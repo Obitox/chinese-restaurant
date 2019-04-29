@@ -5,11 +5,11 @@ import (
 	"encoding/base64"
 )
 
-// GenerateRandomBytes returns securely generated random bytes.
+// generateRandomBytes returns securely generated random bytes.
 // It will return an error if the system's secure random
 // number generator fails to function correctly, in which
 // case the caller should not continue.
-func GenerateRandomBytes(length int) ([]byte, error) {
+func generateRandomBytes(length int) ([]byte, error) {
 	byteArray := make([]byte, length)
 
 	_, err := rand.Read(byteArray)
@@ -26,6 +26,6 @@ func GenerateRandomBytes(length int) ([]byte, error) {
 // It will return an error if the system's secure random
 // number generator fails to function correctly
 func GenerateRandomString(length int) (string, error) {
-	byteArray, err := GenerateRandomBytes(length)
+	byteArray, err := generateRandomBytes(length)
 	return base64.URLEncoding.EncodeToString(byteArray), err
 }

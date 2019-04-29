@@ -44,3 +44,20 @@ func initJWT() error {
 
 	return nil
 }
+
+func CreateAuthAndRefreshToken(){
+
+}
+
+func StoreAuthAndRefreshToken
+
+// func CreateNewTokens(uuid, role string) (authTokenString, refreshTokenString, csrfSecret string, err error){
+// 	csrfSecret, err = utils.GenerateRandomString(32)
+// 	if err != nil {
+// 		Log.Printf(err)
+// 		return
+// 	}
+
+// 	refreshTokenString, err = creat
+// }
+

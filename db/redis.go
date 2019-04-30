@@ -9,11 +9,15 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+const (
+	redisConfigFilePath = "config/redis.yaml"
+)
+
 // RedisConnect returns client/connection or error if it fails
 func RedisConnect() (*redis.Client, error) {
 	redisConfig := models.RedisConfig{}
 
-	data, ymlReadErr := utils.ReadYamlConfigFile()
+	data, ymlReadErr := utils.ReadYamlConfigFile(redisConfigFilePath)
 
 	if ymlReadErr != nil {
 		log.Println(ymlReadErr)
@@ -23,7 +27,7 @@ func RedisConnect() (*redis.Client, error) {
 	err := yaml.Unmarshal(data, &redisConfig)
 
 	if err != nil {
-		log.ymlReadErr
+		log.Println(err)
 		return nil, err
 	}
 

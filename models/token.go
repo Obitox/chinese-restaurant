@@ -16,5 +16,5 @@ const AuthTokenValidTime = time.Minute * 15
 type TokenClaims struct {
 	jwt.StandardClaims
 	Role string `json:"role"`
-	Csrf string `json:"csrf"`
+	// Csrf string `json:"csrf"`
 }

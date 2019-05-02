@@ -2,12 +2,18 @@ package db
 
 import (
 	"log"
-	"restaurant-app/models"
 	"restaurant-app/utils"
 
 	"github.com/go-redis/redis"
 	yaml "gopkg.in/yaml.v2"
 )
+
+// RedisConfig represents a struct that mimics redis.yaml structure
+type RedisConfig struct {
+	Address  string `yaml:"addr"`
+	Password string `yaml:"pass"`
+	DB       int    `yaml:"db"`
+}
 
 const (
 	redisConfigFilePath = "config/redis.yaml"
@@ -15,7 +21,7 @@ const (
 
 // RedisConnect returns client/connection or error if it fails
 func RedisConnect() (*redis.Client, error) {
-	redisConfig := models.RedisConfig{}
+	config := RedisConfig{}
 
 	data, ymlReadErr := utils.ReadYamlConfigFile(redisConfigFilePath)
 
@@ -24,7 +30,7 @@ func RedisConnect() (*redis.Client, error) {
 		return nil, ymlReadErr
 	}
 
-	err := yaml.Unmarshal(data, &redisConfig)
+	err := yaml.Unmarshal(data, &config)
 
 	if err != nil {
 		log.Println(err)
@@ -32,9 +38,9 @@ func RedisConnect() (*redis.Client, error) {
 	}
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     redisConfig.Address,
-		Password: redisConfig.Password, // no password set
-		DB:       redisConfig.DB,       // use default DB
+		Addr:     config.Address,
+		Password: config.Password,
+		DB:       config.DB,
 	})
 
 	pong, err := client.Ping().Result()

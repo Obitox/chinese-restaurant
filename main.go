@@ -1,16 +1,14 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"restaurant-app/utils"
-	"time"
+	"restaurant-app/handlers"
+	"restaurant-app/middleware"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
+	"github.com/justinas/alice"
 )
 
 const (
@@ -43,12 +41,19 @@ type Claims struct {
 }
 
 func main() {
-	// errorChain := alice.New(loggerHandler, recoverHandler)
 	muxHandler := mux.NewRouter()
+	// muxHandler.HandleFunc("/token", tokenHandler)
+	muxHandler.HandleFunc("/login", handlers.Login)
+	muxHandler.HandleFunc("/register", handlers.Register)
 
-	muxHandler.HandleFunc("/", rootHandler)
-	muxHandler.HandleFunc("/token", tokenHandler)
-	muxHandler.HandleFunc("/login", loginHandler)
+	chain := alice.New(middleware.RecoverHandler, middleware.LoggerHandler).Then(muxHandler)
+
+	log.Printf("Service UP\n")
+	serveError := http.ListenAndServe(":3000", chain)
+
+	if serveError != nil {
+		log.Printf("Following error occured: %s", serveError)
+	}
 
 	// Current APIS
 	// muxHandler.Handle("/", errorChain.Then(muxHandler))
@@ -75,198 +80,155 @@ func main() {
 	// 	Handler: muxHandler,
 	// }
 
-	log.Printf("Service UP\n")
-	serveError := http.ListenAndServe(":3000", muxHandler)
-
-	if serveError != nil {
-		log.Printf("Following error occured: %s", serveError)
-	}
-
 	// serverError := server.ListenAndServeTLS(certFile, keyFile)
 	// if serverError != nil {
 	// 	log.Fatal("ListenAndServe: ", serverError)
 	// }
 }
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Happend")
-	fmt.Fprint(w, "Nobody should read this.")
-}
+// func loginHandler(w http.ResponseWriter, r *http.Request) {
+// 	setupResponse(&w, r)
+// 	if (*r).Method == "OPTIONS" {
+// 		return
+// 	}
 
-func loggerHandler(h http.Handler) http.Handler {
+// 	body, err := ioutil.ReadAll(r.Body)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	log.Println(string(body))
+// 	var t Token
+// 	err = json.Unmarshal(body, &t)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	fmt.Printf("Value is: %s", t.CsrfToken)
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		h.ServeHTTP(w, r)
-		log.Printf("<< %s %s %v", r.Method, r.URL.Path, time.Since(start))
-	})
-}
+// 	// csrfToken := r.Header.Get("csrf-token")
 
-func recoverHandler(next http.Handler) http.Handler {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		defer func() {
-			if err := recover(); err != nil {
-				log.Printf("panic: %+v", err)
-				http.Error(w, http.StatusText(500), 500)
-			}
-		}()
+// 	// if csrfToken == "" {
+// 	// 	fmt.Fprintf(w, "I am being cheated")
+// 	// }
 
-		next.ServeHTTP(w, r)
-	}
+// 	// fmt.Fprintf(w, csrfToken)
 
-	return http.HandlerFunc(fn)
-}
+// 	// OLD CODE
+// 	// var creds Credentials
+// 	// err := json.NewDecoder(r.Body).Decode(&creds)
+// 	// if err != nil {
+// 	// 	w.WriteHeader(http.StatusBadRequest)
+// 	// 	return
+// 	// }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	setupResponse(&w, r)
-	if (*r).Method == "OPTIONS" {
-		return
-	}
+// 	// expectedPassword, ok := users[creds.Username]
 
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err)
-	}
-	log.Println(string(body))
-	var t Token
-	err = json.Unmarshal(body, &t)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Value is: %s", t.CsrfToken)
+// 	// if !ok || expectedPassword != creds.Password {
+// 	// 	w.WriteHeader(http.StatusUnauthorized)
+// 	// 	return
+// 	// }
 
-	// csrfToken := r.Header.Get("csrf-token")
+// 	// expirationTime := time.Now().Add(5 * time.Minute)
 
-	// if csrfToken == "" {
-	// 	fmt.Fprintf(w, "I am being cheated")
-	// }
+// 	// claims := &Claims{
+// 	// 	Username: creds.Username,
+// 	// 	StandardClaims: jwt.StandardClaims{
+// 	// 		// In JWT, the expiry time is expressed as unix milliseconds
+// 	// 		ExpiresAt: expirationTime.Unix(),
+// 	// 	},
+// 	// }
 
-	// fmt.Fprintf(w, csrfToken)
+// 	// // Declare the token with the algorithm used for signing, and the claims
+// 	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+// 	// // Create the JWT string
+// 	// tokenString, err := token.SignedString(jwtKey)
+// 	// if err != nil {
+// 	// 	// If there is an error in creating the JWT return an internal server error
+// 	// 	w.WriteHeader(http.StatusInternalServerError)
+// 	// 	return
+// 	// }
 
-	// OLD CODE
-	// var creds Credentials
-	// err := json.NewDecoder(r.Body).Decode(&creds)
-	// if err != nil {
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	return
-	// }
+// 	// // Finally, we set the client cookie for "token" as the JWT we just generated
+// 	// // we also set an expiry time which is the same as the token itself
+// 	// http.SetCookie(w, &http.Cookie{
+// 	// 	Name:    "token",
+// 	// 	Value:   tokenString,
+// 	// 	Expires: expirationTime,
+// 	// })
+// }
 
-	// expectedPassword, ok := users[creds.Username]
+// func tokenHandler(w http.ResponseWriter, r *http.Request) {
+// 	fmt.Println("Hiya form Token")
+// 	setupResponse(&w, r)
+// 	if (*r).Method == "OPTIONS" {
+// 		return
+// 	}
 
-	// if !ok || expectedPassword != creds.Password {
-	// 	w.WriteHeader(http.StatusUnauthorized)
-	// 	return
-	// }
+// 	csrfToken, err := utils.GenerateRandomString(32)
 
-	// expirationTime := time.Now().Add(5 * time.Minute)
+// 	log.Printf("Value of the token is: %s", csrfToken)
 
-	// claims := &Claims{
-	// 	Username: creds.Username,
-	// 	StandardClaims: jwt.StandardClaims{
-	// 		// In JWT, the expiry time is expressed as unix milliseconds
-	// 		ExpiresAt: expirationTime.Unix(),
-	// 	},
-	// }
+// 	if err != nil {
+// 		fmt.Println("Token generation failed!")
+// 	}
 
-	// // Declare the token with the algorithm used for signing, and the claims
-	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	// // Create the JWT string
-	// tokenString, err := token.SignedString(jwtKey)
-	// if err != nil {
-	// 	// If there is an error in creating the JWT return an internal server error
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
+// 	fmt.Printf("Value of the token: %s", csrfToken)
 
-	// // Finally, we set the client cookie for "token" as the JWT we just generated
-	// // we also set an expiry time which is the same as the token itself
-	// http.SetCookie(w, &http.Cookie{
-	// 	Name:    "token",
-	// 	Value:   tokenString,
-	// 	Expires: expirationTime,
-	// })
-}
+// 	token := Token{csrfToken}
 
-func tokenHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Hiya form Token")
-	setupResponse(&w, r)
-	if (*r).Method == "OPTIONS" {
-		return
-	}
+// 	marshaledToken, jsonError := json.Marshal(token)
+// 	if jsonError != nil {
+// 		fmt.Println("Failed!")
+// 		return
+// 	}
 
-	csrfToken, err := utils.GenerateRandomString(32)
+// 	// r.Header.Add("csrf-token", csrfToken)
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.Write(marshaledToken)
+// 	// w.Write(marshaledToken)
+// 	// fmt.Fprintf(w, "Catch")
+// }
 
-	log.Printf("Value of the token is: %s", csrfToken)
+// func itemHandler(w http.ResponseWriter, r *http.Request) {
+// 	// We can obtain the session token from the requests cookies, which come with every request
+// 	c, err := r.Cookie("token")
+// 	if err != nil {
+// 		if err == http.ErrNoCookie {
+// 			// If the cookie is not set, return an unauthorized status
+// 			w.WriteHeader(http.StatusUnauthorized)
+// 			return
+// 		}
+// 		// For any other type of error, return a bad request status
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
 
-	if err != nil {
-		fmt.Println("Token generation failed!")
-	}
+// 	// Get the JWT string from the cookie
+// 	tknStr := c.Value
 
-	fmt.Printf("Value of the token: %s", csrfToken)
+// 	// Initialize a new instance of `Claims`
+// 	claims := &Claims{}
 
-	token := Token{csrfToken}
+// 	// Parse the JWT string and store the result in `claims`.
+// 	// Note that we are passing the key in this method as well. This method will return an error
+// 	// if the token is invalid (if it has expired according to the expiry time we set on sign in),
+// 	// or if the signature does not match
+// 	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
+// 		return jwtKey, nil
+// 	})
+// 	if !tkn.Valid {
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		return
+// 	}
+// 	if err != nil {
+// 		if err == jwt.ErrSignatureInvalid {
+// 			w.WriteHeader(http.StatusUnauthorized)
+// 			return
+// 		}
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
 
-	marshaledToken, jsonError := json.Marshal(token)
-	if jsonError != nil {
-		fmt.Println("Failed!")
-		return
-	}
-
-	// r.Header.Add("csrf-token", csrfToken)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(marshaledToken)
-	// w.Write(marshaledToken)
-	// fmt.Fprintf(w, "Catch")
-}
-
-func itemHandler(w http.ResponseWriter, r *http.Request) {
-	// We can obtain the session token from the requests cookies, which come with every request
-	c, err := r.Cookie("token")
-	if err != nil {
-		if err == http.ErrNoCookie {
-			// If the cookie is not set, return an unauthorized status
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		// For any other type of error, return a bad request status
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	// Get the JWT string from the cookie
-	tknStr := c.Value
-
-	// Initialize a new instance of `Claims`
-	claims := &Claims{}
-
-	// Parse the JWT string and store the result in `claims`.
-	// Note that we are passing the key in this method as well. This method will return an error
-	// if the token is invalid (if it has expired according to the expiry time we set on sign in),
-	// or if the signature does not match
-	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
-	})
-	if !tkn.Valid {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-	if err != nil {
-		if err == jwt.ErrSignatureInvalid {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	// Finally, return the welcome message to the user, along with their
-	// username given in the token
-	w.Write([]byte(fmt.Sprintf("Welcome %s!", claims.Username)))
-}
-
-func setupResponse(w *http.ResponseWriter, req *http.Request) {
-	// req.Header.Get(`origin`)
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-}
+// 	// Finally, return the welcome message to the user, along with their
+// 	// username given in the token
+// 	w.Write([]byte(fmt.Sprintf("Welcome %s!", claims.Username)))
+// }

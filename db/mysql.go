@@ -3,14 +3,17 @@ package db
 import (
 	"log"
 	"restaurant-app/utils"
+	"strconv"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm" // Gorm default import
 	yaml "gopkg.in/yaml.v2"
 )
 
 // MySQLConfig represents a struct that mimics redis.yaml structure
 type MySQLConfig struct {
-	User, Password, DBName, Charset, ParseTime, Loc string
+	User, Password, DBName, Charset, Loc string
+	ParseTime                            bool
 }
 
 const (
@@ -40,10 +43,13 @@ func MySQLConnect() (db *gorm.DB, err error) {
 		config.Password + "@/" +
 		config.DBName + "?charset=" +
 		config.Charset + "&parseTime=" +
-		config.ParseTime + "&loc=" +
+		strconv.FormatBool(config.ParseTime) + "&loc=" +
 		config.Loc
 
 	db, err = gorm.Open("mysql", connectionString)
+
+	// Changes default table naming for example User struct: users -> user
+	db.SingularTable(true)
 
 	if err != nil {
 		log.Println(err)

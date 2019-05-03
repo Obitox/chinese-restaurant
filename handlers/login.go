@@ -28,7 +28,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	retrievalError := user.GetUserByUsernameAndPassword()
 	if retrievalError != nil {
-		panic(retrievalError)
+		response := models.Response{
+			ReturnCode: -1,
+			Message:    retrievalError.Error(),
+		}
+
+		byteResponse, marshalError := response.Response()
+		if marshalError != nil {
+			// Internal server errorA
+			log.Println("Error while marshaling the Response object")
+			return
+		}
+		w.Write(byteResponse)
+		return
 	}
 
 	if user.UserID == 0 {
@@ -43,6 +55,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Write(byteResponse)
+		return
 	}
 
 	authToken, refreshToken, err := user.CreateAndStoreAuthAndRefreshTokens()

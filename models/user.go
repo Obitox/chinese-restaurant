@@ -2,11 +2,13 @@ package models
 
 import (
 	"crypto/rsa"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"restaurant-app/db"
+	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -85,8 +87,19 @@ func (user *User) GetUserByUsernameAndPassword() (err error) {
 		return err
 	}
 
-	conn.Where("username=? AND password=?", user.Username, user.Password).First(&user)
-	return err
+	temp := user.Password
+
+	conn.Where("username=?", user.Username).First(&user)
+
+	log.Println("Password: " + temp)
+
+	err = CheckPasswordHash([]byte(user.Password), []byte(temp))
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // CreateUser adds a new user to the MySQL DB
@@ -98,6 +111,23 @@ func (user *User) CreateUser() (err error) {
 		log.Println(err)
 		return err
 	}
+
+	tempUser := User{}
+
+	conn.Select("user_id").Where("username=?", user.Username).Find(&tempUser)
+
+	if tempUser.UserID != 0 {
+		log.Println("User already exist in the DB")
+		return errors.New("User with username " + user.Username + " already exist in the DB")
+	}
+
+	byteArray, hashingError := user.HashPassword()
+	if hashingError != nil {
+		log.Println(hashingError)
+		return hashingError
+	}
+
+	user.Password = string(byteArray)
 
 	conn.Create(&user)
 	return nil
@@ -125,6 +155,7 @@ func (user User) CreateAndStoreAuthAndRefreshTokens() (authToken string, refresh
 		return
 	}
 
+	log.Println("UserID: " + string(user.UserID))
 	err = storeAuthAndRefreshTokens(user.UserID, authToken, refreshToken)
 
 	if err != nil {
@@ -152,7 +183,7 @@ func storeAuthAndRefreshTokens(id uint64, authToken, refreshToken string) error 
 	tokens["AuthToken"] = authToken
 	tokens["RefreshToken"] = refreshToken
 
-	_, tokenInsertError := client.HMSet(string(id), tokens).Result()
+	_, tokenInsertError := client.HMSet(strconv.FormatUint(id, 10), tokens).Result()
 	if err != nil {
 		log.Println(tokenInsertError)
 		return tokenInsertError
@@ -230,7 +261,7 @@ func SetAuthAndRefreshCookies(w *http.ResponseWriter, authTokenString, refreshTo
 	http.SetCookie(*w, &authCookie)
 
 	refreshCookie := http.Cookie{
-		Name:     "AuthToken",
+		Name:     "RefreshToken",
 		Value:    refreshTokenString,
 		HttpOnly: true,
 	}

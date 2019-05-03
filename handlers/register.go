@@ -25,7 +25,18 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	err = user.CreateUser()
 	if err != nil {
-		panic(err)
+		response := models.Response{
+			ReturnCode: -201,
+			Message:    err.Error(),
+		}
+
+		byteResponse, marshalError := response.Response()
+		if marshalError != nil {
+			panic(marshalError)
+		}
+
+		w.Write(byteResponse)
+		return
 	}
 
 	response := models.Response{

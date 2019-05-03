@@ -7,7 +7,7 @@ import (
 
 // Response used for displaying errors from handlers to end user in a json format
 type Response struct {
-	ReturnCode int8
+	ReturnCode int16
 	Message    string
 }
 

@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"restaurant-app/models"
@@ -18,11 +20,21 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	decoder := json.NewDecoder(r.Body)
-	user := models.User{}
+	user := models.User{
+		Username: "",
+		Password: "",
+	}
+	// err := json.NewDecoder(r.Body).Decode(&user)
 
-	err := decoder.Decode(&user)
+	data, err := ioutil.ReadAll(r.Body)
+	fmt.Println("Data: " + string(data))
 	if err != nil {
+		log.Println("Readll: " + err.Error())
+	}
+
+	err = json.Unmarshal(data, &user)
+	if err != nil {
+		log.Println(err.Error())
 		panic(err)
 	}
 

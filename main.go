@@ -42,7 +42,7 @@ type Claims struct {
 
 func main() {
 	muxHandler := mux.NewRouter()
-	// muxHandler.HandleFunc("/token", tokenHandler)
+	muxHandler.HandleFunc("/csrf", handlers.Csrf)
 	muxHandler.HandleFunc("/login", handlers.Login)
 	muxHandler.HandleFunc("/register", handlers.Register)
 

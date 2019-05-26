@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux'
+import loginReducer  from './loginReducer'
 
 const restaurant_app = combineReducers({
-    //  Reducer1,
+   loginReducer: loginReducer
     //  Reducer2,
     //  ...
 })

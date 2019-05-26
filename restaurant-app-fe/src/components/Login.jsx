@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import axios from 'axios';
+import { connect } from 'react-redux'
+import {loginAction} from '../actions/login'
 
 
-export class Login extends Component {
+class Login extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -195,3 +197,15 @@ export class Login extends Component {
         )
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        loginData: state.username
+    };
+}
+
+const mapActionsToProps = () => {
+    doLogin: loginAction
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(Login)

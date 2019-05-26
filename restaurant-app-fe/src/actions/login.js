@@ -1,12 +1,17 @@
-// export const LOGIN_REQUEST = 'LOGIN_REQUEST'
-// export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
-// export const LOGIN_FAILURE = 'LOGIN_FAILURE'
+export const LOGIN_REQUEST = 'LOGIN_REQUEST'
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
+export const LOGIN_FAILURE = 'LOGIN_FAILURE'
 
-export const Actions = {
-    LOGIN_REQUEST: 'LOGIN_REQUEST',
-    LOGIN_SUCCESS: 'LOGIN_SUCCESS',
-    LOGIN_FAILURE: 'LOGIN_FAILURE'
-}
+// export const Actions = {
+//     // LOGIN
+//     LOGIN_REQUEST: 'LOGIN_REQUEST',
+//     LOGIN_SUCCESS: 'LOGIN_SUCCESS',
+//     LOGIN_FAILURE: 'LOGIN_FAILURE',
+//     // CSRF
+//     // CSRF_REQUEST: 'CSRF_REQUEST',
+//     // CSRF_SUCCESS: 'CSRF_SUCCESS',
+//     // CSRF_FAILURE: 'CSRF_FAILURE',
+// }
 
 const baseURL = `http://localhost:3000`
 
@@ -15,8 +20,8 @@ const baseURL = `http://localhost:3000`
 //     payload: 
 // });
 
-const login = (username, password) => dispatch => {
-    dispatch({type: Actions.LOGIN_REQUEST, payload: username})
+export const loginAction = (username, password) => dispatch => {
+    dispatch({type: LOGIN_REQUEST, payload: username})
 
     const payload = {
         username: username,
@@ -29,9 +34,13 @@ const login = (username, password) => dispatch => {
     })
     .then(res => res.json())
     .then(response => 
-        dispatch({type: Actions.LOGIN_SUCCESS, payload: response.data})
+        dispatch({type: LOGIN_SUCCESS, payload: response.data})
     )
     .catch(error =>
-        dispatch({type: Actions.LOGIN_FAILURE, payload: error})
+        dispatch({type: LOGIN_FAILURE, payload: error})
     );
 }
+
+// const csrf = () => dispatch() => {
+//     dispatch()
+// }

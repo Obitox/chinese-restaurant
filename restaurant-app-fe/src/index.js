@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import "assets/scss/main.scss";
 import Login from 'components/Login.jsx'
+import Home from 'components/Home.jsx'
 import restaurant_app from './reducers/combineReducers'
 
 const store = createStore(
@@ -21,7 +22,8 @@ const store = createStore(
 const Root = () => (
   <Provider store={store}>
     <Router>
-      <Route path="/" component={Login} />
+      <Route path="/login" component={Login} />
+      <Route path="/home" component={Home} />
     </Router>
   </Provider>
 )

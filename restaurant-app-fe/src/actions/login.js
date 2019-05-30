@@ -33,8 +33,13 @@ export const loginAction = (username, password) => dispatch => {
        body: JSON.stringify(payload) 
     })
     .then(res => res.json())
-    .then(response => 
-        dispatch({type: LOGIN_SUCCESS, payload: response.data})
+    .then(response => {
+        if(response.data.Message == "OK"){
+            dispatch({type: LOGIN_SUCCESS, payload: response.data.Message}) 
+        } else {
+            dispatch({type: LOGIN_FAILURE, payload: "Authentication failed, username or password is wrong"})
+        }
+    }
     )
     .catch(error =>
         dispatch({type: LOGIN_FAILURE, payload: error})

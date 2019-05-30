@@ -130,8 +130,10 @@ class Login extends Component {
             password: this.state.password
         };
 
-        const urlX = `http://localhost:3000/login`;
-        console.log(JSON.stringify(user));
+        this.doLogin(user.username, user.password);
+
+        // const urlX = `http://localhost:3000/login`;
+        // console.log(JSON.stringify(user));
         // axios({
         //     method: 'POST',
         //     // headers: {
@@ -147,13 +149,13 @@ class Login extends Component {
         // });
 
 
-        fetch(urlX, {
-            method: 'POST', // or 'PUT'
-            // body: JSON.stringify(user), // data can be `string` or {object}!
-            body: JSON.stringify(user)
-          }).then(res => res.json())
-          .then(response => console.log('Success:', JSON.stringify(response)))
-          .catch(error => console.error('Error:', error));
+        // fetch(urlX, {
+        //     method: 'POST', // or 'PUT'
+        //     // body: JSON.stringify(user), // data can be `string` or {object}!
+        //     body: JSON.stringify(user)
+        //   }).then(res => res.json())
+        //   .then(response => console.log('Success:', JSON.stringify(response)))
+        //   .catch(error => console.error('Error:', error));
 
         // axios({
         //     method: "POST",
@@ -192,6 +194,7 @@ class Login extends Component {
                     <input type="text" name="username" onChange={this.handleChange} placeholder="Enter your username here"></input>
                     <input type="text" name="password" onChange={this.handleChange} placeholder="Enter your password here"></input>
                     <button type="submit" onClick={this.doLogin}>Login</button>
+                    {this.props.loginData}
                 {/* </form> */}
             </div>
         )
@@ -200,7 +203,7 @@ class Login extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        loginData: state.username
+        loginData: state.loginReducer.Username
     };
 }
 

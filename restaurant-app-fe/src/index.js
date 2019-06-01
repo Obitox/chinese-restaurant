@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
+// import { configureStore } from 'redux-starter-kit'
+import thunk from 'redux-thunk'
 
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
@@ -12,8 +14,19 @@ import restaurant_app from './reducers/combineReducers'
 
 const store = createStore(
   restaurant_app,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  compose(
+    applyMiddleware(
+        thunk
+    ),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )
+)
+
+// const store = createStore(
+//   restaurant_app,
+//   window.__REDUX_DEVTOOLS_EXTENSION__, window.__REDUX_DEVTOOLS_EXTENSION__(),
+//   applyMiddleware(thunk),
+// )
 
 // let HelloWorld = () => {
 //   return <h1><Login/></h1>

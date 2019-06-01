@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 import loginReducer  from './loginReducer'
 
 const restaurant_app = combineReducers({
-   loginReducer: loginReducer
+   loginReducer
     //  Reducer2,
     //  ...
 })

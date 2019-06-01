@@ -113,7 +113,7 @@ class Login extends Component {
             // return await response.json(); // parses JSON response into native Javascript objects
     }
 
-    doLogin = () =>{
+    doLogin = () => {
         // const instance = axios.create({
         //     baseURL: [`http://localhost:3000`],
         //     timeout: 5000,
@@ -130,7 +130,7 @@ class Login extends Component {
             password: this.state.password
         };
 
-        this.doLogin(user.username, user.password);
+        this.props.loginAction(user.username, user.password);
 
         // const urlX = `http://localhost:3000/login`;
         // console.log(JSON.stringify(user));
@@ -203,12 +203,12 @@ class Login extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        loginData: state.loginReducer.Username
+        loginData: state.Username
     };
 }
 
-const mapActionsToProps = () => {
-    doLogin: loginAction
+const mapDispatchToProps = {
+    loginAction
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

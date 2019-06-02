@@ -2,7 +2,6 @@ import { LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_SUCCESS } from '../actions/login'
 
 const initialState = {
     IsAuthenticated: false,
-    // IsLoading: false,
     Username: '',
     Message: ''
 }
@@ -24,20 +23,5 @@ export default function loginReducer(state = initialState, action){
             });
         default:
             return state;
-        // case Actions.CSRF_REQUEST:
-        //     return [
-        //         ...state,
-        //         action.payload
-        //     ]
-        // case Actions.CSRF_SUCCESS:
-        //     return [
-        //         ...state,
-        //         action.payload
-        //     ]
-        // case Actions.CSRF_FAILURE:
-        //     return [
-        //         ...state,
-        //         action.payload
-        //     ]
     }
 }

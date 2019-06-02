@@ -2,7 +2,6 @@ import { LOAD_DATA_FROM_LOCALSTORAGE } from '../actions/home'
 
 const initialState = {
     IsAuthenticated: false,
-    // IsLoading: false,
     Username: '',
     Message: ''
 }
@@ -18,20 +17,5 @@ export default function homeReducer(state = initialState, action){
             });
         default:
             return state;
-        // case Actions.CSRF_REQUEST:
-        //     return [
-        //         ...state,
-        //         action.payload
-        //     ]
-        // case Actions.CSRF_SUCCESS:
-        //     return [
-        //         ...state,
-        //         action.payload
-        //     ]
-        // case Actions.CSRF_FAILURE:
-        //     return [
-        //         ...state,
-        //         action.payload
-        //     ]
     }
 }

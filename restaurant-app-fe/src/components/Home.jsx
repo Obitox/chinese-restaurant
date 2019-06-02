@@ -8,27 +8,12 @@ import { tryLoadDataFromLocalStroage } from '../actions/home'
 class Home extends React.Component {
     constructor(props) {
         super(props);
-        // this.handleLoginClick = this.handleLoginClick.bind(this);
-        // this.handleLogoutClick = this.handleLogoutClick.bind(this);
-        // this.state = {isLoggedIn: false};
-        this.state = {
-
-        };
         this.componentDidMount = this.componentDidMount.bind(this);
     }
 
     componentDidMount(){
-        console.log('Entered')
         this.props.tryLoadDataFromLocalStroage();
     }
-
-    // handleLoginClick() {
-    //     this.setState({isLoggedIn: true});
-    // }
-
-    // handleLogoutClick() {
-    //     this.setState({isLoggedIn: false});
-    // }
 
     render(){
         const isLoggedIn = this.props.IsAuthenticated;
@@ -37,9 +22,9 @@ class Home extends React.Component {
         console.log('PROPSU: ' + this.props.Username)
 
         if (isLoggedIn) {
-            button = <LogoutButton /*onClick={this.handleLogoutClick}*/ />;
+            button = <LogoutButton />;
         } else {
-            button = <LoginAndSignUpButton /*onClick={this.handleLoginClick}*/ />;
+            button = <LoginAndSignUpButton />;
         }
 
         return (
@@ -54,8 +39,6 @@ class Home extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    // console.log('STATEZ: ' + state.Username)
-    // console.log('STATEZ: ' + state.IsAuthenticated)
     return {
         Username: state.homeReducer.Username,
         IsAuthenticated: state.homeReducer.IsAuthenticated

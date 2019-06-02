@@ -22,16 +22,6 @@ const store = createStore(
   )
 )
 
-// const store = createStore(
-//   restaurant_app,
-//   window.__REDUX_DEVTOOLS_EXTENSION__, window.__REDUX_DEVTOOLS_EXTENSION__(),
-//   applyMiddleware(thunk),
-// )
-
-// let HelloWorld = () => {
-//   return <h1><Login/></h1>
-// }
-
 const Root = () => (
   <Provider store={store}>
     <Router>

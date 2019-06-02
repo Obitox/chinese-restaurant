@@ -1,7 +1,9 @@
 import React from "react";
+import { connect } from 'react-redux'
+
 import LoginAndSignUpButton from "./LoginAndSignUpButton.jsx";
 import LogoutButton from "./LogoutButton.jsx";
-import { connect } from 'react-redux'
+import { tryLoadDataFromLocalStroage } from '../actions/home'
 
 class Home extends React.Component {
     constructor(props) {
@@ -9,6 +11,15 @@ class Home extends React.Component {
         // this.handleLoginClick = this.handleLoginClick.bind(this);
         // this.handleLogoutClick = this.handleLogoutClick.bind(this);
         // this.state = {isLoggedIn: false};
+        this.state = {
+
+        };
+        this.componentDidMount = this.componentDidMount.bind(this);
+    }
+
+    componentDidMount(){
+        console.log('Entered')
+        this.props.tryLoadDataFromLocalStroage();
     }
 
     // handleLoginClick() {
@@ -23,6 +34,8 @@ class Home extends React.Component {
         const isLoggedIn = this.props.IsAuthenticated;
         let button;
 
+        console.log('PROPSU: ' + this.props.Username)
+
         if (isLoggedIn) {
             button = <LogoutButton /*onClick={this.handleLogoutClick}*/ />;
         } else {
@@ -32,9 +45,25 @@ class Home extends React.Component {
         return (
             <div>
                 {button}
+                <p>
+                    Currently logged in as: {this.props.Username}
+                </p>
             </div>
         )
     }
 }
 
-export default connect()(Home)
+const mapStateToProps = (state) => {
+    // console.log('STATEZ: ' + state.Username)
+    // console.log('STATEZ: ' + state.IsAuthenticated)
+    return {
+        Username: state.homeReducer.Username,
+        IsAuthenticated: state.homeReducer.IsAuthenticated
+    };
+}
+
+const mapDispatchToProps = {
+    tryLoadDataFromLocalStroage
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

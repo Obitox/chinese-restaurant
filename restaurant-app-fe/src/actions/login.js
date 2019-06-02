@@ -41,6 +41,28 @@ const loginFailure = (message) => {
     }
 }
 
+const saveSingleValueToLocalStorage = (key, value) => {
+    localStorage.setItem(key, value);
+}
+
+const saveObjectToLocalStorage = (userInfo) => {
+    console.log('happened')
+    console.log('Username: ' + userInfo.Username)
+    console.log(userInfo)
+
+    for (var key in userInfo) {
+        console.log('Ajajajaj')
+        if (userInfo.hasOwnProperty(key)) {
+            console.log('HAAAAAAAAA')
+            localStorage.setItem(key, userInfo[key]);
+        } else{
+        console.log('ELSE')}
+    }
+
+    console.log('Username: ' + localStorage.getItem('Username'))
+    console.log('IsAuthenticated: ' + localStorage.getItem('IsAuthenticated'))
+}
+
 export const loginAction = (username, password) => dispatch => {
     dispatch(loginRequest(username))
 
@@ -48,8 +70,6 @@ export const loginAction = (username, password) => dispatch => {
         username: username,
         password: password
     }
-    console.log('Username: ' + username);
-    console.log('Password: ' + password);
 
     fetch(baseURL + '/login', {
        method: 'POST',
@@ -57,22 +77,17 @@ export const loginAction = (username, password) => dispatch => {
     })
     .then(res => res.json())
     .then(response => {
-        console.log('JOJOJO')
         if(response.Message == "OK"){
-            console.log('USPESAN')
+            saveObjectToLocalStorage({
+                Username: username,
+                IsAuthenticated: true
+            })
             dispatch(loginSuccess(response.Message)) 
         } else {
             dispatch(loginFailure("Authentication failed, username or password is wrong"))
         }
-    }
-    )
-    .catch(error =>
-        {
-            console.log('FALL')
-            console.log(error)
-            dispatch(loginFailure(error))
-        }
-    );
+    })
+    .catch(error => dispatch(loginFailure(error)));
 }
 
 // const csrf = () => dispatch() => {

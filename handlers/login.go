@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -27,7 +26,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// err := json.NewDecoder(r.Body).Decode(&user)
 
 	data, err := ioutil.ReadAll(r.Body)
-	fmt.Println("Data: " + string(data))
 	if err != nil {
 		log.Println("Readll: " + err.Error())
 	}
@@ -38,11 +36,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	retrievalError := user.GetUserByUsernameAndPassword()
-	if retrievalError != nil {
+	cookie, err := r.Cookie("RequestAntiForgeryToken")
+	if err != nil {
 		response := models.Response{
-			ReturnCode: -1,
-			Message:    retrievalError.Error(),
+			ReturnCode: http.StatusUnauthorized,
+			Message:    "",
 		}
 
 		byteResponse, marshalError := response.Response()
@@ -55,29 +53,68 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.UserID == 0 {
-		response := models.Response{
-			ReturnCode: -101,
-			Message:    "Username or password is wrong.",
+	r.ParseForm()
+
+	antiForgeryToken := r.Form.Get("_RequestAntiForgeryToken")
+
+	if len(antiForgeryToken) > 0 {
+		if antiForgeryToken == cookie.Value {
+			retrievalError := user.GetUserByUsernameAndPassword()
+			if retrievalError != nil {
+				response := models.Response{
+					ReturnCode: -1,
+					Message:    retrievalError.Error(),
+				}
+
+				byteResponse, marshalError := response.Response()
+				if marshalError != nil {
+					// Internal server errorA
+					log.Println("Error while marshaling the Response object")
+					return
+				}
+				w.Write(byteResponse)
+				return
+			}
+
+			if user.UserID == 0 {
+				response := models.Response{
+					ReturnCode: -101,
+					Message:    "Username or password is wrong.",
+				}
+				byteResponse, marshalError := response.Response()
+				if marshalError != nil {
+					// Internal server errorA
+					log.Println("Error while marshaling the Response object")
+					return
+				}
+				w.Write(byteResponse)
+				return
+			}
+
+			authToken, refreshToken, err := user.CreateAndStoreAuthAndRefreshTokens()
+
+			log.Println(err)
+			models.SetAuthAndRefreshCookies(&w, authToken, refreshToken)
+
+			response := models.Response{
+				ReturnCode: 0,
+				Message:    "OK",
+			}
+			byteResponse, marshalError := response.Response()
+			if marshalError != nil {
+				// Internal server errorA
+				log.Println("Error while marshaling the Response object")
+				return
+			}
+			w.Write(byteResponse)
 		}
-		byteResponse, marshalError := response.Response()
-		if marshalError != nil {
-			// Internal server errorA
-			log.Println("Error while marshaling the Response object")
-			return
-		}
-		w.Write(byteResponse)
-		return
 	}
-
-	authToken, refreshToken, err := user.CreateAndStoreAuthAndRefreshTokens()
-
-	models.SetAuthAndRefreshCookies(&w, authToken, refreshToken)
 
 	response := models.Response{
-		ReturnCode: 0,
-		Message:    "OK",
+		ReturnCode: http.StatusUnauthorized,
+		Message:    "",
 	}
+
 	byteResponse, marshalError := response.Response()
 	if marshalError != nil {
 		// Internal server errorA
@@ -85,4 +122,53 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(byteResponse)
+	return
+
+	// retrievalError := user.GetUserByUsernameAndPassword()
+	// if retrievalError != nil {
+	// 	response := models.Response{
+	// 		ReturnCode: -1,
+	// 		Message:    retrievalError.Error(),
+	// 	}
+
+	// 	byteResponse, marshalError := response.Response()
+	// 	if marshalError != nil {
+	// 		// Internal server errorA
+	// 		log.Println("Error while marshaling the Response object")
+	// 		return
+	// 	}
+	// 	w.Write(byteResponse)
+	// 	return
+	// }
+
+	// if user.UserID == 0 {
+	// 	response := models.Response{
+	// 		ReturnCode: -101,
+	// 		Message:    "Username or password is wrong.",
+	// 	}
+	// 	byteResponse, marshalError := response.Response()
+	// 	if marshalError != nil {
+	// 		// Internal server errorA
+	// 		log.Println("Error while marshaling the Response object")
+	// 		return
+	// 	}
+	// 	w.Write(byteResponse)
+	// 	return
+	// }
+
+	// authToken, refreshToken, err := user.CreateAndStoreAuthAndRefreshTokens()
+
+	// models.SetAuthAndRefreshCookies(&w, authToken, refreshToken)
+
+	// response := models.Response{
+	// 	ReturnCode: 0,
+	// 	Message:    "OK",
+	// }
+	// byteResponse, marshalError := response.Response()
+	// if marshalError != nil {
+	// 	// Internal server errorA
+	// 	log.Println("Error while marshaling the Response object")
+	// 	return
+	// }
+	// w.Write(byteResponse)
 }

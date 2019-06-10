@@ -268,3 +268,18 @@ func SetAuthAndRefreshCookies(w *http.ResponseWriter, authTokenString, refreshTo
 
 	http.SetCookie(*w, &refreshCookie)
 }
+
+// SetCsrfCookie sets cookie for current form, changes for every form request
+func SetCsrfCookie(w http.ResponseWriter, csrf string) {
+	expiration := time.Now().Add(365 * 24 * time.Hour)
+	csrfCookie := http.Cookie{
+		Name:     "RequestAntiForgeryToken",
+		Value:    csrf,
+		Expires:  expiration,
+		Domain:   "http://localhost:8080",
+		Path:     "/",
+		HttpOnly: false,
+		MaxAge:   90000,
+	}
+	http.SetCookie(w, &csrfCookie)
+}

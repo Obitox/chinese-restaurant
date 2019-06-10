@@ -47,17 +47,19 @@ const saveObjectToLocalStorage = (userInfo) => {
     console.log('IsAuthenticated: ' + localStorage.getItem('IsAuthenticated'))
 }
 
-export const loginAction = (username, password) => dispatch => {
+export const loginAction = (username, password, csrf) => dispatch => {
     dispatch(loginRequest(username))
 
     const payload = {
         username: username,
-        password: password
+        password: password,
+        _RequestAntiForgeryToken: csrf
     }
 
     fetch(baseURL + '/login', {
        method: 'POST',
-       body: JSON.stringify(payload) 
+       body: JSON.stringify(payload),
+       credentials: 'include'
     })
     .then(res => res.json())
     .then(response => {

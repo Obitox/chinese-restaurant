@@ -9,7 +9,6 @@ const loadData = (userInfo) => {
 
 export const tryLoadDataFromLocalStroage = () => dispatch => {
 
-    console.log('tryLoad')
     if(localStorage.hasOwnProperty("Username") && localStorage.hasOwnProperty("IsAuthenticated"))
     {
         // Targeted load
@@ -18,7 +17,6 @@ export const tryLoadDataFromLocalStroage = () => dispatch => {
             IsAuthenticated: localStorage.getItem("IsAuthenticated")
         }
 
-        console.log('IF')
         dispatch(loadData(userInfo))
     }
     // Automatated load

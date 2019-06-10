@@ -29,6 +29,8 @@ func Csrf(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	models.SetCsrfCookie(w, csrf)
+
 	marshaledCsrfToken, err := json.Marshal(models.CsrfToken{
 		Token: csrf,
 	})

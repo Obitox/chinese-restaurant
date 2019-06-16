@@ -18,16 +18,31 @@ class Login extends Component {
     }
 
     componentDidMount (){
-        axios({
+        // axios({
+        //     method: 'POST',
+        //     url: "http://localhost:3000/csrf",
+        //     credentials: 'withCredentials'
+        // })
+        // .then(response => {
+        //     this.setState({
+        //         csrf_token: response.data._RequestAntiForgeryToken
+        //     });
+        // });
+        
+
+
+        fetch(`http://localhost:3000/csrf`, {
             method: 'POST',
-            url: "http://localhost:3000/csrf",
             credentials: 'include'
-        })
-        .then(response => {
+         })
+         .then(res => res.json())
+         .then(response => {
             this.setState({
-                csrf_token: response.data._RequestAntiForgeryToken
+                csrf_token: response._RequestAntiForgeryToken
             });
-        });
+         });
+
+
     }
 
     handleChange = (event) => {

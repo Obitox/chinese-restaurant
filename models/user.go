@@ -35,8 +35,8 @@ type TokenClaims struct {
 }
 
 type User struct {
-	UserID                                                                                    uint64
-	Username, Password, Role, FirstName, LastName, Address1, Address2, Address3, Phone, Email string
+	UserID                                                                                                             uint64
+	Username, Password, Role, FirstName, LastName, Address1, Address2, Address3, Phone, Email, RequestAntiForgeryToken string
 }
 
 const (
@@ -271,15 +271,13 @@ func SetAuthAndRefreshCookies(w *http.ResponseWriter, authTokenString, refreshTo
 
 // SetCsrfCookie sets cookie for current form, changes for every form request
 func SetCsrfCookie(w http.ResponseWriter, csrf string) {
-	expiration := time.Now().Add(365 * 24 * time.Hour)
+	expires := time.Now().AddDate(0, 0, 1)
+
 	csrfCookie := http.Cookie{
-		Name:     "RequestAntiForgeryToken",
-		Value:    csrf,
-		Expires:  expiration,
-		Domain:   "http://localhost:8080",
-		Path:     "/",
-		HttpOnly: false,
-		MaxAge:   90000,
+		Name:  "id.r.f",
+		Value: csrf,
+		// Domain:  "127.0.0.1",
+		Expires: expires,
 	}
 	http.SetCookie(w, &csrfCookie)
 }

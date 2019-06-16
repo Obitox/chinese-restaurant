@@ -16,6 +16,7 @@ import (
 // Login authenticates user, creates Auth&Referesh tokens for existing user
 func Login(w http.ResponseWriter, r *http.Request) {
 	utils.SetupCors(&w, r)
+	// log.Println("Before")
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -36,11 +37,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	cookie, err := r.Cookie("RequestAntiForgeryToken")
+	log.Println(user)
+
+	cookie, err := r.Cookie("id.r.f")
 	if err != nil {
 		response := models.Response{
 			ReturnCode: http.StatusUnauthorized,
-			Message:    "",
+			Message:    err.Error(),
 		}
 
 		byteResponse, marshalError := response.Response()
@@ -53,12 +56,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.ParseForm()
+	// log.Println("Hello")
+	// log.Println("Cookie: " + cookie.Name)
 
-	antiForgeryToken := r.Form.Get("_RequestAntiForgeryToken")
+	// r.ParseForm()
 
-	if len(antiForgeryToken) > 0 {
-		if antiForgeryToken == cookie.Value {
+	// antiForgeryToken := r.Form.Get("_RequestAntiForgeryToken")
+
+	log.Println("Token: " + user.RequestAntiForgeryToken)
+
+	if len(user.RequestAntiForgeryToken) > 0 {
+		if user.RequestAntiForgeryToken == cookie.Value {
 			retrievalError := user.GetUserByUsernameAndPassword()
 			if retrievalError != nil {
 				response := models.Response{
@@ -112,7 +120,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	response := models.Response{
 		ReturnCode: http.StatusUnauthorized,
-		Message:    "",
+		Message:    "Unauthorized",
 	}
 
 	byteResponse, marshalError := response.Response()

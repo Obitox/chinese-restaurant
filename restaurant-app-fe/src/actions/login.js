@@ -53,13 +53,18 @@ export const loginAction = (username, password, csrf) => dispatch => {
     const payload = {
         username: username,
         password: password,
-        _RequestAntiForgeryToken: csrf
+        RequestAntiForgeryToken: ''
     }
 
     fetch(baseURL + '/login', {
        method: 'POST',
-       body: JSON.stringify(payload),
-       credentials: 'include'
+    //    mode: 'cors',
+    //    headers: {
+    //        'Content-Type': 'application/json',
+    //        // 'Content-Type': 'application/x-www-form-urlencoded',
+    //     },
+        body: JSON.stringify(payload),
+        credentials: 'include'
     })
     .then(res => res.json())
     .then(response => {

@@ -274,7 +274,7 @@ func SetCsrfCookie(w http.ResponseWriter, csrf string) {
 	expires := time.Now().AddDate(0, 0, 1)
 
 	csrfCookie := http.Cookie{
-		Name:  "id.r.f",
+		Name:  "RequestAntiForgeryToken",
 		Value: csrf,
 		// Domain:  "127.0.0.1",
 		Expires: expires,

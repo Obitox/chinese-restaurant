@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 	"restaurant-app/models"
 	"restaurant-app/utils"
 )
@@ -16,7 +17,6 @@ import (
 // Login authenticates user, creates Auth&Referesh tokens for existing user
 func Login(w http.ResponseWriter, r *http.Request) {
 	utils.SetupCors(&w, r)
-	// log.Println("Before")
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -24,7 +24,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Username: "",
 		Password: "",
 	}
-	// err := json.NewDecoder(r.Body).Decode(&user)
 
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -37,9 +36,25 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	log.Println(user)
+	// Validation
+	matched, _ := regexp.MatchString("^[A-Za-z]{1}[A-Za-z0-9]{0,19}$", user.Username)
+	if !matched {
+		response := models.Response{
+			ReturnCode: -1,
+			Message:    "Invalid data entered",
+		}
 
-	cookie, err := r.Cookie("id.r.f")
+		byteResponse, marshalError := response.Response()
+		if marshalError != nil {
+			// Internal server errorA
+			log.Println("Error while marshaling the Response object")
+			return
+		}
+		w.Write(byteResponse)
+		return
+	}
+
+	cookie, err := r.Cookie("RequestAntiForgeryToken")
 	if err != nil {
 		response := models.Response{
 			ReturnCode: http.StatusUnauthorized,
@@ -55,15 +70,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		w.Write(byteResponse)
 		return
 	}
-
-	// log.Println("Hello")
-	// log.Println("Cookie: " + cookie.Name)
-
-	// r.ParseForm()
-
-	// antiForgeryToken := r.Form.Get("_RequestAntiForgeryToken")
-
-	log.Println("Token: " + user.RequestAntiForgeryToken)
 
 	if len(user.RequestAntiForgeryToken) > 0 {
 		if user.RequestAntiForgeryToken == cookie.Value {
@@ -115,6 +121,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.Write(byteResponse)
+			return
 		}
 	}
 

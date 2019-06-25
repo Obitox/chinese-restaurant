@@ -53,7 +53,7 @@ export const loginAction = (username, password, csrf) => dispatch => {
     const payload = {
         username: username,
         password: password,
-        RequestAntiForgeryToken: ''
+        RequestAntiForgeryToken: csrf
     }
 
     fetch(baseURL + '/login', {

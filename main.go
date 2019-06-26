@@ -45,6 +45,7 @@ func main() {
 	muxHandler.HandleFunc("/csrf", handlers.Csrf)
 	muxHandler.HandleFunc("/login", handlers.Login)
 	muxHandler.HandleFunc("/register", handlers.Register)
+	muxHandler.HandleFunc("/logout", handlers.Logout)
 
 	chain := alice.New(middleware.RecoverHandler, middleware.LoggerHandler).Then(muxHandler)
 

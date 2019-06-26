@@ -2,7 +2,7 @@ package handlers
 
 import "net/http"
 
-// IndexHandler-Handler for the main page of the restaurant =returns following data:
+// IndexHandler for the main page of the restaurant =returns following data:
 // - List of all food items
 // - List of popular food items
 // - Promo foods

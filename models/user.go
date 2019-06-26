@@ -183,10 +183,10 @@ func storeAuthAndRefreshTokens(id uint64, authToken, refreshToken string) error 
 	tokens["AuthToken"] = authToken
 	tokens["RefreshToken"] = refreshToken
 
-	_, tokenInsertError := client.HMSet(strconv.FormatUint(id, 10), tokens).Result()
-	if err != nil {
-		log.Println(tokenInsertError)
-		return tokenInsertError
+	_, insertError := client.HMSet(strconv.FormatUint(id, 10), tokens).Result()
+	if insertError != nil {
+		log.Println(insertError)
+		return insertError
 	}
 
 	return nil
@@ -197,7 +197,7 @@ func createAuthTokenString(id uint64, role string) (authTokenString string, err 
 
 	authTokenClaims := TokenClaims{
 		jwt.StandardClaims{
-			Subject:   string(id),
+			Subject:   strconv.FormatUint(id, 10),
 			ExpiresAt: authTokenExp,
 		},
 		role,
@@ -280,4 +280,42 @@ func SetCsrfCookie(w http.ResponseWriter, csrf string) {
 		Expires: expires,
 	}
 	http.SetCookie(w, &csrfCookie)
+}
+
+// GetAuthTokenWithUserID accepts id with which it queries the redis db and retrieves a AuthToken at given id
+func GetAuthTokenWithUserID(id uint64) (string, error) {
+	client, err := db.RedisConnect()
+	defer client.Close()
+
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	authToken, err := client.HGet(strconv.FormatUint(id, 10), "AuthToken").Result()
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	return authToken, nil
+}
+
+// RevokeUserTokensWithUserID accepts userID and based on it deletes hashset in redis db
+func RevokeUserTokensWithUserID(id uint64) (int64, error) {
+	client, err := db.RedisConnect()
+	defer client.Close()
+
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+
+	delNum, deleteError := client.Del(strconv.FormatUint(id, 10)).Result()
+	if deleteError != nil {
+		log.Println(deleteError)
+		return 0, deleteError
+	}
+
+	return delNum, nil
 }

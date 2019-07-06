@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"crypto/rsa"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"restaurant-app/models"
 	"restaurant-app/utils"
 	"strconv"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -32,11 +34,26 @@ var (
 func Logout(w http.ResponseWriter, r *http.Request) {
 	utils.SetupCors(&w, r)
 
-	r.ParseForm()
+	w.Header().Set("Content-Type", "application/json ")
 
-	csrfToken := r.FormValue("csrfToken")
+	user := models.User{
+		RequestAntiForgeryToken: "",
+	}
 
-	cookie, err := r.Cookie("csrfToken")
+	data, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println("Readll: " + err.Error())
+	}
+
+	err = json.Unmarshal(data, &user)
+	if err != nil {
+		log.Println(err.Error())
+		panic(err)
+	}
+
+	// csrfToken := r.FormValue("RequestAntiForgeryToken")
+
+	cookie, err := r.Cookie("RequestAntiForgeryToken")
 	if err != nil {
 		response := models.Response{
 			ReturnCode: -1,
@@ -53,8 +70,8 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(csrfToken) > 0 {
-		if csrfToken == cookie.Value {
+	if len(user.RequestAntiForgeryToken) > 0 {
+		if user.RequestAntiForgeryToken == cookie.Value {
 			authCookie, cookieError := r.Cookie("AuthToken")
 			if cookieError != nil {
 				response := models.Response{
@@ -140,10 +157,33 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 						fmt.Println(revokeErr)
 					}
 
+					// Annihilate cookies
+					authCookie := &http.Cookie{
+						Name:    "AuthCookie",
+						Value:   "",
+						Path:    "/",
+						Expires: time.Unix(0, 0),
+
+						HttpOnly: true,
+					}
+
+					http.SetCookie(w, authCookie)
+
+					refreshCookie := &http.Cookie{
+						Name:    "RefreshCookie",
+						Value:   "",
+						Path:    "/",
+						Expires: time.Unix(0, 0),
+
+						HttpOnly: true,
+					}
+
+					http.SetCookie(w, refreshCookie)
+
 					if delNum == 1 {
 						response := models.Response{
 							ReturnCode: http.StatusOK,
-							Message:    "Successful logout",
+							Message:    "OK",
 						}
 						byteResponse, marshalError := response.Response()
 						if marshalError != nil {

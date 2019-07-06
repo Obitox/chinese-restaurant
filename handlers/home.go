@@ -7,6 +7,6 @@ import "net/http"
 // - List of popular food items
 // - Promo foods
 // - Food categories
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
+func Home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello my name is Bojan!"))
 }

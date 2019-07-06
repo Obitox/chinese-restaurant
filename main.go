@@ -6,7 +6,6 @@ import (
 	"restaurant-app/handlers"
 	"restaurant-app/middleware"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 )
@@ -17,28 +16,28 @@ const (
 	keyFile  = "certs\\ca.key"
 )
 
-var jwtKey = []byte("DeusVult")
+// var jwtKey = []byte("DeusVult")
 
-var users = map[string]string{
-	"user1": "password1",
-	"user2": "password2",
-}
+// var users = map[string]string{
+// 	"user1": "password1",
+// 	"user2": "password2",
+// }
 
-type Token struct {
-	CsrfToken string `json:"token"`
-}
+// type Token struct {
+// 	CsrfToken string `json:"token"`
+// }
 
-// Credentials for the user login
-type Credentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
+// // Credentials for the user login
+// type Credentials struct {
+// 	Username string `json:"username"`
+// 	Password string `json:"password"`
+// }
 
-// Claims for the JWT token
-type Claims struct {
-	Username string `json:"username"`
-	jwt.StandardClaims
-}
+// // Claims for the JWT token
+// type Claims struct {
+// 	Username string `json:"username"`
+// 	jwt.StandardClaims
+// }
 
 func main() {
 	muxHandler := mux.NewRouter()
@@ -46,6 +45,7 @@ func main() {
 	muxHandler.HandleFunc("/login", handlers.Login)
 	muxHandler.HandleFunc("/register", handlers.Register)
 	muxHandler.HandleFunc("/logout", handlers.Logout)
+	muxHandler.HandleFunc("/home", handlers.Home)
 
 	chain := alice.New(middleware.RecoverHandler, middleware.LoggerHandler).Then(muxHandler)
 

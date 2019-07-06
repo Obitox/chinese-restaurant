@@ -1,3 +1,5 @@
+import { push } from 'connected-react-router'
+
 export const LOGIN_REQUEST = 'LOGIN_REQUEST'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const LOGIN_FAILURE = 'LOGIN_FAILURE'
@@ -30,21 +32,14 @@ const saveSingleValueToLocalStorage = (key, value) => {
 }
 
 const saveObjectToLocalStorage = (userInfo) => {
-    console.log('happened')
-    console.log('Username: ' + userInfo.Username)
-    console.log(userInfo)
-
     for (var key in userInfo) {
-        console.log('Ajajajaj')
         if (userInfo.hasOwnProperty(key)) {
-            console.log('HAAAAAAAAA')
             localStorage.setItem(key, userInfo[key]);
         } else{
-        console.log('ELSE')}
+
+        }
     }
 
-    console.log('Username: ' + localStorage.getItem('Username'))
-    console.log('IsAuthenticated: ' + localStorage.getItem('IsAuthenticated'))
 }
 
 export const loginAction = (username, password, csrf) => dispatch => {
@@ -73,7 +68,8 @@ export const loginAction = (username, password, csrf) => dispatch => {
                 Username: username,
                 IsAuthenticated: true
             })
-            dispatch(loginSuccess(response.Message)) 
+            dispatch(loginSuccess(response.Message))
+            dispatch(push('/home'))
         } else {
             dispatch(loginFailure("Authentication failed, username or password is wrong"))
         }

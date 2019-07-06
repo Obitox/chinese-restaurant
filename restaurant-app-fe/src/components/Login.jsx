@@ -60,7 +60,8 @@ class Login extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        loginData: state.Username
+        loginData: state.loginReducer.Username,
+        Message: state.loginReducer.Message
     };
 }
 

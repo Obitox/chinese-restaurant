@@ -10,6 +10,7 @@ import { Provider } from 'react-redux'
 import "assets/scss/main.scss";
 import Login from 'components/Login.jsx'
 import Home from 'components/Home.jsx'
+import Register from 'components/Register.jsx'
 // import restaurant_app from './reducers/combineReducers'
 
 import { ConnectedRouter } from 'connected-react-router'
@@ -34,6 +35,7 @@ const Root = () => (
         <Switch>
           <Route path="/home" component={Home} />
           <Route path="/login" component={Login} />
+          <Route path="/register" component={Register} />
         </Switch>
     </ConnectedRouter>
   </Provider>

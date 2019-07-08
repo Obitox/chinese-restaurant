@@ -3,11 +3,15 @@ import { connect } from 'react-redux'
 // import { Route, Redirect } from 'react-router'
 import { push } from 'connected-react-router'
 
+// Styling
+import Button from '@material-ui/core/Button';
+
 // import LoginAndSignUpButton from "./LoginAndSignUpButton.jsx";
 // import LogoutButton from "./LogoutButton.jsx";
 import { logoutAction } from '../actions/home'
 // import Login from "./Login.jsx"
 import { tryLoadDataFromLocalStroage } from '../actions/home'
+
 
 class Home extends React.Component {
     constructor(props) {
@@ -18,8 +22,13 @@ class Home extends React.Component {
         this.componentDidMount = this.componentDidMount.bind(this);
     }
 
-    redirect = () => {
+    redirectLogin = () => {
         let path = `/login`;
+        this.props.push(path);
+    }
+
+    redirectRegister = () => {
+        let path = `/register`;
         this.props.push(path);
     }
 
@@ -59,7 +68,14 @@ class Home extends React.Component {
                         {this.props.loginData} */}
                       </div>;
         } else {
-            button = <button type="button" onClick={this.redirect}>Login</button>;
+            button = <div>
+                <Button variant="outlined" onClick={this.redirectLogin}>
+                    Login
+                </Button>
+                <Button variant="outlined" onClick={this.redirectRegister}>
+                    Register
+                </Button>
+            </div>;
         }
 
         return (

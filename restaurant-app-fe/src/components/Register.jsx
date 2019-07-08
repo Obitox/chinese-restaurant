@@ -1,39 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+// Performance
+import { throttle } from 'throttle-debounce';
+
 
 // Styling
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-
-// const [this.state, setthis.state] = React.useState({
-//     username: '',
-//     password: '',
-//     email: '',
-//     firstname: '',
-//     lastname: '',
-//     address1: '',
-//     address2: '',
-//     address3: '',
-//     phone: '',
-//     IsUsernameValid: false,
-//     IsPasswordValid: false,
-//     IsEmailValid: false,
-//     IsFirstNameValid: false,
-//     IsLastNameValid: false,
-//     IsAddress1Valid: false,
-//     IsPhoneValid: false,
-//   });
-
-  
-
-
-// const handleChange = name => e => {
-//     // const name = name;
-//     const fieldValue = e.target.value;
-
-//     setthis.state({ ...this.state, [name]: fieldValue }, () => {validateField(name, fieldValue)});
-// };
 
 class Register extends Component {
     constructor(props) {
@@ -56,17 +30,12 @@ class Register extends Component {
             IsAddress1Valid: false,
             IsPhoneValid: false,
         };
-        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.validateField = this.validateField.bind(this);
     }
 
 
     validateField(fieldName, fieldValue){
-        // TODO: 
-        // Regex for each field
-        // Implement this method with material ui
-        // Test it
         let IsUsernameValid  = this.state.IsUsernameValid;
         let IsPasswordValid  = this.state.IsPasswordValid;
         let IsEmailValid     = this.state.IsEmailValid;
@@ -77,24 +46,31 @@ class Register extends Component {
     
         switch(fieldName){
             case 'username':
-                IsUsernameValid = fieldValue.match(/^[A-Za-z]{1}[A-Za-z0-9]{3,19}$/);
+                IsUsernameValid = /^[A-Za-z]{1}[A-Za-z0-9]{3,19}$/.test(fieldValue);
                 break;
             case 'password':
-                IsPasswordFalid = fliedValue.match(/^[A-Za-z0-9!@#$^&]{6,20}$/);
+                IsPasswordValid = /^[A-Za-z0-9!@#$^&]{6,20}$/.test(fieldValue);
                 break;
             case 'email':
+                IsEmailValid = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(fieldValue);
                 break;
             case 'firstname':
+                IsFirstNameValid = /^[A-Z]{1}[a-z]{1,99}$/.test(fieldValue);
                 break;
             case 'lastname':
+                IsLastNameValid = /^[A-Z]{1}[a-z]{1,99}$/.test(fieldValue);
                 break;
             case 'address1':
+                IsAddress1Valid = /^[A-Za-z0-9]{1,}[. ]{0,}[A-Za-z0-9 \/.]{0,}$/.test(fieldValue);
                 break;
             case 'address2':
                 break;
             case 'address3':
                 break;
-             case 'phone':
+            case 'phone':
+                IsPhoneValid = /^06[0-9]{2,8}$/.test(fieldValue);
+                break;
+            default:
                 break;
         }
 
@@ -109,10 +85,10 @@ class Register extends Component {
         });
     }
     
-    handleChange(event){
+    handleChange = event => {
         const fieldName = event.target.name;
-        const fieldValue = event.target.value; 
-        this.setState({[fieldName]: fieldValue}, () => {this.validateField(fieldName, fieldValue)});
+        const fieldValue = event.target.value;
+        this.setState({[fieldName]: fieldValue}, throttle(250, () => {this.validateField(fieldName, fieldValue)}));
     }
     
     handleSubmit(event){
@@ -132,12 +108,10 @@ class Register extends Component {
     
 
     render() {
-        // UserID                                                                                                             uint64
-// Username, Password, Role, FirstName, LastName, Address1, Address2, Address3, Phone, Email, RequestAntiForgeryToken
         return (
             <form onSubmit={this.handleSubmit}>
                 <TextField
-                    error={this.state.IsUsernameValid}
+                    error={!this.state.IsUsernameValid}
                     id="outlined-name"
                     label="Username*"
                     name="username"
@@ -147,7 +121,7 @@ class Register extends Component {
                     variant="outlined"
                 />
                 <TextField
-                    error={this.state.IsPasswordValid}
+                    error={!this.state.IsPasswordValid}
                     id="outlined-password-input"
                     label="Password*"
                     name="password"
@@ -158,7 +132,7 @@ class Register extends Component {
                     variant="outlined"
                 />
                 <TextField
-                    error={this.state.IsEmailValid}
+                    error={!this.state.IsEmailValid}
                     id="outlined-email-input"
                     label="Email*"
                     name="email"
@@ -169,7 +143,7 @@ class Register extends Component {
                     variant="outlined"
                 />
                 <TextField
-                    error={this.state.IsFirstNameValid}
+                    error={!this.state.IsFirstNameValid}
                     id="outlined-name"
                     label="First name*"
                     name="firstname"
@@ -179,7 +153,7 @@ class Register extends Component {
                     variant="outlined"
                 />
                 <TextField
-                    error={this.state.IsLastNameValid}
+                    error={!this.state.IsLastNameValid}
                     id="outlined-name"
                     label="Last name*"
                     name="lastname"
@@ -189,7 +163,7 @@ class Register extends Component {
                     variant="outlined"
                 />
                 <TextField
-                    error={this.state.IsAddress1Valid}
+                    error={!this.state.IsAddress1Valid}
                     id="outlined-name"
                     label="Address1*"
                     name="address1"
@@ -217,7 +191,7 @@ class Register extends Component {
                     variant="outlined"
                 />
                 <TextField
-                    error={this.state.IsPhoneValid}
+                    error={!this.state.IsPhoneValid}
                     id="outlined-name"
                     label="Phone*"
                     name="phone"
@@ -227,13 +201,13 @@ class Register extends Component {
                     variant="outlined"
                 />
                 <Button disabled={ 
-                    this.state.IsUsernameValid  &&
-                    this.state.IsPasswordValid  &&
-                    this.state.IsEmailValid     &&
-                    this.state.IsFirstNameValid &&
-                    this.state.IsLastNameValid  &&
-                    this.state.IsAddress1Valid  &&
-                    this.state.IsPhoneValid} variant="outlined">
+                    !(this.state.IsUsernameValid  &&
+                      this.state.IsPasswordValid  &&
+                      this.state.IsEmailValid     &&
+                      this.state.IsFirstNameValid &&
+                      this.state.IsLastNameValid  &&
+                      this.state.IsAddress1Valid  &&
+                      this.state.IsPhoneValid)} variant="outlined">
                     Register
                 </Button>
                 {/* <label>

@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import axios from 'axios';
 import { connect } from 'react-redux'
 import {loginAction} from '../actions/login'
 
@@ -14,7 +12,6 @@ class Login extends Component {
             csrf_token: ''
         }
         this.componentDidMount = this.componentDidMount.bind(this);
-        this.doLogin = this.doLogin.bind(this);
     }
 
     componentDidMount (){

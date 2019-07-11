@@ -129,8 +129,8 @@ func (user *User) CreateUser() (err error) {
 
 	user.Password = string(byteArray)
 
-	conn.Create(&user)
-	return nil
+	createError := conn.Create(&user)
+	return createError.Error
 }
 
 // CreateAndStoreAuthAndRefreshTokens

@@ -9,6 +9,8 @@ import { throttle } from 'throttle-debounce';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
+import { registerAction } from '../actions/register'
+
 class Register extends Component {
     constructor(props) {
         super(props);
@@ -93,6 +95,31 @@ class Register extends Component {
     
     handleSubmit(event){
         event.preventDefault();
+        
+        let IsFormValid =   this.state.IsUsernameValid && 
+                            this.state.IsPasswordValid &&
+                            this.state.IsEmailValid &&
+                            this.state.IsFirstNameValid &&
+                            this.state.IsLastNameValid &&
+                            this.state.IsAddress1Valid &&
+                            this.state.IsPhoneValid;
+
+        if(IsFormValid){
+            const user = {
+                username: this.state.username,
+                password: this.state.password,
+                email: this.state.email,
+                firstname: this.state.firstname,
+                lastname: this.state.lastname,
+                address1: this.state.address1,
+                address2: this.state.address2 === null || this.state.address2 === undefined ? '' : this.state.address2,
+                address3: this.state.address3 === null || this.state.address3 === undefined ? '' : this.state.address3,
+                phone: this.state.phone,
+                role: 'customer'
+            };
+    
+            this.props.registerAction(user);
+        }
     }
 
     // username: '',
@@ -207,7 +234,9 @@ class Register extends Component {
                       this.state.IsFirstNameValid &&
                       this.state.IsLastNameValid  &&
                       this.state.IsAddress1Valid  &&
-                      this.state.IsPhoneValid)} variant="outlined">
+                      this.state.IsPhoneValid)} 
+                      variant="outlined"
+                      type="submit">
                     Register
                 </Button>
                 {/* <label>
@@ -252,14 +281,15 @@ class Register extends Component {
     }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
     return {
-
+        Username: state.registerReducer.Username,
+        Message: state.registerReducer.Message
     };
 }
 
 const mapDispatchToProps = {
-    
+    registerAction
 }
 
 export default connect(

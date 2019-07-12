@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 	"restaurant-app/db"
 	"strconv"
 	"time"
@@ -318,4 +319,28 @@ func RevokeUserTokensWithUserID(id uint64) (int64, error) {
 	}
 
 	return delNum, nil
+}
+
+// Validate - performs regex check for all fields
+// True - OK
+// False - Failed
+func (user User) Validate() bool {
+	validUsername := regexp.MustCompile(`^[A-Za-z]{1}[A-Za-z0-9]{3,19}$`)
+	validPassword := regexp.MustCompile(`^[A-Za-z0-9!@#$^&]{6,20}$`)
+	validEmail := regexp.MustCompile(`^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`)
+	validFirstName := regexp.MustCompile(`^[A-Z]{1}[a-z]{1,99}$`)
+	validLastName := regexp.MustCompile(`^[A-Z]{1}[a-z]{1,99}$`)
+	validAddress1 := regexp.MustCompile(`^[A-Za-z0-9]{1,}[. ]{0,}[A-Za-z0-9 \/.]{0,}$`)
+	validPhone := regexp.MustCompile(`^06[0-9]{2,8}$`)
+
+	if validUsername.MatchString(user.Username) &&
+		validPassword.MatchString(user.Password) &&
+		validEmail.MatchString(user.Email) &&
+		validFirstName.MatchString(user.FirstName) &&
+		validLastName.MatchString(user.LastName) &&
+		validAddress1.MatchString(user.Address1) &&
+		validPhone.MatchString(user.Phone) {
+		return true
+	}
+	return false
 }

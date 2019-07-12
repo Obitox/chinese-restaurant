@@ -9,6 +9,19 @@ import (
 
 // Error mapping:
 // -201 -
+// -202 - Validation error
+
+// username: '',
+// password: '',
+// email: '',
+// firstname: '',
+// lastname: '',
+// address1: '',
+// address2: '',
+// address3: '',
+// phone: '',
+
+const ()
 
 // Register creates a new user
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -23,11 +36,28 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	err = user.CreateUser()
-	if err != nil {
+	isValidUser := user.Validate()
+
+	if isValidUser {
+		err = user.CreateUser()
+		if err != nil {
+			response := models.Response{
+				ReturnCode: -201,
+				Message:    err.Error(),
+			}
+
+			byteResponse, marshalError := response.Response()
+			if marshalError != nil {
+				panic(marshalError)
+			}
+
+			w.Write(byteResponse)
+			return
+		}
+
 		response := models.Response{
-			ReturnCode: -201,
-			Message:    err.Error(),
+			ReturnCode: 0,
+			Message:    "OK",
 		}
 
 		byteResponse, marshalError := response.Response()
@@ -40,8 +70,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := models.Response{
-		ReturnCode: 0,
-		Message:    "OK",
+		ReturnCode: -202,
+		Message:    "Validation error",
 	}
 
 	byteResponse, marshalError := response.Response()
@@ -50,4 +80,5 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(byteResponse)
+	return
 }

@@ -4,6 +4,10 @@ export const LOGOUT_REQUEST = 'LOGOUT_REQUEST'
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS'
 export const LOGOUT_FAILED = 'LOGOUT_FAILED'
 
+export const ITEMS_REQUEST = 'ITEMS_REQUEST'
+export const ITEMS_SUCCESS = 'ITEMS_SUCCESS'
+export const ITEMS_FAILED = 'ITEMS_FAILED'
+
 const baseURL = `http://localhost:3000`
 
 const logoutRequest = (username) => {
@@ -31,6 +35,27 @@ const loadData = (userInfo) => {
     return {
         type: LOAD_DATA_FROM_LOCALSTORAGE,
         payload: userInfo
+    }
+}
+
+const itemsRequest = () => {
+    return {
+        type: ITEMS_REQUEST,
+        payload: 'Request'
+    }
+}
+
+const itemsSuccess = (items) => {
+    return {
+        type: ITEMS_SUCCESS,
+        payload: items
+    }
+}
+
+const itemsFailed = (message) => {
+    return {
+        type: ITEMS_SUCCESS,
+        payload: message
     }
 }
 
@@ -88,4 +113,29 @@ export const logoutAction = (csrf) => dispatch => {
             dispatch(logoutFailed(error))
          });
     }
+}
+
+export const fetchItems = () => dispatch => {
+    dispatch(itemsRequest())
+
+    fetch(baseURL + '/home', {
+        method: 'POST'
+     //    mode: 'cors',
+     //    headers: {
+     //        'Content-Type': 'application/json',
+     //        // 'Content-Type': 'application/x-www-form-urlencoded',
+     //     },
+        //  body: JSON.stringify(payload),
+        //  credentials: 'include'
+     })
+     .then(res => res.json())
+     .then(response => {
+         if(response.length > 0){
+            console.log(response)
+            dispatch(itemsSuccess(response))
+         } else {
+             dispatch(itemsFailed("No data"))
+         }
+     })
+     .catch(error => dispatch(itemsFailed(error)));
 }

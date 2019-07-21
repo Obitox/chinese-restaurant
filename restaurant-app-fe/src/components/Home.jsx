@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import { logoutAction } from '../actions/home'
 // import Login from "./Login.jsx"
 import { tryLoadDataFromLocalStroage } from '../actions/home'
+import { fetchItems } from '../actions/home'
 
 
 class Home extends React.Component {
@@ -48,6 +49,7 @@ class Home extends React.Component {
             });
         });
         this.props.tryLoadDataFromLocalStroage();
+        this.props.fetchItems();
     }
 
     render(){
@@ -78,9 +80,23 @@ class Home extends React.Component {
             </div>;
         }
 
+        let items = this.props.Data.map((object, key) =>
+            // <li key={object.Item.ItemID}>{object.Item.Title}</li>
+            <div class="item" key={object.Item.ItemID}>
+                <img src={object.Image.Path}></img>
+                <p>
+                    {object.Item.Title}
+                </p>
+                
+            </div>
+        );
+
         return (
             <div>
                 {button}
+                <div class="container-items">
+                    {items}
+                </div>
             </div>
         )
     }
@@ -89,13 +105,15 @@ class Home extends React.Component {
 const mapStateToProps = (state) => {
     return {
         Username: state.homeReducer.Username,
-        IsAuthenticated: state.homeReducer.IsAuthenticated
+        IsAuthenticated: state.homeReducer.IsAuthenticated,
+        Data: state.homeReducer.Data
     };
 }
 
 const mapDispatchToProps = {
     tryLoadDataFromLocalStroage,
     logoutAction,
+    fetchItems,
     push
 }
 

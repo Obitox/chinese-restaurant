@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"restaurant-app/models"
+	"restaurant-app/utils"
 )
 
 // Home for the main page of the restaurant =returns following data:
@@ -20,6 +21,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	// for _, element := range items {
 	// 	// element is the element from someSlice for where we are
 	// }
+
+	utils.SetupCors(&w, r)
 
 	homeData := models.Data()
 	marshaledHomeData, err := json.Marshal(homeData)

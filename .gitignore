@@ -3,4 +3,5 @@ keys/
 restaurant-app-fe/node_modules/
 restaurant-app-fe/build/
 restaurant-app-fe/yarn.lock
+restaurant-app-fe/src/assets/images
 config/

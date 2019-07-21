@@ -92,8 +92,6 @@ func (user *User) GetUserByUsernameAndPassword() (err error) {
 
 	conn.Where("username=?", user.Username).First(&user)
 
-	log.Println("Password: " + temp)
-
 	err = CheckPasswordHash([]byte(user.Password), []byte(temp))
 
 	if err != nil {

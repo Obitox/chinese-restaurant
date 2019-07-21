@@ -1,9 +1,10 @@
-import { LOAD_DATA_FROM_LOCALSTORAGE, LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILED } from '../actions/home'
+import { LOAD_DATA_FROM_LOCALSTORAGE, LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILED, ITEMS_REQUEST, ITEMS_SUCCESS, ITEMS_FAILED } from '../actions/home'
 
 const initialState = {
     IsAuthenticated: false,
     Username: '',
-    Message: ''
+    Message: '',
+    Data: [],
 }
 
 export default function homeReducer(state = initialState, action){
@@ -23,6 +24,18 @@ export default function homeReducer(state = initialState, action){
                 Message: action.payload
             });
         case LOGOUT_FAILED:
+            return Object.assign({}, state, {
+                Message: action.payload
+            });
+        case ITEMS_REQUEST:
+            return Object.assign({}, state, {
+                Message: action.payload
+            });
+        case ITEMS_SUCCESS:
+            return Object.assign({}, state, {
+                Data: action.payload
+            });
+        case ITEMS_FAILED:
             return Object.assign({}, state, {
                 Message: action.payload
             });

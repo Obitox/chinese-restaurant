@@ -5,6 +5,10 @@ import { push } from 'connected-react-router'
 
 // Styling
 import Button from '@material-ui/core/Button';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
 
 // import LoginAndSignUpButton from "./LoginAndSignUpButton.jsx";
 // import LogoutButton from "./LogoutButton.jsx";
@@ -18,7 +22,8 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            csrf_token: ''
+            csrf_token: '',
+            size: ''
         }
         this.componentDidMount = this.componentDidMount.bind(this);
     }
@@ -35,6 +40,10 @@ class Home extends React.Component {
 
     doLogout = () => {
         this.props.logoutAction(this.state.csrf_token)
+    }
+
+    handleChange = event => {
+        this.setState({[event.target.name]: event.target.value});
     }
 
     componentDidMount(){
@@ -82,19 +91,33 @@ class Home extends React.Component {
 
         let items = this.props.Data.map((object, key) =>
             // <li key={object.Item.ItemID}>{object.Item.Title}</li>
-            <div class="item" key={object.Item.ItemID}>
+            <div className="item" key={object.Item.ItemID}>
                 <img src={object.Image.Path}></img>
                 <p>
                     {object.Item.Title}
                 </p>
-                
+                <FormControl>
+                    <InputLabel htmlFor="size">Size</InputLabel>
+                    <Select
+                        value={this.state.size}
+                        onChange={this.handleChange}
+                        inputProps={{
+                            name: 'size',
+                            id: 'size',
+                        }}
+                    >
+                    {object.Portion.map((portion, key) => 
+                        <MenuItem key={portion.PortionID} value={key}>{portion.SizeName}</MenuItem>
+                    )}
+                    </Select>
+                </FormControl>
             </div>
         );
 
         return (
             <div>
                 {button}
-                <div class="container-items">
+                <div className="container-items">
                     {items}
                 </div>
             </div>

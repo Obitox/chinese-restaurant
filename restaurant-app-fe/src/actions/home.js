@@ -131,7 +131,6 @@ export const fetchItems = () => dispatch => {
      .then(res => res.json())
      .then(response => {
          if(response.length > 0){
-            console.log(response)
             dispatch(itemsSuccess(response))
          } else {
              dispatch(itemsFailed("No data"))

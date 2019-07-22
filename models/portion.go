@@ -40,17 +40,6 @@ func GetPortionByCategoryID(CategoryID uint64) []Portion {
 
 	portions := []Portion{}
 	conn.Joins("JOIN category_portion ON category_portion.portion_id = portion.portion_id").Where("category_portion.category_id = ?", CategoryID).Find(&portions)
-	// conn.Raw("SELECT size_name FROM portion WHERE portion_id IN (SELECT portion_id FROM category_portion WHERE category_id = ?)", CategoryID).Scan(&portions)
-
-	// portionNames := []string{}
-	// if len(portions) > 0 {
-	// 	for _, portion := range portions {
-	// 		portionNames = append(portionNames, portion.SizeName)
-	// 	}
-	// }
-	for _, portion := range portions {
-		log.Println(portion.SizeName)
-	}
 
 	return portions
 }

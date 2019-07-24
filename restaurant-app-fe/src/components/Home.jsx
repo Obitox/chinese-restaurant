@@ -9,6 +9,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 // import LoginAndSignUpButton from "./LoginAndSignUpButton.jsx";
 // import LogoutButton from "./LogoutButton.jsx";
@@ -17,13 +23,15 @@ import { logoutAction } from '../actions/home'
 import { tryLoadDataFromLocalStroage } from '../actions/home'
 import { fetchItems } from '../actions/home'
 
+// import ItemDialog from './ItemDialog.jsx'
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             csrf_token: '',
-            size: ''
+            size: '',
+            open: false
         }
         this.componentDidMount = this.componentDidMount.bind(this);
     }
@@ -44,6 +52,14 @@ class Home extends React.Component {
 
     handleChange = event => {
         this.setState({[event.target.name]: event.target.value});
+    }
+
+    handleClickOpen = () => {
+        this.setState({['open']: true});
+    }
+
+    handleClose = () => {
+        this.setState({['open']: false});
     }
 
     componentDidMount(){
@@ -96,21 +112,38 @@ class Home extends React.Component {
                 <p>
                     {object.Item.Title}
                 </p>
-                <FormControl>
-                    <InputLabel htmlFor="size">Size</InputLabel>
-                    <Select
-                        value={this.state.size}
-                        onChange={this.handleChange}
-                        inputProps={{
-                            name: 'size',
-                            id: 'size',
-                        }}
-                    >
-                    {object.Portion.map((portion, key) => 
-                        <MenuItem key={portion.PortionID} value={key}>{portion.SizeName}</MenuItem>
-                    )}
-                    </Select>
-                </FormControl>
+                <Button variant="outlined" onClick={this.handleClickOpen}>
+                    Add to cart
+                </Button>
+                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">{object.Item.Title}</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText>
+                        To subscribe to this website, please enter your email address here. We will send updates
+                        occasionally.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Email Address"
+                        type="email"
+                        fullWidth
+                    />
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={this.handleClose} color="primary">
+                        Subscribe
+                    </Button>
+                    </DialogActions>
+                </Dialog>
+                {/* <ItemDialog 
+                    open={this.state.open}
+                    object={object}
+                ></ItemDialog> */}
             </div>
         );
 

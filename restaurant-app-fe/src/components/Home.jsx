@@ -31,7 +31,8 @@ class Home extends React.Component {
         this.state = {
             csrf_token: '',
             size: '',
-            open: false
+            open: false,
+            items: []
         }
         this.componentDidMount = this.componentDidMount.bind(this);
     }
@@ -115,7 +116,7 @@ class Home extends React.Component {
                 <Button variant="outlined" onClick={this.handleClickOpen}>
                     Add to cart
                 </Button>
-                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                <Dialog open={this.state.key} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">{object.Item.Title}</DialogTitle>
                     <DialogContent>
                     <DialogContentText>

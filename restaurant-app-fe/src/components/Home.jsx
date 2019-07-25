@@ -23,7 +23,7 @@ import { logoutAction } from '../actions/home'
 import { tryLoadDataFromLocalStroage } from '../actions/home'
 import { fetchItems } from '../actions/home'
 
-// import ItemDialog from './ItemDialog.jsx'
+import ItemDialog from './ItemDialog.jsx'
 
 class Home extends React.Component {
     constructor(props) {
@@ -32,7 +32,7 @@ class Home extends React.Component {
             csrf_token: '',
             size: '',
             open: false,
-            items: []
+            object: { }
         }
         this.componentDidMount = this.componentDidMount.bind(this);
     }
@@ -55,12 +55,32 @@ class Home extends React.Component {
         this.setState({[event.target.name]: event.target.value});
     }
 
-    handleClickOpen = () => {
-        this.setState({['open']: true});
+    handleClickOpen = key => {
+        let element = this.props.Data.filter(function(el){
+            console.log(key);
+            if(el.Item.ItemID == key){
+                console.log(el.Item)
+                return el.Item;
+            }
+        });
+        this.setState({['open']: true, ['object']: element});
     }
 
     handleClose = () => {
         this.setState({['open']: false});
+    }
+
+    indexElements = key => {
+        let index = {
+            open: false,
+            key: key
+        }
+
+        this.setState((prevState) => {
+            return {
+                elementStates: prevState.elementStates.concat(index)
+            };
+        });
     }
 
     componentDidMount(){
@@ -113,34 +133,9 @@ class Home extends React.Component {
                 <p>
                     {object.Item.Title}
                 </p>
-                <Button variant="outlined" onClick={this.handleClickOpen}>
+                <Button variant="outlined" onClick={() => this.handleClickOpen(object.Item.ItemID)}>
                     Add to cart
                 </Button>
-                <Dialog open={this.state.key} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">{object.Item.Title}</DialogTitle>
-                    <DialogContent>
-                    <DialogContentText>
-                        To subscribe to this website, please enter your email address here. We will send updates
-                        occasionally.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                    />
-                    </DialogContent>
-                    <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={this.handleClose} color="primary">
-                        Subscribe
-                    </Button>
-                    </DialogActions>
-                </Dialog>
                 {/* <ItemDialog 
                     open={this.state.open}
                     object={object}
@@ -148,11 +143,24 @@ class Home extends React.Component {
             </div>
         );
 
+        const IsOpen = this.state.open;
+
+        let itemDialog;
+        if(IsOpen){
+            itemDialog = <div>
+                            <ItemDialog 
+                                open={this.state.open}
+                                object={this.state.object}
+                            ></ItemDialog>
+                         </div>
+        }
+
         return (
             <div>
                 {button}
                 <div className="container-items">
                     {items}
+                    {itemDialog}
                 </div>
             </div>
         )

@@ -38,6 +38,7 @@ type TokenClaims struct {
 type User struct {
 	UserID                                                                                                             uint64
 	Username, Password, Role, FirstName, LastName, Address1, Address2, Address3, Phone, Email, RequestAntiForgeryToken string
+	IsDeleted                                                                                                          int8
 }
 
 const (
@@ -127,6 +128,7 @@ func (user *User) CreateUser() (err error) {
 	}
 
 	user.Password = string(byteArray)
+	user.IsDeleted = 0
 
 	createError := conn.Create(&user)
 	return createError.Error

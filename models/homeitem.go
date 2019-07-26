@@ -7,9 +7,10 @@ import (
 
 // HomeItem represents strucct that merges item, portion & image
 type HomeItem struct {
-	Item    Item
-	Portion []Portion
-	Image   Image
+	Item       Item
+	Portion    []Portion
+	Ingredient []Ingredient
+	Image      Image
 }
 
 // Data returns data needed for home handler
@@ -27,10 +28,12 @@ func Data() []HomeItem {
 		for _, item := range items {
 			portions := GetPortionByCategoryID(item.CategoryID)
 			image := GetImageByItemID(item.ItemID)
+			ingredients := GetIngredientsByItemID(item.ItemID)
 			homeItem := HomeItem{
-				Item:    item,
-				Portion: portions,
-				Image:   image,
+				Item:       item,
+				Portion:    portions,
+				Ingredient: ingredients,
+				Image:      image,
 			}
 			homeItems = append(homeItems, homeItem)
 		}

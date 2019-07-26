@@ -12,18 +12,33 @@ export default class ItemDialog extends React.Component {
 
   constructor(props){
     super(props);
+    // let arrayOfIngredients = [];
     this.state = {
-        open: false
+        
     };
   }
 
-  handleClickOpen = () => {
-      this.setState({['open']: true});
+  componentDidMount = () => {
+    this.props.object[0].Ingredient.forEach(this.initCheckBoxes);
   }
 
+  // handleClickOpen = () => {
+  //     this.setState({['open']: true});
+  // }
+
   handleClose = () => {
-      this.setState({['open']: false});
+      this.props.handleClose();
   }
+
+  initCheckBoxes = (ingredient) => {
+    console.log('ID: ' + ingredient.IngredientID)
+    this.setState({[ingredient.IngredientID]: false});
+    console.log(this.state);
+  }
+
+  // handleIngredientCheck = (obj) => {
+  //     this.setState({['ingredients']: })
+  // }
 
 //   function handleClickOpen() {
 //     setOpen(true);
@@ -34,11 +49,25 @@ export default class ItemDialog extends React.Component {
 //   }
 
   render(){
+    // let ingredients = this.props.object[0].Ingredient.map((obj, key) => 
+    //             <Checkbox
+    //               key={obj.IngredientID}
+    //               checked={obj.checked}
+    //               onLoad={() => this.initCheckboxes(oj)}
+    //               onChange={() => this.handleIngredientCheck(obj)}
+    //               value="checkedA"
+    //               inputProps={{
+    //                 'aria-label': 'primary checkbox',
+    //               }}
+    //           />
+    // );
+
     return (
         <div>
           <Dialog open={this.props.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">{this.props.object[0].Item.Title}</DialogTitle>
                     <DialogContent>
+                    
                     <DialogContentText>
                         To subscribe to this website, please enter your email address here. We will send updates
                         occasionally.

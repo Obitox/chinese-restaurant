@@ -57,7 +57,7 @@ class Home extends React.Component {
 
     handleClickOpen = key => {
         let element = this.props.Data.filter(function(el){
-            console.log(key);
+            // console.log(key);
             if(el.Item.ItemID == key){
                 console.log(el.Item)
                 return el.Item;
@@ -151,6 +151,7 @@ class Home extends React.Component {
                             <ItemDialog 
                                 open={this.state.open}
                                 object={this.state.object}
+                                handleClose={this.handleClose}
                             ></ItemDialog>
                          </div>
         }

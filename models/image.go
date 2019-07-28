@@ -28,5 +28,13 @@ func GetImageByItemID(ItemID uint64) Image {
 	image := Image{}
 	conn.Where("item_id = ?", ItemID).Find(&image)
 
+	if image.ImageID == 0 {
+		return Image{
+			ImageID: 0,
+			ItemID:  0,
+			Path:    "src/assets/images/default.png",
+		}
+	}
+
 	return image
 }

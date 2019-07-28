@@ -59,7 +59,6 @@ class Home extends React.Component {
         let element = this.props.Data.filter(function(el){
             // console.log(key);
             if(el.Item.ItemID == key){
-                console.log(el.Item)
                 return el.Item;
             }
         });
@@ -129,7 +128,6 @@ class Home extends React.Component {
         let items = this.props.Data.map((object, key) =>
             // <li key={object.Item.ItemID}>{object.Item.Title}</li>
             <div className="item" key={object.Item.ItemID}>
-                <img src={object.Image.Path}></img>
                 <p>
                     {object.Item.Title}
                 </p>

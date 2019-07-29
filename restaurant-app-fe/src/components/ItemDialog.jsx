@@ -54,6 +54,15 @@ export default class ItemDialog extends React.Component {
       this.props.handleClose();
   }
 
+
+  addToCart = () => {
+    this.props.addToCart({
+      title: 
+      size: this.state.size
+    }, this.state.amount);
+  }
+
+
   getPriceMultiplier = (size) => {
     let portions = this.props.object[0].Portion;
 
@@ -213,9 +222,9 @@ export default class ItemDialog extends React.Component {
                     </DialogContent>
                     <DialogActions>
                     <Button onClick={this.handleClose} color="primary">
-                        Cancel
+                        Done
                     </Button>
-                    <Button onClick={this.handleClose} disabled={this.state.isDisabled} color="primary">
+                    <Button onClick={this.addToCart} disabled={this.state.isDisabled} color="primary">
                         Add to cart
                     </Button>
                     </DialogActions>

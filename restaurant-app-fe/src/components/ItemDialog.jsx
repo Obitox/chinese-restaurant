@@ -29,7 +29,9 @@ export default class ItemDialog extends React.Component {
         checkboxes: [],
         size: '',
         price: 0,
-        isDisabled: true
+        isDisabled: true,
+        personalPreference: '',
+        amount: 0
     };
 
     this.getCheckboxState = this.getCheckboxState.bind(this);
@@ -43,6 +45,10 @@ export default class ItemDialog extends React.Component {
   // handleClickOpen = () => {
   //     this.setState({['open']: true});
   // }
+
+  handleChange = event => {
+    this.setState({[event.target.name]: event.target.value});
+  }
 
   handleClose = () => {
       this.props.handleClose();
@@ -167,6 +173,30 @@ export default class ItemDialog extends React.Component {
                         {portion}
                       </Select>
                     </FormControl>
+                    <TextField
+                      id="outlined-multiline-flexible"
+                      label="Personal preference"
+                      name="personalPreference"
+                      multiline
+                      rowsMax="4"
+                      value={this.state.personalPreference}
+                      onChange={this.handleChange}
+                      margin="normal"
+                      helperText="No onion, no cabbage, more chicken :)"
+                      variant="outlined"
+                    />
+                    <TextField
+                      id="standard-number"
+                      label="Number"
+                      name="amount"
+                      value={this.state.amount}
+                      onChange={this.handleChange}
+                      type="number"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      margin="normal"
+                    />
                     <p>{this.state.price}</p>
                     {/* <DialogContentText>
                         To subscribe to this website, please enter your email address here. We will send updates

@@ -16,6 +16,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
+
 // import LoginAndSignUpButton from "./LoginAndSignUpButton.jsx";
 // import LogoutButton from "./LogoutButton.jsx";
 import { logoutAction } from '../actions/home'
@@ -32,7 +36,9 @@ class Home extends React.Component {
             csrf_token: '',
             size: '',
             open: false,
-            object: { }
+            object: { },
+            numItemsInCart: 0,
+            cartItems: []
         }
         this.componentDidMount = this.componentDidMount.bind(this);
     }
@@ -67,6 +73,13 @@ class Home extends React.Component {
 
     handleClose = () => {
         this.setState({['open']: false});
+    }
+
+    addToCart = (num, item) => {
+        this.setState(prevState => ({
+            numItemsInCart: prevState.numItemsInCart + num,
+            cartItems: prevState.cartItems.push(item)
+        }));
     }
 
     indexElements = key => {
@@ -154,12 +167,18 @@ class Home extends React.Component {
                          </div>
         }
 
+        let cart =  <div className="cart">
+                        <FontAwesomeIcon icon={faShoppingCart} />
+                        <p>{this.state.numItemsInCart}</p>
+                    </div>
+
         return (
             <div>
                 {button}
                 <div className="container-items">
                     {items}
                     {itemDialog}
+                    {cart}
                 </div>
             </div>
         )

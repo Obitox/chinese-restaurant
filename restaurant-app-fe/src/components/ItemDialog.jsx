@@ -153,7 +153,7 @@ export default class ItemDialog extends React.Component {
                     <DialogContent>
                     {this.props.open ? img : null}
                     {ingredients}
-                    {allergens !== undefined ? <div><FontAwesomeIcon icon={faAllergies} />{allergens}</div> : <div><FontAwesomeIcon icon={faCheck} />No allergens :)</div>}
+                    {allergens.length > 1 ? <div><FontAwesomeIcon icon={faAllergies} />{allergens}</div> : <div><FontAwesomeIcon icon={faCheck} />No allergens :)</div>}
                     <FormControl>
                       <InputLabel htmlFor="portion-size">Portion size</InputLabel>
                       <Select

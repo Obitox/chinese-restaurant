@@ -76,10 +76,13 @@ class Home extends React.Component {
     }
 
     addToCart = (num, item) => {
-        this.setState(prevState => ({
-            numItemsInCart: prevState.numItemsInCart + num,
-            cartItems: prevState.cartItems.push(item)
-        }));
+        let cartItems = this.state.cartItems;
+        let numItemsInCart = this.state.numItemsInCart;
+        
+        numItemsInCart += num;
+        cartItems.push(item);
+
+        this.setState({['numItemsInCart']: numItemsInCart, ['cartItems']: cartItems});
     }
 
     indexElements = key => {
@@ -163,6 +166,7 @@ class Home extends React.Component {
                                 open={this.state.open}
                                 object={this.state.object}
                                 handleClose={this.handleClose}
+                                addToCart={this.addToCart}
                             ></ItemDialog>
                          </div>
         }

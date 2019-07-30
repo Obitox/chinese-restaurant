@@ -50,16 +50,27 @@ export default class ItemDialog extends React.Component {
     this.setState({[event.target.name]: event.target.value});
   }
 
+  handleAmountChange = event => {
+    let price = this.state.price;
+
+    if(price > 0) {
+      price *= event.target.value;
+    }
+    this.setState({[event.target.name]: event.target.value, ['price']: price});
+  }
+
   handleClose = () => {
       this.props.handleClose();
   }
 
 
   addToCart = () => {
-    this.props.addToCart({
-      title: 
-      size: this.state.size
-    }, this.state.amount);
+    this.props.addToCart(this.state.amount, {
+      title: this.props.object[0].Item.Title,
+      size: this.state.size,
+      price: this.state.price,
+      personalPreference: this.state.personalPreference
+    });
   }
 
 
@@ -76,7 +87,15 @@ export default class ItemDialog extends React.Component {
   }
 
   calculatePrice = (size) => {
-    return this.props.object[0].Item.Price * this.getPriceMultiplier(size);
+    let price = 0;
+    
+    price = this.props.object[0].Item.Price * this.getPriceMultiplier(size);
+    console.log('AMOUNT: ' + this.state.amount);
+    if(this.state.amount > 0){
+      price *= this.state.amount;
+    }
+
+    return price;
   }
 
   handleSelect = event => {
@@ -199,7 +218,7 @@ export default class ItemDialog extends React.Component {
                       label="Number"
                       name="amount"
                       value={this.state.amount}
-                      onChange={this.handleChange}
+                      onChange={this.handleAmountChange}
                       type="number"
                       InputLabelProps={{
                         shrink: true,

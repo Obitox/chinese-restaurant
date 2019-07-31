@@ -63,7 +63,6 @@ class Home extends React.Component {
 
     handleClickOpen = key => {
         let element = this.props.Data.filter(function(el){
-            // console.log(key);
             if(el.Item.ItemID == key){
                 return el.Item;
             }
@@ -76,13 +75,10 @@ class Home extends React.Component {
     }
 
     addToCart = (num, item) => {
-        let cartItems = this.state.cartItems;
-        let numItemsInCart = this.state.numItemsInCart;
-        
-        numItemsInCart += num;
-        cartItems.push(item);
-
-        this.setState({['numItemsInCart']: numItemsInCart, ['cartItems']: cartItems});
+        this.setState(prevState => ({
+            numItemsInCart: prevState.numItemsInCart + parseInt(num),
+            cartItems: prevState.cartItems.push(item)
+        }));
     }
 
     indexElements = key => {

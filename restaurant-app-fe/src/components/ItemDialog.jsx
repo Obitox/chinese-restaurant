@@ -24,14 +24,13 @@ import defaultImg from '../assets/images/default.png';
 export default class ItemDialog extends React.Component {
   constructor(props){
     super(props);
-    // let arrayOfIngredients = [];
     this.state = {
         checkboxes: [],
         size: '',
         price: 0,
         isDisabled: true,
         personalPreference: '',
-        amount: 0
+        amount: 1
     };
 
     this.getCheckboxState = this.getCheckboxState.bind(this);
@@ -42,21 +41,24 @@ export default class ItemDialog extends React.Component {
     this.props.object[0].Ingredient.forEach(this.initCheckBoxes);
   }
 
-  // handleClickOpen = () => {
-  //     this.setState({['open']: true});
-  // }
-
   handleChange = event => {
     this.setState({[event.target.name]: event.target.value});
   }
 
   handleAmountChange = event => {
-    let price = this.state.price;
+    let price = this.props.object[0].Item.Price * this.getPriceMultiplier(this.state.size);
+    let name = event.target.name;
+    let amount = event.target.value;
 
     if(price > 0) {
-      price *= event.target.value;
+      if(amount > 0){
+        price *= amount;
+      }
+      else {
+        price = 0;
+      }
     }
-    this.setState({[event.target.name]: event.target.value, ['price']: price});
+    this.setState({[name]: amount, ['price']: price});
   }
 
   handleClose = () => {
@@ -88,9 +90,8 @@ export default class ItemDialog extends React.Component {
 
   calculatePrice = (size) => {
     let price = 0;
-    
     price = this.props.object[0].Item.Price * this.getPriceMultiplier(size);
-    console.log('AMOUNT: ' + this.state.amount);
+    
     if(this.state.amount > 0){
       price *= this.state.amount;
     }
@@ -99,7 +100,9 @@ export default class ItemDialog extends React.Component {
   }
 
   handleSelect = event => {
-    this.setState({[event.target.name]: event.target.value, ['price']: this.calculatePrice(event.target.value), ['isDisabled']: false});
+    let price = 0;
+    price = this.state.amount == 0 ? 0 : this.calculatePrice(event.target.value)
+    this.setState({[event.target.name]: event.target.value, ['price']: price, ['isDisabled']: false});
   }
 
   initCheckBoxes = (ingredient) => {
@@ -215,7 +218,7 @@ export default class ItemDialog extends React.Component {
                     />
                     <TextField
                       id="standard-number"
-                      label="Number"
+                      label="Amount"
                       name="amount"
                       value={this.state.amount}
                       onChange={this.handleAmountChange}
@@ -226,18 +229,6 @@ export default class ItemDialog extends React.Component {
                       margin="normal"
                     />
                     <p>{this.state.price}</p>
-                    {/* <DialogContentText>
-                        To subscribe to this website, please enter your email address here. We will send updates
-                        occasionally.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                    /> */}
                     </DialogContent>
                     <DialogActions>
                     <Button onClick={this.handleClose} color="primary">

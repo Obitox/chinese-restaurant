@@ -24,10 +24,11 @@ import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 // import LogoutButton from "./LogoutButton.jsx";
 import { logoutAction } from '../actions/home'
 // import Login from "./Login.jsx"
-import { tryLoadDataFromLocalStroage } from '../actions/home'
+import { tryLoadDataFromLocalStorage, tryLoadCartItemsFromLocalStorage } from '../actions/home'
 import { fetchItems } from '../actions/home'
 
 import ItemDialog from './ItemDialog.jsx'
+import CartDialog from './CartDialog.jsx'
 
 class Home extends React.Component {
     constructor(props) {
@@ -38,7 +39,8 @@ class Home extends React.Component {
             open: false,
             object: { },
             numItemsInCart: 0,
-            cartItems: []
+            cartItems: [],
+            isCartOpen: false
         }
         this.componentDidMount = this.componentDidMount.bind(this);
     }
@@ -74,11 +76,19 @@ class Home extends React.Component {
         this.setState({['open']: false});
     }
 
+    handleCartOpen = () => {
+        this.setState({['isCartOpen']: true}, () => console.log('status: ' + this.state.isCartOpen))
+    }
+
+    handleCartClose = () => {
+        this.setState({['isCartOpen']: false});
+    }
+
     addToCart = (num, item) => {
         this.setState(prevState => ({
             numItemsInCart: prevState.numItemsInCart + parseInt(num),
             cartItems: prevState.cartItems.concat(item)
-        }));
+        }), () => localStorage.setItem("cartItems", JSON.stringify(this.state.cartItems)));
     }
 
     indexElements = key => {
@@ -105,11 +115,14 @@ class Home extends React.Component {
                 csrf_token: response._RequestAntiForgeryToken
             });
         });
-        this.props.tryLoadDataFromLocalStroage();
+        this.props.tryLoadDataFromLocalStorage();
+        this.props.tryLoadCartItemsFromLocalStorage();
         this.props.fetchItems();
     }
 
     render(){
+        console.log('Pera: ')
+        console.log(this.props.CartItems);
         const isLoggedIn = this.props.IsAuthenticated;
 
         let button;
@@ -167,10 +180,27 @@ class Home extends React.Component {
                          </div>
         }
 
+        const isCartOpen = this.state.isCartOpen;
+
         let cart =  <div className="cart">
                         <FontAwesomeIcon icon={faShoppingCart} />
                         <p>{this.state.numItemsInCart}</p>
+                        <Button variant="outlined" onClick={this.handleCartOpen}>
+                            Go to cart
+                        </Button>
                     </div>
+
+        let cartDialog;
+        if(isCartOpen){
+            cartDialog = <div>
+                            <CartDialog
+                                open={this.state.isCartOpen}
+                                cart={this.props.CartItems.length == 0 ? [] :  this.props.CartItems}
+                                handleCartClose={this.handleCartClose}
+                            > 
+                            </CartDialog>
+                         </div>
+        }
 
         return (
             <div>
@@ -179,6 +209,7 @@ class Home extends React.Component {
                     {items}
                     {itemDialog}
                     {cart}
+                    {cartDialog}
                 </div>
             </div>
         )
@@ -189,12 +220,14 @@ const mapStateToProps = (state) => {
     return {
         Username: state.homeReducer.Username,
         IsAuthenticated: state.homeReducer.IsAuthenticated,
-        Data: state.homeReducer.Data
+        Data: state.homeReducer.Data,
+        CartItems: state.homeReducer.CartItems
     };
 }
 
 const mapDispatchToProps = {
-    tryLoadDataFromLocalStroage,
+    tryLoadDataFromLocalStorage,
+    tryLoadCartItemsFromLocalStorage,
     logoutAction,
     fetchItems,
     push

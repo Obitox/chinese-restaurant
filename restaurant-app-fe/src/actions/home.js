@@ -1,4 +1,5 @@
 export const LOAD_DATA_FROM_LOCALSTORAGE = 'LOAD_DATA_FROM_LOCALSTORAGE'
+export const LOAD_CART_ITEMS_FROM_LOCALSTORAGE = 'LOAD_CART_ITEMS_FROM_LOCALSTORAGE'
 
 export const LOGOUT_REQUEST = 'LOGOUT_REQUEST'
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS'
@@ -59,7 +60,14 @@ const itemsFailed = (message) => {
     }
 }
 
-export const tryLoadDataFromLocalStroage = () => dispatch => {
+const loadCartItems = (cartItems) => {
+    return {
+        type: LOAD_CART_ITEMS_FROM_LOCALSTORAGE,
+        payload: cartItems
+    }
+}
+ 
+export const tryLoadDataFromLocalStorage = () => dispatch => {
 
     if(localStorage.hasOwnProperty("Username") && localStorage.hasOwnProperty("IsAuthenticated"))
     {
@@ -78,6 +86,16 @@ export const tryLoadDataFromLocalStroage = () => dispatch => {
     // for (; sKey = window.localStorage.key(i); i++) {
     //     oJson[sKey] = window.localStorage.getItem(sKey);
     // }
+}
+
+export const tryLoadCartItemsFromLocalStorage = () => dispatch => {
+    console.log('TRY LOAD');
+    if(localStorage.hasOwnProperty("cartItems")){
+        console.log('INSIDE TRY LOAD')
+        let cartItems = JSON.parse(localStorage.getItem("cartItems"));
+        // console.log(cartItems);
+        dispatch(loadCartItems(cartItems));
+    }
 }
 
 export const logoutAction = (csrf) => dispatch => {

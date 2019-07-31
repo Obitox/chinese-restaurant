@@ -77,7 +77,7 @@ class Home extends React.Component {
     addToCart = (num, item) => {
         this.setState(prevState => ({
             numItemsInCart: prevState.numItemsInCart + parseInt(num),
-            cartItems: prevState.cartItems.push(item)
+            cartItems: prevState.cartItems.concat(item)
         }));
     }
 

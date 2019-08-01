@@ -29,17 +29,9 @@ class CartDialog extends Component {
     }
 
     render() {
-        // title: th
-        // size: thi
-        // price: th
-        // personalP
-        // amount: t
-        
-
         let cartItems = this.props.cart.map((cartItem, index) => 
                                 <p key={index}>Title: {cartItem.title} Size: {cartItem.size} Amount: {cartItem.amount} PersonalPreference: {cartItem.personalPreference} Price: {cartItem.price}</p>
         );
-
 
         return (
             <div>
@@ -93,8 +85,8 @@ class CartDialog extends Component {
                     <Button onClick={this.handleCartClose} color="primary">
                         Done
                     </Button>
-                    <Button onClick={this.addToCart} disabled={this.state.isDisabled} color="primary">
-                        Add to cart
+                    <Button onClick={this.checkoutCart} disabled={this.state.isDisabled} color="primary">
+                        Checkout cart
                     </Button>
                     </DialogActions>
                 </Dialog>

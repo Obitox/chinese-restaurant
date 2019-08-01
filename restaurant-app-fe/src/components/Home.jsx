@@ -24,7 +24,7 @@ import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 // import LogoutButton from "./LogoutButton.jsx";
 import { logoutAction } from '../actions/home'
 // import Login from "./Login.jsx"
-import { tryLoadDataFromLocalStorage, tryLoadCartItemsFromLocalStorage } from '../actions/home'
+import { tryLoadDataFromLocalStorage } from '../actions/home'
 import { fetchItems } from '../actions/home'
 
 import ItemDialog from './ItemDialog.jsx'
@@ -43,6 +43,7 @@ class Home extends React.Component {
             isCartOpen: false
         }
         this.componentDidMount = this.componentDidMount.bind(this);
+        // this.loadDataFromLocalStorage = this.loadDataFromLocalStorage.bind(this);
     }
 
     redirectLogin = () => {
@@ -77,7 +78,7 @@ class Home extends React.Component {
     }
 
     handleCartOpen = () => {
-        this.setState({['isCartOpen']: true}, () => console.log('status: ' + this.state.isCartOpen))
+        this.setState({['isCartOpen']: true})
     }
 
     handleCartClose = () => {
@@ -88,7 +89,23 @@ class Home extends React.Component {
         this.setState(prevState => ({
             numItemsInCart: prevState.numItemsInCart + parseInt(num),
             cartItems: prevState.cartItems.concat(item)
-        }), () => localStorage.setItem("cartItems", JSON.stringify(this.state.cartItems)));
+        }), () => this.appendCartInLocalStorage(item));
+    }
+
+    appendCartInLocalStorage = (item) => {
+        console.log(item);
+        if(localStorage.hasOwnProperty("cartItems")){
+            let cartItems = JSON.parse(localStorage.getItem("cartItems"));
+            cartItems.push(item);
+            console.log(cartItems);
+            localStorage.setItem("cartItems", JSON.stringify(cartItems));
+        }
+        else {
+            let cartItems = [];
+            cartItems.push(item);
+            console.log(cartItems);
+            localStorage.setItem("cartItems", JSON.stringify(cartItems));
+        }
     }
 
     indexElements = key => {
@@ -116,13 +133,20 @@ class Home extends React.Component {
             });
         });
         this.props.tryLoadDataFromLocalStorage();
-        this.props.tryLoadCartItemsFromLocalStorage();
         this.props.fetchItems();
+        this.loadDataFromLocalStorageWithoutRedux();
+    }
+
+    loadDataFromLocalStorageWithoutRedux = () => {
+        if(localStorage.hasOwnProperty("cartItems")){
+            let cartItems = JSON.parse(localStorage.getItem("cartItems"));
+            this.setState({['numItemsInCart']: cartItems.length, ['cartItems']: cartItems});
+        }
     }
 
     render(){
-        console.log('Pera: ')
-        console.log(this.props.CartItems);
+        // FIXME: Different cart load on startup
+        // this.loadDataFromLocalStorage();
         const isLoggedIn = this.props.IsAuthenticated;
 
         let button;
@@ -195,7 +219,7 @@ class Home extends React.Component {
             cartDialog = <div>
                             <CartDialog
                                 open={this.state.isCartOpen}
-                                cart={this.props.CartItems.length == 0 ? [] :  this.props.CartItems}
+                                cart={this.state.cartItems.length == 0 ? [] :  this.state.cartItems}
                                 handleCartClose={this.handleCartClose}
                             > 
                             </CartDialog>
@@ -216,18 +240,17 @@ class Home extends React.Component {
     }
 }
 
+
 const mapStateToProps = (state) => {
     return {
         Username: state.homeReducer.Username,
         IsAuthenticated: state.homeReducer.IsAuthenticated,
-        Data: state.homeReducer.Data,
-        CartItems: state.homeReducer.CartItems
+        Data: state.homeReducer.Data
     };
 }
 
 const mapDispatchToProps = {
     tryLoadDataFromLocalStorage,
-    tryLoadCartItemsFromLocalStorage,
     logoutAction,
     fetchItems,
     push

@@ -1,5 +1,4 @@
 export const LOAD_DATA_FROM_LOCALSTORAGE = 'LOAD_DATA_FROM_LOCALSTORAGE'
-export const LOAD_CART_ITEMS_FROM_LOCALSTORAGE = 'LOAD_CART_ITEMS_FROM_LOCALSTORAGE'
 
 export const LOGOUT_REQUEST = 'LOGOUT_REQUEST'
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS'
@@ -8,6 +7,10 @@ export const LOGOUT_FAILED = 'LOGOUT_FAILED'
 export const ITEMS_REQUEST = 'ITEMS_REQUEST'
 export const ITEMS_SUCCESS = 'ITEMS_SUCCESS'
 export const ITEMS_FAILED = 'ITEMS_FAILED'
+
+export const CART_CHECKOUT_REQUEST = 'CART_CHECKOUT_REQUEST'
+export const CART_CHECKOUT_SUCCESS = 'CART_CHECKOUT_SUCCESS'
+export const CART_CHECKOUT_FAILED = 'CART_CHECKOUT_FAILED'
 
 const baseURL = `http://localhost:3000`
 
@@ -60,13 +63,27 @@ const itemsFailed = (message) => {
     }
 }
 
-const loadCartItems = (cartItems) => {
+const cartCheckoutRequest = (username) => {
     return {
-        type: LOAD_CART_ITEMS_FROM_LOCALSTORAGE,
-        payload: cartItems
+        type: CART_CHECKOUT_REQUEST,
+        payload: username
     }
 }
- 
+
+const cartCheckoutSuccess = (message) => {
+    return {
+        type: CART_CHECKOUT_SUCCESS,
+        payload: message
+    }
+}
+
+const cartCheckoutFailed = (message) => {
+    return {
+        type: CART_CHECKOUT_FAILED,
+        payload: message
+    }
+}
+
 export const tryLoadDataFromLocalStorage = () => dispatch => {
 
     if(localStorage.hasOwnProperty("Username") && localStorage.hasOwnProperty("IsAuthenticated"))
@@ -86,16 +103,6 @@ export const tryLoadDataFromLocalStorage = () => dispatch => {
     // for (; sKey = window.localStorage.key(i); i++) {
     //     oJson[sKey] = window.localStorage.getItem(sKey);
     // }
-}
-
-export const tryLoadCartItemsFromLocalStorage = () => dispatch => {
-    console.log('TRY LOAD');
-    if(localStorage.hasOwnProperty("cartItems")){
-        console.log('INSIDE TRY LOAD')
-        let cartItems = JSON.parse(localStorage.getItem("cartItems"));
-        // console.log(cartItems);
-        dispatch(loadCartItems(cartItems));
-    }
 }
 
 export const logoutAction = (csrf) => dispatch => {
@@ -155,4 +162,35 @@ export const fetchItems = () => dispatch => {
          }
      })
      .catch(error => dispatch(itemsFailed(error)));
+}
+
+export const checkoutCart = (username, cart) => {
+    dispatch(cartCheckoutRequest(username))
+
+    const payload = {
+        username: username,
+        cart: cart
+    }
+
+    fetch(baseURL + '/checkoutCart', {
+        method: 'POST',
+     //    mode: 'cors',
+     //    headers: {
+     //        'Content-Type': 'application/json',
+     //        // 'Content-Type': 'application/x-www-form-urlencoded',
+     //     },
+         body: JSON.stringify(payload),
+         credentials: 'include'
+     })
+     .then(res => res.json())
+     .then(response => {
+         if(response.length > 0){
+            dispatch(cartCheckoutSuccess(response))
+         } else {
+             dispatch(cartCheckoutFailed("No data"))
+         }
+     })
+     .catch(error => dispatch(cartCheckoutFailed(error)));
+
+    
 }

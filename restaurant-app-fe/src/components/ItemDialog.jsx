@@ -67,8 +67,7 @@ export default class ItemDialog extends React.Component {
 
 
   addToCart = () => {
-    // FIXME: different amount handling
-    this.props.addToCart(this.state.amount, {
+    this.props.addToCart(1, {
       title: this.props.object[0].Item.Title,
       size: this.state.size,
       price: this.state.price,

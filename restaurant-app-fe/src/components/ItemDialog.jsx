@@ -38,6 +38,7 @@ export default class ItemDialog extends React.Component {
   }
 
   componentDidMount = () => {
+    // FIXME: fix this ugly menace
     this.props.object[0].Ingredient.forEach(this.initCheckBoxes);
   }
 
@@ -46,6 +47,7 @@ export default class ItemDialog extends React.Component {
   }
 
   handleAmountChange = event => {
+    // FIXME: fix this ugly menace
     let price = this.props.object[0].Item.Price * this.getPriceMultiplier(this.state.size);
     let name = event.target.name;
     let amount = event.target.value;
@@ -68,6 +70,7 @@ export default class ItemDialog extends React.Component {
 
   addToCart = () => {
     this.props.addToCart(1, {
+      // FIXME: fix this ugly menace
       title: this.props.object[0].Item.Title,
       size: this.state.size,
       price: this.state.price,
@@ -78,6 +81,7 @@ export default class ItemDialog extends React.Component {
 
 
   getPriceMultiplier = (size) => {
+    // FIXME: fix this ugly menace
     let portions = this.props.object[0].Portion;
 
     for(var i=0; i < portions.length;i++){
@@ -143,6 +147,7 @@ export default class ItemDialog extends React.Component {
   }
 
   IsBase = (index) => {
+    // FIXME: fix this ugly menace
     return this.props.object[0].Ingredient[index].IsBase == 1 ? true : false;
   }
 
@@ -156,6 +161,7 @@ export default class ItemDialog extends React.Component {
   }
 
   render(){
+    // FIXME: fix this ugly menace
     let ingredients = this.props.object[0].Ingredient.map((obj, index) => 
                                         <FormControlLabel
                                           key={index}
@@ -171,7 +177,7 @@ export default class ItemDialog extends React.Component {
                                         />
     );
 
-    // let ingredientsWithAllergens = this.props.object[0].Ingredient.filter(ingredient => ingredient.Allergens !== "");
+    // FIXME: fix this ugly menace
     let allergens = this.props.object[0].Ingredient.map(function(ingredient){
         if(ingredient.Allergens !== ""){
           return ingredient.Allergens;
@@ -180,10 +186,12 @@ export default class ItemDialog extends React.Component {
 
     let img = <img id='default' alt="default" src={defaultImg} height='75px' width='75px'></img>
 
+    // FIXME: fix this ugly menace
     let portion = this.props.object[0].Portion.map((portion, index) => 
                                           <MenuItem key={index} value={portion.SizeName}>{portion.SizeName}</MenuItem>
     );
 
+    //FIXME: fix this ugly menace
     return (
         <div>
           <Dialog open={this.props.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">

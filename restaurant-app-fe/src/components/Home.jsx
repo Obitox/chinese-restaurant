@@ -97,13 +97,11 @@ class Home extends React.Component {
         if(localStorage.hasOwnProperty("cartItems")){
             let cartItems = JSON.parse(localStorage.getItem("cartItems"));
             cartItems.push(item);
-            console.log(cartItems);
             localStorage.setItem("cartItems", JSON.stringify(cartItems));
         }
         else {
             let cartItems = [];
             cartItems.push(item);
-            console.log(cartItems);
             localStorage.setItem("cartItems", JSON.stringify(cartItems));
         }
     }

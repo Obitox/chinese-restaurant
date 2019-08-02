@@ -31,6 +31,7 @@ var (
 // Queries redis DB based on UserID from sub claim in AuthToken received from cookie
 // Compares AuthToken from Cookie & AuthToken from redis DB
 // Upon passing all above conditions it annihilates hashset with Auth&RefreshToken for a user
+// TODO: Check if expired and if so send the response to logout the user
 func Logout(w http.ResponseWriter, r *http.Request) {
 	utils.SetupCors(&w, r)
 

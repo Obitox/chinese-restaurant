@@ -156,7 +156,6 @@ func (user User) CreateAndStoreAuthAndRefreshTokens() (authToken string, refresh
 		return
 	}
 
-	log.Println("UserID: " + string(user.UserID))
 	err = storeAuthAndRefreshTokens(user.UserID, authToken, refreshToken)
 
 	if err != nil {
@@ -300,6 +299,25 @@ func GetAuthTokenWithUserID(id uint64) (string, error) {
 	}
 
 	return authToken, nil
+}
+
+// GetRefreshTokenWithUserID accepts id with which it queries the redis db and retrieves a Refresh Token at given id
+func GetRefreshTokenWithUserID(id uint64) (string, error) {
+	client, err := db.RedisConnect()
+	defer client.Close()
+
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	refToken, err := client.HGet(strconv.FormatUint(id, 10), "RefreshToken").Result()
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	return refToken, nil
 }
 
 // RevokeUserTokensWithUserID accepts userID and based on it deletes hashset in redis db

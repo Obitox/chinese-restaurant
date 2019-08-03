@@ -63,10 +63,9 @@ const itemsFailed = (message) => {
     }
 }
 
-const cartCheckoutRequest = (username) => {
+const cartCheckoutRequest = () => {
     return {
-        type: CART_CHECKOUT_REQUEST,
-        payload: username
+        type: CART_CHECKOUT_REQUEST
     }
 }
 
@@ -164,12 +163,12 @@ export const fetchItems = () => dispatch => {
      .catch(error => dispatch(itemsFailed(error)));
 }
 
-export const checkoutCart = (username, cart) => {
-    dispatch(cartCheckoutRequest(username))
-
+export const checkoutCart = (cart, csrf) => dispatch => {
+    dispatch(cartCheckoutRequest())
+    console.log(cart)
     const payload = {
-        username: username,
-        cart: cart
+        Items: cart,
+        RequestAntiForgeryToken: csrf
     }
 
     fetch(baseURL + '/checkoutCart', {
@@ -179,12 +178,12 @@ export const checkoutCart = (username, cart) => {
      //        'Content-Type': 'application/json',
      //        // 'Content-Type': 'application/x-www-form-urlencoded',
      //     },
-         body: JSON.stringify(payload),
-         credentials: 'include'
+        body: JSON.stringify(payload),
+        credentials: 'include'
      })
      .then(res => res.json())
      .then(response => {
-         if(response.length > 0){
+         if(response.Message == "OK"){
             dispatch(cartCheckoutSuccess(response))
          } else {
              dispatch(cartCheckoutFailed("No data"))

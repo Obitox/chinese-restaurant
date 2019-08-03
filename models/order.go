@@ -8,5 +8,6 @@ type Order struct {
 	IsCanceled, IsDelivered                 int8
 	Rating                                  int
 	PersonalPreference, Comment, IsAccepted string
-	DeliveryAt, CreatedAt, DeliveredAt      *time.Time
+	DeliveryAt, CreatedAt                   time.Time
+	DeliveredAt                             time.Time `gorm:"DEFAULT"`
 }

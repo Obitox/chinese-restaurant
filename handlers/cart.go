@@ -1,10 +1,17 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"restaurant-app/models"
 	"restaurant-app/utils"
+	"strconv"
+	"time"
+
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 // Cart handler for cart checkout
@@ -23,7 +30,7 @@ func Cart(w http.ResponseWriter, r *http.Request) {
 		log.Println("Readll: " + bodyErr.Error())
 	}
 
-	unmarshErr = json.Unmarshal(data, &cart)
+	unmarshErr := json.Unmarshal(data, &cart)
 	if unmarshErr != nil {
 		log.Println(unmarshErr.Error())
 		panic(unmarshErr)
@@ -80,7 +87,7 @@ func Cart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
+	// Separate this logic
 	if len(cart.RequestAntiForgeryToken) > 0 {
 		if cart.RequestAntiForgeryToken == csrfCookie.Value {
 			authCookie, authCookieError := r.Cookie("AuthToken")
@@ -114,6 +121,7 @@ func Cart(w http.ResponseWriter, r *http.Request) {
 			// FIXME: Fix this butcher style
 			authCookieWithoutPrefix := authCookie.Value[7:]
 
+			// TODO: Separate this logic
 			token, parErr := jwt.Parse(authCookieWithoutPrefix, func(token *jwt.Token) (interface{}, error) {
 
 				if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
@@ -123,13 +131,14 @@ func Cart(w http.ResponseWriter, r *http.Request) {
 				return verifyKey, nil
 			})
 
+			// TODO: Separate this logic
 			if parErr != nil {
 				parsedRefToken, refTokenParErr := jwt.Parse(authCookieWithoutPrefix, func(token *jwt.Token) (interface{}, error) {
 
 					if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 						return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 					}
-	
+
 					return verifyKey, nil
 				})
 
@@ -147,20 +156,20 @@ func Cart(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-
 				// BEGIn
-				if refTokenClaims, ok := refTokenClaims.Claims.(jwt.MapClaims); ok && parsedRefToken.Valid {
-					id, err := strconv.ParseUint(claims["sub"].(string), 10, 64)
+				// TODO: Separate this logic
+				if refTokenClaims, ok := parsedRefToken.Claims.(jwt.MapClaims); ok && parsedRefToken.Valid {
+					id, err := strconv.ParseUint(refTokenClaims["sub"].(string), 10, 64)
 					if err != nil {
 						log.Println("Error while parsing UserID from claims")
 						return
 					}
-	
+
 					refTokenFromRedis, err := models.GetRefreshTokenWithUserID(id)
-	
+
 					if err != nil {
 						log.Println("Failed to retrieve auth token from redis db")
-	
+
 						response := models.Response{
 							ReturnCode: http.StatusUnauthorized,
 							Message:    "Unauthorized",
@@ -174,36 +183,37 @@ func Cart(w http.ResponseWriter, r *http.Request) {
 						w.Write(byteResponse)
 						return
 					}
-	
-					if refTokenFromRedis != refreshCookie {
+
+					// TODO: Separate this logic
+					if refTokenFromRedis != refreshCookie.Value {
 						delNum, revokeErr := models.RevokeUserTokensWithUserID(id)
 						if revokeErr != nil {
 							fmt.Println(revokeErr)
 						}
-	
+
 						// Annihilate cookies
 						authCookie := &http.Cookie{
-							Name:    "AuthCookie",
+							Name:    "AuthToken",
 							Value:   "",
 							Path:    "/",
 							Expires: time.Unix(0, 0),
-	
+
 							HttpOnly: true,
 						}
-	
+
 						http.SetCookie(w, authCookie)
-	
+
 						refreshCookie := &http.Cookie{
-							Name:    "RefreshCookie",
+							Name:    "RefreshToken",
 							Value:   "",
 							Path:    "/",
 							Expires: time.Unix(0, 0),
-	
+
 							HttpOnly: true,
 						}
-	
+
 						http.SetCookie(w, refreshCookie)
-	
+
 						if delNum == 1 {
 							response := models.Response{
 								ReturnCode: http.StatusOK,
@@ -220,31 +230,52 @@ func Cart(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 
-					// TODO: Refresh Auth&Ref tokens
+					// TODO: Separate this logic
+					authCookie := &http.Cookie{
+						Name:     "AuthToken",
+						Value:    "Bearer " + authCookie.Value,
+						Path:     "/",
+						Expires:  time.Now().Add(models.AuthTokenValidTime),
+						HttpOnly: true,
+					}
 
+					http.SetCookie(w, authCookie)
 
+					refreshCookie := &http.Cookie{
+						Name:     "RefreshToken",
+						Value:    refreshCookie.Value,
+						Path:     "/",
+						Expires:  time.Now().Add(models.RefreshTokenValidTime),
+						HttpOnly: true,
+					}
+
+					http.SetCookie(w, refreshCookie)
 					// END
 
+					// CART PROCESSING
+					// 1. Create cart
+					log.Println("REF PRINT")
+					userCart := models.Cart{
+						UserID: id,
+					}
 
+					userCart.CreateCart()
 
+					cartRetrieveErr := userCart.RetrieveCartByUserID()
+					if cartRetrieveErr != nil {
+						log.Println(cartRetrieveErr.Error())
+					}
+					log.Printf("Pozvan %d", userCart.CartID)
 
+					createErr := cart.CreateCartItem(userCart.CartID, userCart.UserID)
+					if createErr != nil {
+						log.Println(createErr.Error())
+					}
 
-
-
-
-				// response := models.Response{
-				// 	ReturnCode: http.StatusUnauthorized,
-				// 	Message:    "Unauthorized",
-				// }
-				// byteResponse, marshalError := response.Response()
-				// if marshalError != nil {
-				// 	log.Println("Error while marshaling the response object")
-				// 	return
-				// }
-				// w.Write(byteResponse)
-				// return
+				}
 			}
 
+			// AuthToken parsing
 			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 				id, err := strconv.ParseUint(claims["sub"].(string), 10, 64)
 				if err != nil {
@@ -271,7 +302,7 @@ func Cart(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				if tokenFromRedis == authCookieWithoutPrefix {
+				if tokenFromRedis != authCookieWithoutPrefix {
 					delNum, revokeErr := models.RevokeUserTokensWithUserID(id)
 					if revokeErr != nil {
 						fmt.Println(revokeErr)
@@ -316,28 +347,56 @@ func Cart(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 
-			} else {
+				log.Println("AUTH PRINT")
+				userCart := models.Cart{
+					UserID: id,
+				}
+
+				cartCreateErr := userCart.CreateCart()
+				if cartCreateErr != nil {
+					log.Println("CART CREATE ERROR")
+					log.Println(cartCreateErr.Error())
+				}
+
+				cartRetrieveErr := userCart.RetrieveCartByUserID()
+				if cartRetrieveErr != nil {
+					log.Println(cartRetrieveErr.Error())
+				}
+				log.Printf("Pozvan %d", userCart.CartID)
+
+				createErr := cart.CreateCartItem(userCart.CartID, userCart.UserID)
+				if createErr != nil {
+					log.Println(createErr.Error())
+				}
+
 				response := models.Response{
-					ReturnCode: http.StatusUnauthorized,
-					Message:    "Unauthorized",
+					ReturnCode: http.StatusOK,
+					Message:    "OK",
 				}
 				byteResponse, marshalError := response.Response()
 				if marshalError != nil {
 					// Internal server errorA
-					log.Println("Error while marshaling the response object")
+					log.Println("Error while marshaling the Response object")
 					return
 				}
 				w.Write(byteResponse)
 				return
+
 			}
+
+			response := models.Response{
+				ReturnCode: http.StatusUnauthorized,
+				Message:    "Unauthorized",
+			}
+			byteResponse, marshalError := response.Response()
+			if marshalError != nil {
+				// Internal server errorA
+				log.Println("Error while marshaling the response object")
+				return
+			}
+			w.Write(byteResponse)
+			return
 		}
 	}
-
-
-
-
-
-
-
 
 }

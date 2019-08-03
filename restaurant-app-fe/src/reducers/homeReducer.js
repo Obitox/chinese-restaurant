@@ -1,4 +1,14 @@
-import { LOAD_DATA_FROM_LOCALSTORAGE, LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILED, ITEMS_REQUEST, ITEMS_SUCCESS, ITEMS_FAILED } from '../actions/home'
+import { 
+    LOAD_DATA_FROM_LOCALSTORAGE, 
+    LOGOUT_REQUEST, 
+    LOGOUT_SUCCESS, 
+    LOGOUT_FAILED, 
+    ITEMS_REQUEST, 
+    ITEMS_SUCCESS, 
+    ITEMS_FAILED,
+    CART_CHECKOUT_REQUEST,
+    CART_CHECKOUT_SUCCESS,
+    CART_CHECKOUT_FAILED } from '../actions/home'
 
 const initialState = {
     IsAuthenticated: false,
@@ -36,6 +46,17 @@ export default function homeReducer(state = initialState, action){
                 Data: action.payload
             });
         case ITEMS_FAILED:
+            return Object.assign({}, state, {
+                Message: action.payload
+            });
+        case CART_CHECKOUT_REQUEST:
+            return Object.assign({}, state, {
+            });
+        case CART_CHECKOUT_SUCCESS:
+            return Object.assign({}, state, {
+                Message: action.payload
+            });
+        case CART_CHECKOUT_FAILED:
             return Object.assign({}, state, {
                 Message: action.payload
             });

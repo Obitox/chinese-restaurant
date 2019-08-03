@@ -71,11 +71,12 @@ export default class ItemDialog extends React.Component {
   addToCart = () => {
     this.props.addToCart(1, {
       // FIXME: fix this ugly menace
-      title: this.props.object[0].Item.Title,
-      size: this.state.size,
-      price: this.state.price,
-      personalPreference: this.state.personalPreference,
-      amount: this.state.amount
+      ItemID: this.props.object[0].Item.ItemID,
+      Title: this.props.object[0].Item.Title,
+      Size: this.state.size,
+      Price: this.state.price,
+      PersonalPreference: this.state.personalPreference,
+      Amount: parseInt(this.state.amount)
     });
   }
 

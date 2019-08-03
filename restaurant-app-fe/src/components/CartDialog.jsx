@@ -28,9 +28,13 @@ class CartDialog extends Component {
         this.props.handleCartClose();
     }
 
+    checkoutCart = () => {
+        this.props.checkoutCart();
+    }
+
     render() {
         let cartItems = this.props.cart.map((cartItem, index) => 
-                                <p key={index}>Title: {cartItem.title} Size: {cartItem.size} Amount: {cartItem.amount} PersonalPreference: {cartItem.personalPreference} Price: {cartItem.price}</p>
+                                <p key={index}>Title: {cartItem.Title} Size: {cartItem.Size} Amount: {cartItem.Amount} PersonalPreference: {cartItem.PersonalPreference} Price: {cartItem.Price}</p>
         );
 
         return (

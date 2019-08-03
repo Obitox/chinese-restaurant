@@ -26,6 +26,7 @@ import { logoutAction } from '../actions/home'
 // import Login from "./Login.jsx"
 import { tryLoadDataFromLocalStorage } from '../actions/home'
 import { fetchItems } from '../actions/home'
+import { checkoutCart } from '../actions/home'
 
 import ItemDialog from './ItemDialog.jsx'
 import CartDialog from './CartDialog.jsx'
@@ -93,7 +94,6 @@ class Home extends React.Component {
     }
 
     appendCartInLocalStorage = (item) => {
-        console.log(item);
         if(localStorage.hasOwnProperty("cartItems")){
             let cartItems = JSON.parse(localStorage.getItem("cartItems"));
             cartItems.push(item);
@@ -140,6 +140,10 @@ class Home extends React.Component {
             let cartItems = JSON.parse(localStorage.getItem("cartItems"));
             this.setState({['numItemsInCart']: cartItems.length, ['cartItems']: cartItems});
         }
+    }
+
+    checkoutCart = () => {
+        this.props.checkoutCart(this.state.cartItems, this.state.csrf_token)
     }
 
     render(){
@@ -219,6 +223,7 @@ class Home extends React.Component {
                                 open={this.state.isCartOpen}
                                 cart={this.state.cartItems.length == 0 ? [] :  this.state.cartItems}
                                 handleCartClose={this.handleCartClose}
+                                checkoutCart={this.checkoutCart}
                             > 
                             </CartDialog>
                          </div>
@@ -251,6 +256,7 @@ const mapDispatchToProps = {
     tryLoadDataFromLocalStorage,
     logoutAction,
     fetchItems,
+    checkoutCart,
     push
 }
 

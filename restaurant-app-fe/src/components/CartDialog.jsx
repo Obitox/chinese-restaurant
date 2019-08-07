@@ -8,6 +8,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faShoppingCart, faMinus } from '@fortawesome/free-solid-svg-icons'
+
 class CartDialog extends Component {
     constructor(props){
         super(props);
@@ -32,9 +35,13 @@ class CartDialog extends Component {
         this.props.checkoutCart();
     }
 
+    removeCartItem = () => {
+        this.props.removeCartItem();
+    }
+
     render() {
         let cartItems = this.props.cart.map((cartItem, index) => 
-                                <p key={index}>Title: {cartItem.Title} Size: {cartItem.Size} Amount: {cartItem.Amount} PersonalPreference: {cartItem.PersonalPreference} Price: {cartItem.Price}</p>
+                                <p key={index}>Title: {cartItem.Title} Size: {cartItem.Size} Amount: {cartItem.Amount} PersonalPreference: {cartItem.PersonalPreference} Price: {cartItem.Price}<FontAwesomeIcon onClick={this.removeCartItem} icon={faMinus} /></p>
         );
 
         return (

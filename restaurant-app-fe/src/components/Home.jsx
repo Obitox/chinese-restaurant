@@ -18,7 +18,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
+import { faShoppingCart, faMinus } from '@fortawesome/free-solid-svg-icons'
 
 // import LoginAndSignUpButton from "./LoginAndSignUpButton.jsx";
 // import LogoutButton from "./LogoutButton.jsx";
@@ -86,6 +86,10 @@ class Home extends React.Component {
     addToCart = (item) => {
         this.props.addItemToCart(item);
         this.appendCartInLocalStorage(item);
+    }
+
+    removeCartItem = (itemID) => {
+        this.props.removeItemFromCart(itemID);
     }
 
     appendCartInLocalStorage = (item) => {
@@ -225,6 +229,7 @@ class Home extends React.Component {
                                 cart={this.props.Cart.length == 0 ? [] :  this.props.Cart}
                                 handleCartClose={this.handleCartClose}
                                 checkoutCart={this.checkoutCart}
+                                removeCartItem={this.removeCartItem}
                             > 
                             </CartDialog>
                          </div>

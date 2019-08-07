@@ -8,9 +8,15 @@ export const ITEMS_REQUEST = 'ITEMS_REQUEST'
 export const ITEMS_SUCCESS = 'ITEMS_SUCCESS'
 export const ITEMS_FAILED = 'ITEMS_FAILED'
 
+export const LOAD_CART_FROM_LOCALSTORAGE = 'LOAD_CART_FROM_LOCALSTORAGE'
+
 export const CART_CHECKOUT_REQUEST = 'CART_CHECKOUT_REQUEST'
 export const CART_CHECKOUT_SUCCESS = 'CART_CHECKOUT_SUCCESS'
 export const CART_CHECKOUT_FAILED = 'CART_CHECKOUT_FAILED'
+
+export const CART_ITEM_ADD = 'CART_ITEM_ADD'
+export const CART_ITEM_CLEAR = 'CART_ITEM_CLEAR'
+export const CART_ITEM_REMOVE = 'CART_ITEM_REMOVE'
 
 const baseURL = `http://localhost:3000`
 
@@ -80,6 +86,41 @@ const cartCheckoutFailed = (message) => {
     return {
         type: CART_CHECKOUT_FAILED,
         payload: message
+    }
+}
+
+const cartItemAdd = (item) => {
+    return {
+        type: CART_ITEM_ADD,
+        payload: item
+    }
+}
+
+const cartItemRemove = (itemID) => {
+    return {
+        type: CART_ITEM_REMOVE,
+        payload: item
+    }
+}
+
+const cartItemClear = () => {
+    return {
+        type: CART_ITEM_CLEAR,
+        payload: "Cleared"
+    }
+}
+
+const loadCart = (cart) => {
+    return {
+        type: LOAD_CART_FROM_LOCALSTORAGE,
+        payload: cart
+    }
+}
+
+export const loadCartFromLocalStorage = () => dispatch => {
+    if(localStorage.hasOwnProperty("cart")){
+        let cart = JSON.parse(localStorage.getItem("cart"));
+        dispatch(loadCart(cart))
     }
 }
 
@@ -163,9 +204,22 @@ export const fetchItems = () => dispatch => {
      .catch(error => dispatch(itemsFailed(error)));
 }
 
+
+// TODO: Check if item already exists then just append amount
+export const addItemToCart = (item) => dispatch => {
+    dispatch(cartItemAdd(item))
+}
+
+export const removeItemFromCart = (itemID) => dispatch => {
+    dispatch(cartItemRemove(itemID))
+}
+
+export const clearCartItems = () => dispatch => {
+    dispatch(cartItemClear())
+}
+
 export const checkoutCart = (cart, csrf) => dispatch => {
     dispatch(cartCheckoutRequest())
-    console.log(cart)
     const payload = {
         Items: cart,
         RequestAntiForgeryToken: csrf
@@ -184,7 +238,8 @@ export const checkoutCart = (cart, csrf) => dispatch => {
      .then(res => res.json())
      .then(response => {
          if(response.Message == "OK"){
-            dispatch(cartCheckoutSuccess(response))
+            localStorage.removeItem("cart")
+            dispatch(cartCheckoutSuccess(response.Message))
          } else {
              dispatch(cartCheckoutFailed("No data"))
          }

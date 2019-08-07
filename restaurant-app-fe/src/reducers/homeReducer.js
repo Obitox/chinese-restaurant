@@ -6,15 +6,22 @@ import {
     ITEMS_REQUEST, 
     ITEMS_SUCCESS, 
     ITEMS_FAILED,
+    CART_ITEM_ADD,
+    CART_ITEM_REMOVE,
+    CART_ITEM_CLEAR,
     CART_CHECKOUT_REQUEST,
     CART_CHECKOUT_SUCCESS,
-    CART_CHECKOUT_FAILED } from '../actions/home'
+    CART_CHECKOUT_FAILED,
+    LOAD_CART_FROM_LOCALSTORAGE
+} from '../actions/home'
 
 const initialState = {
     IsAuthenticated: false,
     Username: '',
     Message: '',
-    Data: []
+    Data: [],
+    Cart: [],
+    NumItemsInCart: 0
 }
 
 export default function homeReducer(state = initialState, action){
@@ -49,6 +56,18 @@ export default function homeReducer(state = initialState, action){
             return Object.assign({}, state, {
                 Message: action.payload
             });
+        case CART_ITEM_ADD:
+            return Object.assign({}, state, {
+                Cart: state.Cart.concat(action.payload)}
+            );
+        case CART_ITEM_REMOVE:
+            return Object.assign({}, state, {
+                Cart: state.Cart.filter(item => item.ItemID !== action.payload)}
+            );
+        case CART_ITEM_CLEAR:
+            return Object.assign({}, state, {
+                Cart: []
+            });               
         case CART_CHECKOUT_REQUEST:
             return Object.assign({}, state, {
             });
@@ -59,6 +78,10 @@ export default function homeReducer(state = initialState, action){
         case CART_CHECKOUT_FAILED:
             return Object.assign({}, state, {
                 Message: action.payload
+            });
+        case LOAD_CART_FROM_LOCALSTORAGE:
+            return Object.assign({}, state, {
+                Cart: action.payload
             });
         default:
             return state;

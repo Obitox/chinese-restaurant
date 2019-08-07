@@ -25,8 +25,7 @@ import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 import { logoutAction } from '../actions/home'
 // import Login from "./Login.jsx"
 import { tryLoadDataFromLocalStorage } from '../actions/home'
-import { fetchItems } from '../actions/home'
-import { checkoutCart } from '../actions/home'
+import { fetchItems, checkoutCart, addItemToCart, removeItemFromCart, clearCartItems, loadCartFromLocalStorage } from '../actions/home'
 
 import ItemDialog from './ItemDialog.jsx'
 import CartDialog from './CartDialog.jsx'
@@ -39,8 +38,6 @@ class Home extends React.Component {
             size: '',
             open: false,
             object: { },
-            numItemsInCart: 0,
-            cartItems: [],
             isCartOpen: false
         }
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -86,23 +83,21 @@ class Home extends React.Component {
         this.setState({['isCartOpen']: false});
     }
 
-    addToCart = (num, item) => {
-        this.setState(prevState => ({
-            numItemsInCart: prevState.numItemsInCart + parseInt(num),
-            cartItems: prevState.cartItems.concat(item)
-        }), () => this.appendCartInLocalStorage(item));
+    addToCart = (item) => {
+        this.props.addItemToCart(item);
+        this.appendCartInLocalStorage(item);
     }
 
     appendCartInLocalStorage = (item) => {
-        if(localStorage.hasOwnProperty("cartItems")){
-            let cartItems = JSON.parse(localStorage.getItem("cartItems"));
+        if(localStorage.hasOwnProperty("cart")){
+            let cartItems = JSON.parse(localStorage.getItem("cart"));
             cartItems.push(item);
-            localStorage.setItem("cartItems", JSON.stringify(cartItems));
+            localStorage.setItem("cart", JSON.stringify(cartItems));
         }
         else {
             let cartItems = [];
             cartItems.push(item);
-            localStorage.setItem("cartItems", JSON.stringify(cartItems));
+            localStorage.setItem("cart", JSON.stringify(cartItems));
         }
     }
 
@@ -132,18 +127,24 @@ class Home extends React.Component {
         });
         this.props.tryLoadDataFromLocalStorage();
         this.props.fetchItems();
-        this.loadDataFromLocalStorageWithoutRedux();
+        this.props.loadCartFromLocalStorage();
     }
 
-    loadDataFromLocalStorageWithoutRedux = () => {
-        if(localStorage.hasOwnProperty("cartItems")){
-            let cartItems = JSON.parse(localStorage.getItem("cartItems"));
-            this.setState({['numItemsInCart']: cartItems.length, ['cartItems']: cartItems});
-        }
-    }
+    // loadDataFromLocalStorageWithoutRedux = () => {
+    //     if(localStorage.hasOwnProperty("cart")){
+    //         let cartItems = JSON.parse(localStorage.getItem("cart"));
+    //         this.setState({['numItemsInCart']: cartItems.length, ['cartItems']: cartItems});
+    //     }
+    // }
 
     checkoutCart = () => {
-        this.props.checkoutCart(this.state.cartItems, this.state.csrf_token)
+        this.props.checkoutCart(this.props.Cart, this.state.csrf_token);
+        this.props.clearCartItems();
+    }
+
+    resetCart = () => {
+        localStorage.removeItem("cartItems");
+        this.setState({['cartItems']: [], ['numItemsInCart']: 0});
     }
 
     render(){
@@ -210,7 +211,7 @@ class Home extends React.Component {
 
         let cart =  <div className="cart">
                         <FontAwesomeIcon icon={faShoppingCart} />
-                        <p>{this.state.numItemsInCart}</p>
+                        {this.props.Cart !== undefined ? <p>{this.props.Cart.length}</p> : <p>{0}</p>}
                         <Button variant="outlined" onClick={this.handleCartOpen}>
                             Go to cart
                         </Button>
@@ -221,7 +222,7 @@ class Home extends React.Component {
             cartDialog = <div>
                             <CartDialog
                                 open={this.state.isCartOpen}
-                                cart={this.state.cartItems.length == 0 ? [] :  this.state.cartItems}
+                                cart={this.props.Cart.length == 0 ? [] :  this.props.Cart}
                                 handleCartClose={this.handleCartClose}
                                 checkoutCart={this.checkoutCart}
                             > 
@@ -248,7 +249,9 @@ const mapStateToProps = (state) => {
     return {
         Username: state.homeReducer.Username,
         IsAuthenticated: state.homeReducer.IsAuthenticated,
-        Data: state.homeReducer.Data
+        Data: state.homeReducer.Data,
+        Cart: state.homeReducer.Cart,
+        Message: state.homeReducer.Message
     };
 }
 
@@ -257,6 +260,10 @@ const mapDispatchToProps = {
     logoutAction,
     fetchItems,
     checkoutCart,
+    addItemToCart,
+    removeItemFromCart,
+    clearCartItems,
+    loadCartFromLocalStorage,
     push
 }
 

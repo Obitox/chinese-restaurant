@@ -69,7 +69,7 @@ export default class ItemDialog extends React.Component {
 
 
   addToCart = () => {
-    this.props.addToCart(1, {
+    this.props.addToCart({
       // FIXME: fix this ugly menace
       ItemID: this.props.object[0].Item.ItemID,
       Title: this.props.object[0].Item.Title,

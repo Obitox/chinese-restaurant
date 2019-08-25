@@ -5,12 +5,20 @@ import (
 	"restaurant-app/db"
 )
 
-// Category represents category of item
+// REFACTORED CATEGORY
 type Category struct {
-	CategoryID uint64
+	CategoryID uint64 `gorm:"primary_key"`
 	Title      string
+	Portions   []Portion `gorm:"foreignkey:CategoryID;association_foreignkey:CategoryID"`
 	IsScalable int
 }
+
+// Category represents category of item
+// type Category struct {
+// 	CategoryID uint64
+// 	Title      string
+// 	IsScalable int
+// }
 
 // GetAllCategories retrieves all categories from db
 // returns empty array of type category if no categories found or err

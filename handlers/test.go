@@ -8,21 +8,11 @@ import (
 	"restaurant-app/utils"
 )
 
-// Home for the main page of the restaurant =returns following data:
-// - List of all food items
-// - List of popular food items
-// - Promo foods
-// - Food categories
-func Home(w http.ResponseWriter, r *http.Request) {
-	// items := models.GetAllItems()
-	// portions := models.GetAllPortions()
-	// // categories := models.GetAllCategories()
-
-	// for _, element := range items {
-	// 	// element is the element from someSlice for where we are
-	// }
-
+// Test is a function for testing items fetch with GORM
+func Test(w http.ResponseWriter, r *http.Request) {
 	utils.SetupCors(&w, r)
+
+	w.Header().Set("Content-Type", "application/json")
 
 	items := models.GetAllItems()
 	marshaledItems, err := json.Marshal(items)
@@ -42,6 +32,4 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(marshaledItems)
-
-	// w.Write([]byte("Hello my name is Bojan!"))
 }

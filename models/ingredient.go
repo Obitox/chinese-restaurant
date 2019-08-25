@@ -7,7 +7,7 @@ import (
 
 // Ingredient represents ingredients for items
 type Ingredient struct {
-	IngredientID     uint64
+	IngredientID     uint64 `gorm:"primary_key"`
 	Title, Allergens string
 	IsBase           int8
 }

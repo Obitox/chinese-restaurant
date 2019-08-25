@@ -7,8 +7,9 @@ import (
 
 // Image represents struct that is abstraction for Image of AN Item
 type Image struct {
-	ImageID, ItemID uint64
-	Path            string
+	ImageID uint64 `gorm:"primary_key"`
+	ItemID  uint64
+	Path    string
 }
 
 // GetImageByItemID retrieves image based on supplied ItemID

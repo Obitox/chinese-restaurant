@@ -9,7 +9,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faShoppingCart, faMinus } from '@fortawesome/free-solid-svg-icons'
+import { faShoppingCart, faMinus, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
+
+import { removeItemFromCart, incrementCartItemAmount, decrementCartItemAmount } from '../actions/home.js'
 
 class CartDialog extends Component {
     constructor(props){
@@ -35,14 +37,32 @@ class CartDialog extends Component {
         this.props.checkoutCart();
     }
 
-    removeCartItem = () => {
-        this.props.removeCartItem();
+    removeItemFromCart = (itemID, size) => {
+        this.props.removeItemFromCart(itemID, size);
+    }
+
+    incrementCartItemAmount = (itemID, totalPrice, pricePerItem, size) => {
+        let newTotalPrice = totalPrice + pricePerItem;
+        this.props.incrementCartItemAmount(itemID, newTotalPrice, size);
+    }
+
+    decrementCartItemAmount = (itemID, totalPrice, pricePerItem, size) => {
+        let newTotalPrice = totalPrice - pricePerItem;
+        this.props.decrementCartItemAmount(itemID, newTotalPrice, size);
     }
 
     render() {
-        let cartItems = this.props.cart.map((cartItem, index) => 
-                                <p key={index}>Title: {cartItem.Title} Size: {cartItem.Size} Amount: {cartItem.Amount} PersonalPreference: {cartItem.PersonalPreference} Price: {cartItem.Price}<FontAwesomeIcon onClick={this.removeCartItem} icon={faMinus} /></p>
-        );
+        let cartItems = null
+        if(this.props.Cart.length > 0){
+            console.log(this.props.Cart);
+            cartItems = this.props.Cart.map((cartItem, index) => 
+            <p key={index}>Title: {cartItem.Title} Size: {cartItem.Size} Amount: {cartItem.Amount} PersonalPreference: {cartItem.PersonalPreference} Price: {cartItem.TotalPrice} PRICEPER: {cartItem.Price}<FontAwesomeIcon onClick={() => this.decrementCartItemAmount(cartItem.ItemID, cartItem.TotalPrice, cartItem.Price, cartItem.Size)} icon={faMinus} /><FontAwesomeIcon onClick={() => this.incrementCartItemAmount(cartItem.ItemID, cartItem.TotalPrice, cartItem.Price, cartItem.Size)} icon={faPlus} /><FontAwesomeIcon onClick={() => this.removeItemFromCart(cartItem.ItemID, cartItem.Size)} icon={faTimes} /></p>
+            );
+        }
+
+        // let cartItems = this.props.Cart.map((cartItem, index) => 
+        // <p key={index}>Title: {cartItem.Title} Size: {cartItem.Size} Amount: {cartItem.Amount} PersonalPreference: {cartItem.PersonalPreference} Price: {cartItem.Price}<FontAwesomeIcon onClick={() => this.decrementCartItemAmount(cartItem.ItemID)} icon={faMinus} /><FontAwesomeIcon onClick={() => this.incrementCartItemAmount(cartItem.ItemID)} icon={faPlus} /><FontAwesomeIcon onClick={() => this.removeItemFromCart(cartItem.ItemID)} icon={faTimes} /></p>
+        // );
 
         return (
             <div>
@@ -110,7 +130,7 @@ const mapStateToProps = (state) => {
     return {
         // Username: state.homeReducer.Username,
         // IsAuthenticated: state.homeReducer.IsAuthenticated,
-        // Data: state.homeReducer.Data
+        Cart: state.homeReducer.Cart
     };
 }
 
@@ -118,6 +138,9 @@ const mapDispatchToProps = {
     // tryLoadDataFromLocalStroage,
     // logoutAction,
     // fetchItems,
+    removeItemFromCart,
+    incrementCartItemAmount,
+    decrementCartItemAmount,
     push
 }
 

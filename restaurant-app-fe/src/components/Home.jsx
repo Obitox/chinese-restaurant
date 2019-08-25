@@ -25,7 +25,7 @@ import { faShoppingCart, faMinus } from '@fortawesome/free-solid-svg-icons'
 import { logoutAction } from '../actions/home'
 // import Login from "./Login.jsx"
 import { tryLoadDataFromLocalStorage } from '../actions/home'
-import { fetchItems, checkoutCart, addItemToCart, removeItemFromCart, clearCartItems, loadCartFromLocalStorage } from '../actions/home'
+import { fetchItems, checkoutCart, addItemToCart, clearCartItems, loadCartFromLocalStorage } from '../actions/home'
 
 import ItemDialog from './ItemDialog.jsx'
 import CartDialog from './CartDialog.jsx'
@@ -37,7 +37,7 @@ class Home extends React.Component {
             csrf_token: '',
             size: '',
             open: false,
-            object: { },
+            item: { },
             isCartOpen: false
         }
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -63,12 +63,12 @@ class Home extends React.Component {
     }
 
     handleClickOpen = key => {
-        let element = this.props.Data.filter(function(el){
-            if(el.Item.ItemID == key){
-                return el.Item;
+        let item = this.props.Items.find(function(item){
+            if(item.ItemID == key){
+                return item;
             }
         });
-        this.setState({['open']: true, ['object']: element});
+        this.setState({['open']: true, ['item']: item});
     }
 
     handleClose = () => {
@@ -86,10 +86,6 @@ class Home extends React.Component {
     addToCart = (item) => {
         this.props.addItemToCart(item);
         this.appendCartInLocalStorage(item);
-    }
-
-    removeCartItem = (itemID) => {
-        this.props.removeItemFromCart(itemID);
     }
 
     appendCartInLocalStorage = (item) => {
@@ -119,6 +115,7 @@ class Home extends React.Component {
     }
 
     componentDidMount(){
+        // FIXME: separate this request to action
         fetch(`http://localhost:3000/csrf`, {
             method: 'POST',
             credentials: 'include'
@@ -129,6 +126,7 @@ class Home extends React.Component {
                 csrf_token: response._RequestAntiForgeryToken
             });
         });
+        
         this.props.tryLoadDataFromLocalStorage();
         this.props.fetchItems();
         this.props.loadCartFromLocalStorage();
@@ -152,8 +150,6 @@ class Home extends React.Component {
     }
 
     render(){
-        // FIXME: Different cart load on startup
-        // this.loadDataFromLocalStorage();
         const isLoggedIn = this.props.IsAuthenticated;
 
         let button;
@@ -181,18 +177,18 @@ class Home extends React.Component {
             </div>;
         }
 
-        let items = this.props.Data.map((object, key) =>
-            // <li key={object.Item.ItemID}>{object.Item.Title}</li>
-            <div className="item" key={object.Item.ItemID}>
+        let items = this.props.Items.map((item, index) =>
+            // <li key={item.Item.ItemID}>{item.Item.Title}</li>
+            <div className="item" key={index}>
                 <p>
-                    {object.Item.Title}
+                    {item.Title}
                 </p>
-                <Button variant="outlined" onClick={() => this.handleClickOpen(object.Item.ItemID)}>
+                <Button variant="outlined" onClick={() => this.handleClickOpen(item.ItemID)}>
                     Add to cart
                 </Button>
                 {/* <ItemDialog 
                     open={this.state.open}
-                    object={object}
+                    item={item}
                 ></ItemDialog> */}
             </div>
         );
@@ -204,7 +200,7 @@ class Home extends React.Component {
             itemDialog = <div>
                             <ItemDialog 
                                 open={this.state.open}
-                                object={this.state.object}
+                                Item={this.state.item}
                                 handleClose={this.handleClose}
                                 addToCart={this.addToCart}
                             ></ItemDialog>
@@ -229,7 +225,6 @@ class Home extends React.Component {
                                 cart={this.props.Cart.length == 0 ? [] :  this.props.Cart}
                                 handleCartClose={this.handleCartClose}
                                 checkoutCart={this.checkoutCart}
-                                removeCartItem={this.removeCartItem}
                             > 
                             </CartDialog>
                          </div>
@@ -254,7 +249,7 @@ const mapStateToProps = (state) => {
     return {
         Username: state.homeReducer.Username,
         IsAuthenticated: state.homeReducer.IsAuthenticated,
-        Data: state.homeReducer.Data,
+        Items: state.homeReducer.Data,
         Cart: state.homeReducer.Cart,
         Message: state.homeReducer.Message
     };
@@ -266,7 +261,6 @@ const mapDispatchToProps = {
     fetchItems,
     checkoutCart,
     addItemToCart,
-    removeItemFromCart,
     clearCartItems,
     loadCartFromLocalStorage,
     push

@@ -16,6 +16,8 @@ import Register from 'components/Register.jsx'
 import { ConnectedRouter } from 'connected-react-router'
 import configureStore, { history } from './configureStore'
 import { Route, Switch } from 'react-router'
+import AdminDashboard from "components/AdminDashboard.jsx";
+import Users from "components/Users.jsx";
 
 const store = configureStore(/* provide initial state if any */)
 
@@ -36,6 +38,7 @@ const Root = () => (
           <Route path="/home" component={Home} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
+          <Route path="/admindashboard" component={AdminDashboard} />
         </Switch>
     </ConnectedRouter>
   </Provider>

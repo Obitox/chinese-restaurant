@@ -79,6 +79,22 @@ func initJWT() error {
 	return nil
 }
 
+// GetAllUsers returns all users inside the DB
+func GetAllUsers() []User {
+	conn, err := db.MySQLConnect()
+	defer conn.Close()
+
+	if err != nil {
+		log.Println(err)
+		return []User{}
+	}
+
+	users := []User{}
+	conn.Where("is_deleted=?", 0).Find(&users)
+
+	return users
+}
+
 // GetUserByUsernameAndPassword retrieves user with matching username and password from the MySQL DB
 func (user *User) GetUserByUsernameAndPassword() (err error) {
 	conn, err := db.MySQLConnect()

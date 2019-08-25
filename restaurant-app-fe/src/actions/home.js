@@ -18,6 +18,9 @@ export const CART_ITEM_ADD = 'CART_ITEM_ADD'
 export const CART_ITEM_CLEAR = 'CART_ITEM_CLEAR'
 export const CART_ITEM_REMOVE = 'CART_ITEM_REMOVE'
 
+export const INCREMENT_CART_ITEM_AMOUNT = 'INCREASE_CART_ITEM_AMOUNT'
+export const DECREMENT_CART_ITEM_AMOUNT = 'DECREMENT_CART_ITEM_AMOUNT'
+
 const baseURL = `http://localhost:3000`
 
 const logoutRequest = (username) => {
@@ -96,10 +99,10 @@ const cartItemAdd = (item) => {
     }
 }
 
-const cartItemRemove = (itemID) => {
+const cartItemRemove = (itemID, size) => {
     return {
         type: CART_ITEM_REMOVE,
-        payload: item
+        payload: {ItemID: itemID, Size: size}
     }
 }
 
@@ -107,6 +110,28 @@ const cartItemClear = () => {
     return {
         type: CART_ITEM_CLEAR,
         payload: "Cleared"
+    }
+}
+
+const cartItemIncrementAmount = (itemID, newTotalPrice, size) => {
+    return {
+        type: INCREMENT_CART_ITEM_AMOUNT,
+        payload: {
+            ItemID: itemID,
+            TotalPrice: newTotalPrice,
+            Size: size
+        }
+    }
+}
+
+const cartItemDecrementAmount = (itemID, newTotalPrice, size) => {
+    return {
+        type: DECREMENT_CART_ITEM_AMOUNT,
+        payload: {
+            ItemID: itemID,
+            TotalPrice: newTotalPrice,
+            Size: size
+        }
     }
 }
 
@@ -210,12 +235,20 @@ export const addItemToCart = (item) => dispatch => {
     dispatch(cartItemAdd(item))
 }
 
-export const removeItemFromCart = (itemID) => dispatch => {
-    dispatch(cartItemRemove(itemID))
+export const removeItemFromCart = (itemID, size) => dispatch => {
+    dispatch(cartItemRemove(itemID, size))
 }
 
 export const clearCartItems = () => dispatch => {
     dispatch(cartItemClear())
+}
+
+export const incrementCartItemAmount = (itemID, newTotalPrice, size) => dispatch => {
+    dispatch(cartItemIncrementAmount(itemID, newTotalPrice, size))
+}
+
+export const decrementCartItemAmount = (itemID, newTotalPrice, size) => dispatch => {
+    dispatch(cartItemDecrementAmount(itemID, newTotalPrice, size))
 }
 
 export const checkoutCart = (cart, csrf) => dispatch => {

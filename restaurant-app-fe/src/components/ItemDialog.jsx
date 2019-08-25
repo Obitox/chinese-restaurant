@@ -27,19 +27,20 @@ export default class ItemDialog extends React.Component {
     this.state = {
         checkboxes: [],
         size: '',
-        price: 0,
+        price: this.props.Item.Price,
+        total_price: 0,
         isDisabled: true,
         personalPreference: '',
         amount: 1
     };
 
-    this.getCheckboxState = this.getCheckboxState.bind(this);
+    // this.getCheckboxState = this.getCheckboxState.bind(this);
     this.handleIngredientCheck = this.handleIngredientCheck.bind(this);
   }
 
   componentDidMount = () => {
     // FIXME: fix this ugly menace
-    this.props.object[0].Ingredient.forEach(this.initCheckBoxes);
+    this.props.Item.Ingredients.forEach(this.initCheckBoxes);
   }
 
   handleChange = event => {
@@ -48,19 +49,20 @@ export default class ItemDialog extends React.Component {
 
   handleAmountChange = event => {
     // FIXME: fix this ugly menace
-    let price = this.props.object[0].Item.Price * this.getPriceMultiplier(this.state.size);
+    let price = this.props.Item.Price * this.getPriceMultiplier(this.state.size);
     let name = event.target.name;
     let amount = event.target.value;
+    let total_price = price;
 
-    if(price > 0) {
+    if(total_price > 0) {
       if(amount > 0){
-        price *= amount;
+        total_price *= amount;
       }
       else {
-        price = 0;
+        total_price = 0;
       }
     }
-    this.setState({[name]: amount, ['price']: price});
+    this.setState({[name]: amount, ['total_price']: total_price, ['price']: price});
   }
 
   handleClose = () => {
@@ -69,12 +71,14 @@ export default class ItemDialog extends React.Component {
 
 
   addToCart = () => {
+    console.log('PRICE: ' + this.state.price);
     this.props.addToCart({
       // FIXME: fix this ugly menace
-      ItemID: this.props.object[0].Item.ItemID,
-      Title: this.props.object[0].Item.Title,
+      ItemID: this.props.Item.ItemID,
+      Title: this.props.Item.Title,
       Size: this.state.size,
       Price: this.state.price,
+      TotalPrice: this.state.total_price,
       PersonalPreference: this.state.personalPreference,
       Amount: parseInt(this.state.amount)
     });
@@ -83,7 +87,7 @@ export default class ItemDialog extends React.Component {
 
   getPriceMultiplier = (size) => {
     // FIXME: fix this ugly menace
-    let portions = this.props.object[0].Portion;
+    let portions = this.props.Item.Category.Portions;
 
     for(var i=0; i < portions.length;i++){
       if(portions[i].SizeName == size){
@@ -96,7 +100,7 @@ export default class ItemDialog extends React.Component {
 
   calculatePrice = (size) => {
     let price = 0;
-    price = this.props.object[0].Item.Price * this.getPriceMultiplier(size);
+    price = this.props.Item.Price * this.getPriceMultiplier(size);
     
     if(this.state.amount > 0){
       price *= this.state.amount;
@@ -108,7 +112,7 @@ export default class ItemDialog extends React.Component {
   handleSelect = event => {
     let price = 0;
     price = this.state.amount == 0 ? 0 : this.calculatePrice(event.target.value)
-    this.setState({[event.target.name]: event.target.value, ['price']: price, ['isDisabled']: false});
+    this.setState({[event.target.name]: event.target.value, ['total_price']: price, ['isDisabled']: false});
   }
 
   initCheckBoxes = (ingredient) => {
@@ -126,14 +130,14 @@ export default class ItemDialog extends React.Component {
     this.setState({['checkboxes']: temp})
   }
 
-  getCheckboxState(key){
-    this.state.checkboxes.filter(function(checkbox){
-      if(checkbox.key == key){
-        return checkbox.value;
-      }
-    });
-    return false;
-  }
+  // getCheckboxState(key){
+  //   this.state.checkboxes.filter(function(checkbox){
+  //     if(checkbox.key == key){
+  //       return checkbox.value;
+  //     }
+  //   });
+  //   return false;
+  // }
 
   handleIngredientCheck(event, key){
       let checkboxes = this.state.checkboxes;
@@ -149,7 +153,7 @@ export default class ItemDialog extends React.Component {
 
   IsBase = (index) => {
     // FIXME: fix this ugly menace
-    return this.props.object[0].Ingredient[index].IsBase == 1 ? true : false;
+    return this.props.Item.Ingredients[index].IsBase == 1 ? true : false;
   }
 
   IsChecked = (checkboxes, ingredientID) => {
@@ -163,23 +167,23 @@ export default class ItemDialog extends React.Component {
 
   render(){
     // FIXME: fix this ugly menace
-    let ingredients = this.props.object[0].Ingredient.map((obj, index) => 
+    let ingredients = this.props.Item.Ingredients.map((ingredient, index) => 
                                         <FormControlLabel
                                           key={index}
                                           control={
                                             <Checkbox
-                                              key={obj.IngredientID}
+                                              key={ingredient.IngredientID}
                                               disabled={this.IsBase(index)}
-                                              checked={this.IsChecked(this.state.checkboxes, obj.IngredientID)}
-                                              onChange={(event) => this.handleIngredientCheck(event,  obj.IngredientID)} 
-                                              value={obj.Title} />
+                                              checked={this.IsChecked(this.state.checkboxes, ingredient.IngredientID)}
+                                              onChange={(event) => this.handleIngredientCheck(event,  ingredient.IngredientID)} 
+                                              value={ingredient.Title} />
                                           }
-                                          label={obj.Title}
+                                          label={ingredient.Title}
                                         />
     );
 
     // FIXME: fix this ugly menace
-    let allergens = this.props.object[0].Ingredient.map(function(ingredient){
+    let allergens = this.props.Item.Ingredients.map(function(ingredient){
         if(ingredient.Allergens !== ""){
           return ingredient.Allergens;
         }
@@ -188,7 +192,7 @@ export default class ItemDialog extends React.Component {
     let img = <img id='default' alt="default" src={defaultImg} height='75px' width='75px'></img>
 
     // FIXME: fix this ugly menace
-    let portion = this.props.object[0].Portion.map((portion, index) => 
+    let portion = this.props.Item.Category.Portions.map((portion, index) => 
                                           <MenuItem key={index} value={portion.SizeName}>{portion.SizeName}</MenuItem>
     );
 
@@ -196,7 +200,7 @@ export default class ItemDialog extends React.Component {
     return (
         <div>
           <Dialog open={this.props.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">{this.props.object[0].Item.Title}</DialogTitle>
+                    <DialogTitle id="form-dialog-title">{this.props.Item.Title}</DialogTitle>
                     <DialogContent>
                     {this.props.open ? img : null}
                     {ingredients}
@@ -238,7 +242,7 @@ export default class ItemDialog extends React.Component {
                       }}
                       margin="normal"
                     />
-                    <p>{this.state.price}</p>
+                    <p>{this.state.total_price}</p>
                     </DialogContent>
                     <DialogActions>
                     <Button onClick={this.handleClose} color="primary">

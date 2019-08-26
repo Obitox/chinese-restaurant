@@ -36,7 +36,7 @@ type TokenClaims struct {
 }
 
 type User struct {
-	UserID                                                                                                             uint64
+	UserID                                                                                                             uint64 `gorm:"primary_key"`
 	Username, Password, Role, FirstName, LastName, Address1, Address2, Address3, Phone, Email, RequestAntiForgeryToken string
 	IsDeleted                                                                                                          int8
 }
@@ -93,6 +93,43 @@ func GetAllUsers() []User {
 	conn.Where("is_deleted=?", 0).Find(&users)
 
 	return users
+}
+
+// UpdateUser updates a user
+// Admin feature
+// FIXME: Can't update password
+func (user User) UpdateUser() (err error) {
+	conn, err := db.MySQLConnect()
+	defer conn.Close()
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	conn.Save(&user)
+
+	return nil
+}
+
+// DeleteUser Deletes a user
+// Admin feature
+func (user *User) DeleteUser() (err error) {
+	conn, err := db.MySQLConnect()
+	defer conn.Close()
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	log.Println("WORKS")
+	// conn.Model(&user).Select("is_deleted").Updates(map[string]interface{}{"is_deleted": 1})
+
+	user.IsDeleted = 1
+	conn.Save(&user)
+
+	return nil
 }
 
 // GetUserByUsernameAndPassword retrieves user with matching username and password from the MySQL DB

@@ -112,7 +112,7 @@ class AdminDashboard extends Component {
         // console.log(this.props.Users);
 
         const {
-            Users,
+            // Users,
             IsFetching
         } = this.props;
 
@@ -130,7 +130,7 @@ class AdminDashboard extends Component {
                 <Route
                     exact
                     path={this.props.match.path}
-                    render={() => <h3>Please select a topic.</h3>}
+                    render={() => <h3>Please select something to maintain.</h3>}
                 />
             </div>
         );

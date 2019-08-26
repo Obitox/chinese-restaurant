@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { push } from 'connected-react-router'
 
+import { updateUser, deleteUser } from '../actions/adminDashboard'
+
 // Styling
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -18,7 +20,8 @@ class Users extends Component {
         super(props);
         this.state = {
             csrf_token: '',
-            switches: []
+            switches: [],
+            users: []
         };
         this.componentDidMount = this.componentDidMount.bind(this);
         // this.initSwitches = this.initSwitches.bind(this);
@@ -35,7 +38,7 @@ class Users extends Component {
                                     credentials: 'include'
                                 });
         const json = await response.json();
-        this.setState({['csrf_token']: json._RequestAntiForgeryToken});
+        this.setState({['csrf_token']: json._RequestAntiForgeryToken, ['users']: this.props.Users});
     }
 
     // componentDidUpdate = () => {
@@ -102,11 +105,46 @@ class Users extends Component {
         }
         this.setState({['switches']: updatedSwitches})
     }
+ 
+    updateUser = (user) => {
+        // console.log(user);
+        this.props.updateUser(user, this.state.csrf_token);
+    }
+
+    deleteUser = (index, userID) => {
+        this.props.deleteUser(this.state.users[index], this.state.csrf_token);
+        this.setState(prevState => ({
+            users: prevState.users.filter(user => user.UserID !== userID)
+        }))
+        // if(this.props.Message == "OK"){
+        //     console.log(this.props.Users)
+        //     this.setState({['users']: this.props.Users});
+        // }
+    }
+
+    handleChange = (event, index) => {
+        let users = this.state.users;
+
+        switch(event.target.name){
+            case "userid":
+                users[index].UserID = event.target.value;
+                this.setState({['users']: users});
+                break;
+            case "username":
+                users[index].Username = event.target.value;
+                this.setState({['users']: users});
+                break;
+            case "password":
+                users[index].Password = event.target.value;
+                this.setState({['users']: users});
+                break;
+        }
+    }
 
     render() {
         // this.props.Users.forEach(this.initSwitches);
 
-        let users = this.props.Users !== undefined ? this.props.Users.map((user, index) => 
+        let users = this.state.users !== undefined ? this.state.users.map((user, index) => 
             <tr key={index}>
                 <td>
                     <TextField
@@ -115,6 +153,7 @@ class Users extends Component {
                         id="standard-bare"
                         name="userid"
                         value={user.UserID}
+                        onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
                         variant="outlined"
@@ -127,6 +166,7 @@ class Users extends Component {
                         id="standard-bare"
                         name="username"
                         value={user.Username}
+                        onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
                         variant="outlined"
@@ -139,6 +179,7 @@ class Users extends Component {
                         id="standard-bare"
                         name="password"
                         value={user.Password}
+                        onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
                         type="password"
@@ -152,6 +193,7 @@ class Users extends Component {
                         id="standard-bare"
                         name="role"
                         value={user.Role}
+                        onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
                         variant="outlined"
@@ -164,6 +206,7 @@ class Users extends Component {
                         id="standard-bare"
                         name="firstname"
                         value={user.FirstName}
+                        onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
                         variant="outlined"
@@ -176,6 +219,7 @@ class Users extends Component {
                         id="standard-bare"
                         name="lastname"
                         value={user.LastName}
+                        onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
                         variant="outlined"
@@ -188,6 +232,7 @@ class Users extends Component {
                         id="standard-bare"
                         name="address1"
                         value={user.Address1}
+                        onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
                         variant="outlined"
@@ -224,6 +269,7 @@ class Users extends Component {
                         id="standard-bare"
                         name="phone"
                         value={user.Phone}
+                        onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
                         variant="outlined"
@@ -236,6 +282,7 @@ class Users extends Component {
                         id="standard-bare"
                         name="email"
                         value={user.Email}
+                        onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
                         variant="outlined"
@@ -253,13 +300,13 @@ class Users extends Component {
                     }
                     label="Editing"
                 />
-                <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} color="primary" aria-label="edit" size="small">
+                {/* <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} color="primary" aria-label="edit" size="small">
                     <EditIcon />
-                </Fab>
-                <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} color="secondary" aria-label="delete" size="small">
+                </Fab> */}
+                <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} onClick={() => this.deleteUser(index, user.UserID)} color="secondary" aria-label="delete" size="small">
                     <DeleteIcon />
                 </Fab>
-                <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} color="primary" aria-label="save" size="small">
+                <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} onClick={() => this.updateUser(this.state.users[index])} color="primary" aria-label="save" size="small">
                     <SaveIcon />
                 </Fab>
                 </td>
@@ -319,12 +366,14 @@ class Users extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        Users: state.usersReducer.Users
+        Users: state.usersReducer.Users,
+        Message: state.usersReducer.Message
     };
 }
 
 const mapDispatchToProps = {
-    
+    updateUser,
+    deleteUser
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Users)

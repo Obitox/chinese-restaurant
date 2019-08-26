@@ -6,33 +6,29 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"restaurant-app/models"
 	"restaurant-app/utils"
 	"strconv"
 	"time"
 
-	"restaurant-app/models"
-
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-// Users handler returns all users inside the DB
-//FIXME: move to admindashboard
-func Users(w http.ResponseWriter, r *http.Request) {
+// DeleteUser handler to delete a user
+// Admin feature
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	utils.SetupCors(&w, r)
 
 	w.Header().Set("Content-Type", "application/json")
 
-	csrf := models.CsrfToken{
-		Token: "",
-	}
+	user := models.User{}
 
-	log.Println(r.Body)
 	data, bodyErr := ioutil.ReadAll(r.Body)
 	if bodyErr != nil {
 		log.Println("Readll: " + bodyErr.Error())
 	}
 
-	unmarshErr := json.Unmarshal(data, &csrf)
+	unmarshErr := json.Unmarshal(data, &user)
 	if unmarshErr != nil {
 		log.Println(unmarshErr.Error())
 		panic("ERROR: " + unmarshErr.Error())
@@ -72,8 +68,8 @@ func Users(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(csrf.Token) > 0 {
-		if csrf.Token == csrfCookie.Value {
+	if len(user.RequestAntiForgeryToken) > 0 {
+		if user.RequestAntiForgeryToken == csrfCookie.Value {
 			authCookie, authCookieError := r.Cookie("AuthToken")
 			if authCookieError != nil {
 				response := models.Response{
@@ -257,15 +253,12 @@ func Users(w http.ResponseWriter, r *http.Request) {
 					http.SetCookie(w, refreshCookie)
 					// END
 
-					// CART PROCESSING
-					// 1. Create cart
-					users := models.GetAllUsers()
-					marshaledUsers, err := json.Marshal(users)
-
-					if err != nil {
+					// BEGIN REF
+					deleteError := user.DeleteUser()
+					if deleteError != nil {
 						response := models.Response{
 							ReturnCode: -1,
-							Message:    err.Error(),
+							Message:    deleteError.Error(),
 						}
 						byteResponse, marshalError := response.Response()
 						if marshalError != nil {
@@ -276,7 +269,16 @@ func Users(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-					w.Write(marshaledUsers)
+					response := models.Response{
+						ReturnCode: 0,
+						Message:    "OK",
+					}
+					byteResponse, marshalError := response.Response()
+					if marshalError != nil {
+						log.Println("Error while marshaling the Response object")
+						return
+					}
+					w.Write(byteResponse)
 					return
 				}
 			}
@@ -375,13 +377,11 @@ func Users(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 
-				users := models.GetAllUsers()
-				marshaledUsers, err := json.Marshal(users)
-
-				if err != nil {
+				deleteError := user.DeleteUser()
+				if deleteError != nil {
 					response := models.Response{
 						ReturnCode: -1,
-						Message:    err.Error(),
+						Message:    deleteError.Error(),
 					}
 					byteResponse, marshalError := response.Response()
 					if marshalError != nil {
@@ -392,7 +392,16 @@ func Users(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				w.Write(marshaledUsers)
+				response := models.Response{
+					ReturnCode: 0,
+					Message:    "OK",
+				}
+				byteResponse, marshalError := response.Response()
+				if marshalError != nil {
+					log.Println("Error while marshaling the Response object")
+					return
+				}
+				w.Write(byteResponse)
 				return
 			}
 
@@ -410,24 +419,4 @@ func Users(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
-	// // LOGIC TO ADD
-	// users := models.GetAllUsers()
-	// marshaledUsers, err := json.Marshal(users)
-
-	// if err != nil {
-	// 	response := models.Response{
-	// 		ReturnCode: -1,
-	// 		Message:    err.Error(),
-	// 	}
-	// 	byteResponse, marshalError := response.Response()
-	// 	if marshalError != nil {
-	// 		log.Println("Error while marshaling the Response object")
-	// 		return
-	// 	}
-	// 	w.Write(byteResponse)
-	// 	return
-	// }
-
-	// w.Write(marshaledUsers)
 }

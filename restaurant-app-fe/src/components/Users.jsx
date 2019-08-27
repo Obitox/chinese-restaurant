@@ -3,17 +3,19 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { push } from 'connected-react-router'
 
-import { updateUser, deleteUser } from '../actions/adminDashboard'
+import { addUser, updateUser, deleteUser } from '../actions/adminDashboard'
 
 // Styling
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Fab from '@material-ui/core/Fab';
-import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 // import DeleteIcon from '@material-ui/icons/Delete';
+
+import { throttle } from 'throttle-debounce';
 
 class Users extends Component {
     constructor(props){
@@ -21,7 +23,20 @@ class Users extends Component {
         this.state = {
             csrf_token: '',
             switches: [],
-            users: []
+            users: [],
+            user: {
+                Username: '',
+                Password: '',
+                Role: '',
+                Password: '',
+                FirstName: '',
+                LastName: '',
+                Address1: '',
+                Address2: '',
+                Address3: '',
+                Phone: '',
+                Email: ''
+            }
         };
         this.componentDidMount = this.componentDidMount.bind(this);
         // this.initSwitches = this.initSwitches.bind(this);
@@ -111,39 +126,84 @@ class Users extends Component {
         this.props.updateUser(user, this.state.csrf_token);
     }
 
-    deleteUser = (index, userID) => {
+    deleteUser = (index) => {
         this.props.deleteUser(this.state.users[index], this.state.csrf_token);
         this.setState(prevState => ({
             users: prevState.users.filter(user => user.UserID !== userID)
-        }))
+        }));
+
         // if(this.props.Message == "OK"){
         //     console.log(this.props.Users)
         //     this.setState({['users']: this.props.Users});
         // }
     }
 
+    addUser = (newUser) => {
+        this.props.addUser(newUser, this.state.csrf_token);
+        this.setState(prevState => ({
+            users: [...prevState.users, newUser]
+        }))
+    }
+
     handleChange = (event, index) => {
+        let name = event.target.name;
+        let value = event.target.value;
         let users = this.state.users;
 
-        switch(event.target.name){
-            case "userid":
-                users[index].UserID = event.target.value;
-                this.setState({['users']: users});
-                break;
-            case "username":
-                users[index].Username = event.target.value;
-                this.setState({['users']: users});
-                break;
-            case "password":
-                users[index].Password = event.target.value;
-                this.setState({['users']: users});
-                break;
-        }
+        users[index][name] = value;
+        this.setState({['users']: users});
+
+        // switch(event.target.name){
+        //     case "userid":
+        //         users[index].UserID = event.target.value;
+        //         this.setState({['users']: users});
+        //         break;
+        //     case "username":
+        //         users[index].Username = event.target.value;
+        //         this.setState({['users']: users});
+        //         break;
+        //     case "password":
+        //         users[index].Password = event.target.value;
+        //         this.setState({['users']: users});
+        //         break;
+        //     case "role":
+        //         users[index].Role = event.target.value;
+        //         this.setState({['users']: users});
+        //         break;
+        //     case "firstname":
+        //         users[index].FirstName = event.target.value;
+        //         this.setState({['users']: users});
+        //         break;
+        //     case "lastname":
+        //         users[index].LastName = event.target.value;
+        //         this.setState({['users']: users});
+        //         break;
+        //     case "address1":
+        //         users[index].Address1 = event.target.value;
+        //         this.setState({['users']: users});
+        //         break;
+        //     case "phone":
+        //         users[index].Phone = event.target.value;
+        //         this.setState({['users']: users});
+        //         break;
+        //     case "email":
+        //         users[index].Email = event.target.value;
+        //         this.setState({['users']: users});
+        //         break;
+        // }
+    }
+
+    handleNewUserChange = (event) => {
+        let name = event.target.name;
+        let value = event.target.value;
+
+        let user = this.state.user;
+        user[name] = value;
+
+        this.setState({user: user})
     }
 
     render() {
-        // this.props.Users.forEach(this.initSwitches);
-
         let users = this.state.users !== undefined ? this.state.users.map((user, index) => 
             <tr key={index}>
                 <td>
@@ -151,7 +211,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="userid"
+                        name="UserID"
                         value={user.UserID}
                         onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
@@ -164,7 +224,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="username"
+                        name="Username"
                         value={user.Username}
                         onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
@@ -177,7 +237,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="password"
+                        name="Password"
                         value={user.Password}
                         onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
@@ -191,7 +251,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="role"
+                        name="Role"
                         value={user.Role}
                         onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
@@ -204,7 +264,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="firstname"
+                        name="FirstName"
                         value={user.FirstName}
                         onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
@@ -217,7 +277,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="lastname"
+                        name="LastName"
                         value={user.LastName}
                         onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
@@ -230,7 +290,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="address1"
+                        name="Address1"
                         value={user.Address1}
                         onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
@@ -243,7 +303,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="address2"
+                        name="Address2"
                         // value={this.state.username}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
@@ -255,7 +315,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="address3"
+                        name="Address3"
                         // value={this.state.username}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
                         margin="normal"
@@ -267,7 +327,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="phone"
+                        name="Phone"
                         value={user.Phone}
                         onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
@@ -280,7 +340,7 @@ class Users extends Component {
                         // error={!this.state.IsUsernameValid}
                         disabled={!this.getSwitchState(this.state.switches, user.UserID)}
                         id="standard-bare"
-                        name="email"
+                        name="Email"
                         value={user.Email}
                         onChange={(event) => this.handleChange(event, index)}
                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
@@ -303,7 +363,7 @@ class Users extends Component {
                 {/* <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} color="primary" aria-label="edit" size="small">
                     <EditIcon />
                 </Fab> */}
-                <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} onClick={() => this.deleteUser(index, user.UserID)} color="secondary" aria-label="delete" size="small">
+                <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} onClick={() => this.deleteUser(index)} color="secondary" aria-label="delete" size="small">
                     <DeleteIcon />
                 </Fab>
                 <Fab disabled={!this.getSwitchState(this.state.switches, user.UserID)} onClick={() => this.updateUser(this.state.users[index])} color="primary" aria-label="save" size="small">
@@ -312,11 +372,190 @@ class Users extends Component {
                 </td>
             </tr>
             
-        ) : <tr><td>Error</td></tr>
+        ) : (<tr><td>Error</td></tr>);
+
+        let userAdd = 
+                (
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Username
+                                </th>
+                                <th>
+                                    Password
+                                </th>
+                                <th>
+                                    Role
+                                </th>
+                                <th>
+                                    Firstname
+                                </th>
+                                <th>
+                                    Lastname
+                                </th>
+                                <th>
+                                    Address1
+                                </th>
+                                <th>
+                                    Address2
+                                </th>
+                                <th>
+                                    Address3
+                                </th>
+                                <th>
+                                    Phone
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="Username"
+                                        defaultValue={this.state.user.Username}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="Password"
+                                        value={this.state.user.Password}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        type="password"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="Role"
+                                        value={this.state.user.Role}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="FirstName"
+                                        value={this.state.user.FirstName}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="LastName"
+                                        value={this.state.user.LastName}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="Address1"
+                                        value={this.state.user.Address1}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="Address2"
+                                        value={this.state.user.Address2}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="Address3"
+                                        value={this.state.user.Address3}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="Phone"
+                                        value={this.state.user.Phone}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <TextField
+                                        // error={!this.state.IsUsernameValid}
+                                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                                        id="standard-bare"
+                                        name="Email"
+                                        value={this.state.user.Email}
+                                        onChange={this.handleNewUserChange}
+                                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                                        margin="normal"
+                                        variant="outlined"
+                                    />
+                                </td>
+                                <td>
+                                    <Fab onClick={() => this.addUser(this.state.user)} color="primary" aria-label="add" size="small">
+                                        <PersonAddIcon />
+                                    </Fab>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                );
 
         return (
             <div>
-                {/* <p>YOYOYOYO</p> */}
                 <table>
                     <thead>
                         <tr>
@@ -359,6 +598,7 @@ class Users extends Component {
                         {users}
                     </tbody>
                 </table>
+                {userAdd}
             </div>
         );
     }
@@ -372,6 +612,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = {
+    addUser,
     updateUser,
     deleteUser
 }

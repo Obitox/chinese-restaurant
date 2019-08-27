@@ -10,6 +10,10 @@ export const USER_DELETE_REQUEST = 'USER_DELETE_REQUEST'
 export const USER_DELETE_SUCCESS = 'USER_DELETE_SUCCESS'
 export const USER_DELETE_FAILED = 'USER_DELETE_FAILED'
 
+export const USER_ADD_REQUEST = 'USER_ADD_REQUEST'
+export const USER_ADD_SUCCESS = 'USER_ADD_SUCCESS'
+export const USER_ADD_FAILED = 'USER_ADD_FAILED'
+
 const baseURL = `http://localhost:3000`
 
 const usersRequest = (isFetching) => {
@@ -36,6 +40,28 @@ const usersFailed = (message) => {
     }
 }
 
+const addUserRequest = (user) => {
+    return {
+        type: USER_ADD_REQUEST,
+        payload: user
+    }
+}
+
+const addUserSuccess = (message) => {
+    return {
+        type: USER_ADD_SUCCESS,
+        payload: {
+            Message: message
+        }
+    }
+}
+
+const addUserFailed = (message) => {
+    return {
+        type: USER_ADD_FAILED,
+        payload: message
+    }
+}
 
 const updateUserRequest = (user) => {
     return {
@@ -58,17 +84,19 @@ const updateUserFailed = (message) => {
     }
 }
 
-const deleteUserRequest = (username) => {
+const deleteUserRequest = (userID) => {
     return {
         type: USER_UPDATE_REQUEST,
-        payload: username
+        payload: userID
     }
 }
 
 const deleteUserSuccess = (message) => {
     return {
         type: USER_UPDATE_SUCCESS,
-        payload: message
+        payload: {
+            Message: message
+        }
     }
 }
 
@@ -151,14 +179,14 @@ export const updateUser = (user, csrf) => dispatch => {
          if(response.Message == "OK"){
              dispatch(updateUserSuccess(response.Message))
          } else {
-             dispatch(updateUserFailed("Authentication failed, username or password is wrong"))
+             dispatch(updateUserFailed("Update failed"))
          }
      })
      .catch(error => dispatch(updateUserFailed(error)));
 }
 
 export const deleteUser = (user, csrf) => dispatch => {
-    dispatch(deleteUserRequest(user.Username))
+    dispatch(deleteUserRequest(user.UserID))
 
     user.RequestAntiForgeryToken = csrf;
     console.log(user);
@@ -178,7 +206,34 @@ export const deleteUser = (user, csrf) => dispatch => {
          if(response.Message == "OK"){
              dispatch(deleteUserSuccess(response.Message))
          } else {
-             dispatch(deleteUserFailed("Authentication failed, username or password is wrong"))
+             dispatch(deleteUserFailed("Delete failed"))
+         }
+     })
+     .catch(error => dispatch(deleteUserFailed(error)));
+}
+
+export const addUser = (user, csrf) => dispatch => {
+    dispatch(addUserRequest(user))
+
+    user.RequestAntiForgeryToken = csrf;
+    console.log(user);
+    
+    fetch(baseURL + '/addUser', {
+        method: 'POST',
+     //    mode: 'cors',
+     //    headers: {
+     //        'Content-Type': 'application/json',
+     //        // 'Content-Type': 'application/x-www-form-urlencoded',
+     //     },
+         body: JSON.stringify(user),
+         credentials: 'include'
+     })
+     .then(res => res.json())
+     .then(response => {
+         if(response.Message == "OK"){
+             dispatch(addUserSuccess(response.Message))
+         } else {
+             dispatch(addUserFailed("Add failed"))
          }
      })
      .catch(error => dispatch(deleteUserFailed(error)));

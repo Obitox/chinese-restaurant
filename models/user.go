@@ -95,6 +95,38 @@ func GetAllUsers() []User {
 	return users
 }
 
+// AddUser Adds a new user to DB and returns the UserID of new user
+func (user *User) AddUser() (UserID uint64, err error) {
+	conn, err := db.MySQLConnect()
+	defer conn.Close()
+
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+
+	tempUser := User{}
+
+	conn.Select("user_id").Where("username=?", user.Username).Find(&tempUser)
+
+	if tempUser.UserID != 0 {
+		log.Println("User already exist in the DB")
+		return 0, errors.New("User with username " + user.Username + " already exist in the DB")
+	}
+
+	byteArray, hashingError := user.HashPassword()
+	if hashingError != nil {
+		log.Println(hashingError)
+		return 0, hashingError
+	}
+
+	user.Password = string(byteArray)
+	user.IsDeleted = 0
+
+	createError := conn.Create(&user)
+	return tempUser.UserID, createError.Error
+}
+
 // UpdateUser updates a user
 // Admin feature
 // FIXME: Can't update password

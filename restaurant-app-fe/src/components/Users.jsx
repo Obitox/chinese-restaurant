@@ -28,7 +28,6 @@ class Users extends Component {
                 Username: '',
                 Password: '',
                 Role: '',
-                Password: '',
                 FirstName: '',
                 LastName: '',
                 Address1: '',
@@ -38,9 +37,21 @@ class Users extends Component {
                 Email: ''
             }
         };
+        // this.username = React.createRef();
+        // this.password = React.createRef();
+        // this.role = React.createRef();
+        // this.firstname = React.createRef();
+        // this.lastname = React.createRef();
+        // this.address1 = React.createRef();
+        // this.address2 = React.createRef();
+        // this.address3 = React.createRef();
+        // this.phone = React.createRef();
+        // this.email = React.createRef();
+
         this.componentDidMount = this.componentDidMount.bind(this);
         // this.initSwitches = this.initSwitches.bind(this);
         this.getSwitchState = this.getSwitchState.bind(this);
+
     }
 
     async componentDidMount(){
@@ -139,6 +150,7 @@ class Users extends Component {
     }
 
     addUser = (newUser) => {
+        console.log(newUser)
         this.props.addUser(newUser, this.state.csrf_token);
         this.setState(prevState => ({
             users: [...prevState.users, newUser]
@@ -554,6 +566,208 @@ class Users extends Component {
                     </table>
                 );
 
+
+        // let userAdd = 
+        //         (
+        //             <table>
+        //                 <thead>
+        //                     <tr>
+        //                         <th>
+        //                             Username
+        //                         </th>
+        //                         <th>
+        //                             Password
+        //                         </th>
+        //                         <th>
+        //                             Role
+        //                         </th>
+        //                         <th>
+        //                             Firstname
+        //                         </th>
+        //                         <th>
+        //                             Lastname
+        //                         </th>
+        //                         <th>
+        //                             Address1
+        //                         </th>
+        //                         <th>
+        //                             Address2
+        //                         </th>
+        //                         <th>
+        //                             Address3
+        //                         </th>
+        //                         <th>
+        //                             Phone
+        //                         </th>
+        //                         <th>
+        //                             Email
+        //                         </th>
+        //                     </tr>
+        //                 </thead>
+        //                 <tbody>
+        //                     <tr>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="Username"
+        //                                 ref={this.username}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="Password"
+        //                                 ref={this.password}
+        //                                 // value={this.state.user.Password}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 type="password"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="Role"
+        //                                 ref={this.role}
+        //                                 // value={this.state.user.Role}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="FirstName"
+        //                                 ref={this.firstname}
+        //                                 // value={this.state.user.FirstName}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="LastName"
+        //                                 ref={this.lastname}
+        //                                 // value={this.state.user.LastName}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="Address1"
+        //                                 ref={this.address1}
+        //                                 // value={this.state.user.Address1}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="Address2"
+        //                                 ref={this.address2}
+        //                                 // value={this.state.user.Address2}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="Address3"
+        //                                 ref={this.address3}
+        //                                 // value={this.state.user.Address3}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="Phone"
+        //                                 ref={this.phone}
+        //                                 // value={this.state.user.Phone}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <TextField
+        //                                 // error={!this.state.IsUsernameValid}
+        //                                 // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                                 id="standard-bare"
+        //                                 name="Email"
+        //                                 ref={this.email}
+        //                                 // value={this.state.user.Email}
+        //                                 // onChange={this.handleNewUserChange}
+        //                                 // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                                 margin="normal"
+        //                                 variant="outlined"
+        //                             />
+        //                         </td>
+        //                         <td>
+        //                             <Fab onClick={() => this.addUser({
+        //                                 Username: this.username.value,
+        //                                 Password: this.password.current.value,
+        //                                 Role: this.role.current.value,
+        //                                 FirstName: this.firstname.current.value,
+        //                                 LastName: this.lastname.current.value,
+        //                                 Address1: this.address1.current.value,
+        //                                 Address2: this.address2.current.value,
+        //                                 Address3: this.address3.current.value,
+        //                                 Phone: this.phone.current.value,
+        //                                 Email: this.email.current.value
+        //                             })} color="primary" aria-label="add" size="small">
+        //                                 <PersonAddIcon />
+        //                             </Fab>
+        //                         </td>
+        //                     </tr>
+        //                 </tbody>
+        //             </table>
+        //         );
+
+
         return (
             <div>
                 <table>
@@ -607,7 +821,7 @@ class Users extends Component {
 const mapStateToProps = (state) => {
     return {
         Users: state.usersReducer.Users,
-        Message: state.usersReducer.Message
+        // Message: state.usersReducer.Message
     };
 }
 

@@ -5,7 +5,7 @@ import { push } from 'connected-react-router'
 import Users from './Users.jsx';
 import Items from './Items.jsx';
 
-import { fetchUsers } from '../actions/adminDashboard'
+import { fetchUsers, fetchItems, fetchCategories } from '../actions/adminDashboard'
 
 // STYLING
 import Button from '@material-ui/core/Button';
@@ -26,16 +26,15 @@ class AdminDashboard extends Component {
                                 });
         // FIXME: Fix this naming
         const json = await response.json();
-        // this.setState({ csrf_token: json._RequestAntiForgeryToken });
-        console.log(json);                        
+        // this.setState({ csrf_token: json._RequestAntiForgeryToken });                  
 
         const payload = {
             _RequestAntiForgeryToken: json._RequestAntiForgeryToken
         }
 
-        console.log(payload);
         this.props.fetchUsers(payload._RequestAntiForgeryToken);
-
+        this.props.fetchItems();
+        this.props.fetchCategories();
         // const responseUsers = await fetch(`http://localhost:3000/users`, {
         //                             method: 'POST',
         //                             credentials: 'include',
@@ -113,12 +112,18 @@ class AdminDashboard extends Component {
 
         const {
             // Users,
-            IsFetching
+            IsFetchingUsers,
+            IsFetchingItems,
+            IsFetchingCategories
         } = this.props;
 
-        if(IsFetching){
+        console.log(this.props.Categories);
+
+        if(IsFetchingUsers && IsFetchingItems && IsFetchingCategories){
             return <div>Loading</div>;
         }
+        console.log(this.props.Items);
+
         return (
             <div>
                 <Link to={`${this.props.match.url}/users`}>Maintain users</Link>
@@ -140,12 +145,18 @@ class AdminDashboard extends Component {
 const mapStateToProps = (state) => {
     return {
         Users: state.usersReducer.Users,
-        IsFetching: state.usersReducer.IsFetching
+        IsFetchingUsers: state.usersReducer.IsFetchingUsers,
+        Items: state.itemsReducer.Items,
+        IsFetchingItems: state.itemsReducer.IsFetchingItems,
+        Categories: state.categoriesReducer.Categories,
+        IsFetchingCategories: state.categoriesReducer.IsFetchingCategories
     };
 }
 
 const mapDispatchToProps = {
     fetchUsers,
+    fetchItems,
+    fetchCategories,
     push
 }
 

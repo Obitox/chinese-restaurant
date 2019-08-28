@@ -18,7 +18,7 @@ const initialState = {
     Message: '',
     Users: [],
     User: {},
-    IsFetching: true,
+    IsFetchingUsers: true,
     UserID: 0
 }
 
@@ -26,12 +26,12 @@ export default function usersReducer(state = initialState, action){
     switch(action.type){
         case USERS_REQUEST:
             return Object.assign({}, state, {
-                IsFetching: action.payload
+                IsFetchingUsers: action.payload
             });
         case USERS_SUCCESS:
             return Object.assign({}, state, {
                 Users: action.payload.Users,
-                IsFetching: action.payload.isFetching
+                IsFetchingUsers: action.payload.IsFetchingUsers
             });
         case USERS_FAILED:
             return Object.assign({}, state, {

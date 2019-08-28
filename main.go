@@ -52,6 +52,7 @@ func main() {
 	muxHandler.HandleFunc("/updateUser", handlers.UpdateUser)
 	muxHandler.HandleFunc("/deleteUser", handlers.DeleteUser)
 	muxHandler.HandleFunc("/addUser", handlers.AddUser)
+	muxHandler.HandleFunc("/categories", handlers.Categories)
 
 	chain := alice.New(middleware.RecoverHandler, middleware.LoggerHandler).Then(muxHandler)
 

@@ -12,6 +12,20 @@ type Ingredient struct {
 	IsBase           int8
 }
 
+func GetAllIngredients() []Ingredient {
+	conn, err := db.MySQLConnect()
+	defer conn.Close()
+	if err != nil {
+		log.Println(err.Error())
+		return []Ingredient{}
+	}
+
+	ingredients := []Ingredient{}
+	conn.Find(&ingredients)
+
+	return ingredients
+}
+
 func GetIngredientsByItemID(ItemID uint64) []Ingredient {
 	conn, err := db.MySQLConnect()
 	defer conn.Close()

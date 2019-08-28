@@ -22,6 +22,10 @@ export const CATEGORIES_REQUEST = 'CATEGORIES_REQUEST'
 export const CATEGORIES_SUCCESS = 'CATEGORIES_SUCCESS'
 export const CATEGORIES_FAILED = 'CATEGORIES_FAILED'
 
+export const INGREDIENTS_REQUEST = 'INGREDIENTS_REQUEST'
+export const INGREDIENTS_SUCCESS = 'INGREDIENTS_SUCCESS'
+export const INGREDIENTS_FAILED = 'INGREDIENTS_FAILED'
+
 const baseURL = `http://localhost:3000`
 
 const usersRequest = (isFetching) => {
@@ -164,7 +168,29 @@ const categoriesFailed = (message) => {
     }
 }
 
+const ingredientsRequest = (isFetching) => {
+    return {
+        type: INGREDIENTS_REQUEST,
+        payload: isFetching
+    }
+}
 
+const ingredientsSuccess = (ingredients, isFetching) => {
+    return {
+        type: INGREDIENTS_SUCCESS,
+        payload: {
+            Ingredients: ingredients,
+            IsFetching: isFetching
+        }
+    }
+}
+
+const ingredientsFailed = (message) => {
+    return {
+        type: INGREDIENTS_SUCCESS,
+        payload: message
+    }
+}
 
 export const fetchUsers = (csrf) => dispatch => {
     // FIXME: Remove this hardcoded value
@@ -348,4 +374,30 @@ export const fetchCategories = () => dispatch => {
          }
      })
      .catch(error => dispatch(categoriesFailed(error)));
+}
+
+export const fetchIngredients = () => dispatch => {
+    let isFetching = true;
+    dispatch(ingredientsRequest(isFetching))
+
+    fetch(baseURL + '/ingredients', {
+        method: 'POST'
+     //    mode: 'cors',
+     //    headers: {
+     //        'Content-Type': 'application/json',
+     //        // 'Content-Type': 'application/x-www-form-urlencoded',
+     //     },
+        //  body: JSON.stringify(payload),
+        //  credentials: 'include'
+     })
+     .then(res => res.json())
+     .then(response => {
+         if(response.length > 0){
+            isFetching = false;
+            dispatch(ingredientsSuccess(response, isFetching))
+         } else {
+             dispatch(ingredientsFailed("No data"))
+         }
+     })
+     .catch(error => dispatch(ingredientsFailed(error)));
 }

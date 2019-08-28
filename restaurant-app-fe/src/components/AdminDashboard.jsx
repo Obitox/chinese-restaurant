@@ -5,7 +5,7 @@ import { push } from 'connected-react-router'
 import Users from './Users.jsx';
 import Items from './Items.jsx';
 
-import { fetchUsers, fetchItems, fetchCategories } from '../actions/adminDashboard'
+import { fetchUsers, fetchItems, fetchCategories, fetchIngredients } from '../actions/adminDashboard'
 
 // STYLING
 import Button from '@material-ui/core/Button';
@@ -35,6 +35,7 @@ class AdminDashboard extends Component {
         this.props.fetchUsers(payload._RequestAntiForgeryToken);
         this.props.fetchItems();
         this.props.fetchCategories();
+        this.props.fetchIngredients();
         // const responseUsers = await fetch(`http://localhost:3000/users`, {
         //                             method: 'POST',
         //                             credentials: 'include',
@@ -85,6 +86,7 @@ class AdminDashboard extends Component {
     }
     
     render() {
+        console.log(this.props.Ingredients);
         // const isUsers = this.state.isUsers;
         // const isItems = this.state.isItems;
 
@@ -149,7 +151,8 @@ const mapStateToProps = (state) => {
         Items: state.itemsReducer.Items,
         IsFetchingItems: state.itemsReducer.IsFetchingItems,
         Categories: state.categoriesReducer.Categories,
-        IsFetchingCategories: state.categoriesReducer.IsFetchingCategories
+        IsFetchingCategories: state.categoriesReducer.IsFetchingCategories,
+        Ingredients: state.ingredientsReducer.Ingredients
     };
 }
 
@@ -157,6 +160,7 @@ const mapDispatchToProps = {
     fetchUsers,
     fetchItems,
     fetchCategories,
+    fetchIngredients,
     push
 }
 

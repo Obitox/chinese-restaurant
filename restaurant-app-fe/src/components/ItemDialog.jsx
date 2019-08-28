@@ -115,6 +115,8 @@ export default class ItemDialog extends React.Component {
     this.setState({[event.target.name]: event.target.value, ['total_price']: price, ['isDisabled']: false});
   }
 
+
+  // FIXME: find a better way
   initCheckBoxes = (ingredient) => {
     let checkbox = {
       key: ingredient.IngredientID,

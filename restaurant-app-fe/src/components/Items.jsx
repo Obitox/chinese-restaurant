@@ -10,30 +10,16 @@ import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import FormHelperText from '@material-ui/core/FormHelperText'
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 class Items extends Component {
     constructor(props){
         super(props);
-
-        // Title
-        // </th>
-        // <th>
-        //     Description
-        // </th>
-        // <th>
-        //     Mass
-        // </th>
-        // <th>
-        //     Calorie count
-        // </th>
-        // <th>
-        //     Price
-
         this.state = {
             csrf_token: '',
             items: [],
@@ -45,7 +31,9 @@ class Items extends Component {
                 Price: 0
             },
             switches: [],
-            categories: []
+            categories: [],
+            ingredients: [],
+            checkboxes: []
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -55,12 +43,17 @@ class Items extends Component {
         if(this.props.Items !== undefined){
             this.props.Items.forEach(this.initSwitches);
         }
+
+        if(this.props.Ingredients !== undefined){
+            this.props.Ingredients.forEach(this.initCheckboxes);
+        }
+
         const response = await fetch(`http://localhost:3000/csrf`, {
                                     method: 'POST',
                                     credentials: 'include'
                                 });
         const json = await response.json();
-        this.setState({['csrf_token']: json._RequestAntiForgeryToken, ['items']: this.props.Items, ['categories']: this.props.Categories});
+        this.setState({['csrf_token']: json._RequestAntiForgeryToken, ['items']: this.props.Items, ['categories']: this.props.Categories, ['ingredients']: this.props.Ingredients});
     }
 
     initSwitches = (item) => {
@@ -72,6 +65,38 @@ class Items extends Component {
         this.setState(prevState => ({
             switches: [...prevState.switches, itemSwitch]
         }))
+    }
+
+    initCheckboxes = (ingredient) => {
+        let checkbox = {
+            key: ingredient.IngredientID,
+            value: false
+        }
+
+        this.setState(prevState => ({
+            checkboxes: [...prevState.checkboxes, checkbox]
+        }))
+    }
+
+    handleIngredientCheck(event, key){
+        let checkboxes = this.state.checkboxes;
+        let updatedCheckboxes = [];
+        for(var i =0; i < checkboxes.length; i++){
+          if(checkboxes[i].key == key){
+            checkboxes[i].value = event.target.checked;
+          }
+          updatedCheckboxes.push(checkboxes[i]);
+        }
+        this.setState({['checkboxes']: updatedCheckboxes})
+    }
+
+    getCheckboxState(checkboxes, key){
+        for(var i=0; i < checkboxes.length; i++){
+            if(checkboxes[i].key == key){
+              return checkboxes[i].value;
+            }
+          }
+        return false;
     }
 
     getSwitchState(switches, key){
@@ -118,6 +143,26 @@ class Items extends Component {
     handleSelect = event => {
         this.setState({[event.target.name]: event.target.value});
     }
+
+    addItem = (item) => {
+        let checkboxes = this.state.checkboxes.filter(checkbox => checkbox.value == true);
+        let ingredients;
+        
+        for(var i = 0; i < checkboxes.length; i++){
+            ingredients.push(this.state.ingredients.find(ingredient => ingredient.IngredientID == checkboxes[i].key));
+        }
+        console.log(ingredients)
+    }
+
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     if (this.props.Items.ItemID === nextProps.Items.ItemID) {
+    //         console.log('DID WORK')
+    //         return false;
+    //     } else {
+    //         return true;
+    //     }
+    // }
+
 
     render() {
         let items = this.state.items !== undefined ? this.state.items.map((item, index) => 
@@ -238,6 +283,22 @@ class Items extends Component {
 
         let categories = this.props.Categories.map((category, index) => 
                                           <MenuItem key={index} value={category.Title}>{category.Title}</MenuItem>
+        );
+
+        // FIXME: fix this ugly menace
+        let ingredients = this.props.Ingredients.map((ingredient, index) => 
+            <FormControlLabel
+            key={index}
+            control={
+                <Checkbox
+                    key={ingredient.IngredientID}
+                    checked={this.getCheckboxState(this.state.checkboxes, ingredient.IngredientID)}
+                    onChange={(event) => this.handleIngredientCheck(event,  ingredient.IngredientID)} 
+                    value={ingredient.Title} 
+                />
+            }
+            label={ingredient.Title}
+            />
         );
 
 
@@ -381,6 +442,7 @@ class Items extends Component {
                     </tbody>
                 </table>
                 {itemAdd}
+                {ingredients}
             </div>
         );
     }
@@ -389,7 +451,8 @@ class Items extends Component {
 const mapStateToProps = (state) => {
     return {
         Items: state.itemsReducer.Items,
-        Categories: state.categoriesReducer.Categories
+        Categories: state.categoriesReducer.Categories,
+        Ingredients: state.ingredientsReducer.Ingredients
     };
 }
 

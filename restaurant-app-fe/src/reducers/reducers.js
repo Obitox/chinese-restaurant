@@ -7,6 +7,7 @@ import registerReducer from './registerReducer'
 import usersReducer from './usersReducer'
 import itemsReducer from './itemsReducer'
 import categoriesReducer from './categoriesReducer'
+import ingredientsReducer from './ingredientsReducer'
 
 export default (history) => combineReducers({
     router: connectRouter(history),
@@ -15,6 +16,7 @@ export default (history) => combineReducers({
     registerReducer,
     usersReducer,
     itemsReducer,
+    ingredientsReducer,
     categoriesReducer
 })
 

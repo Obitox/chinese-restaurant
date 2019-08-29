@@ -128,17 +128,23 @@ class AdminDashboard extends Component {
 
         return (
             <div>
-                <Link to={`${this.props.match.url}/users`}>Maintain users</Link>
-                <Link to={`${this.props.match.url}/items`}>Maintain items</Link>
+                <Button type="submit" onClick={ () => this.props.push("/admin/users") } color="primary">
+                    Maintain users
+                </Button>
+                <Button type="submit" onClick={ () => this.props.push("/admin/items") } color="primary">
+                    Maintain items
+                </Button>
+                {/* <Link to={`${this.props.match.url}/users`}>Maintain users</Link>
+                <Link to={`${this.props.match.url}/items`}>Maintain items</Link> */}
                 {/* component={(props) => <Users {...props} Message={"HELLO"}/>} */}
                 {/* <Route path={`${this.props.match.path}/users`}  render={(props) => <Users {...props} Users={this.state.Users}/>}/> */}
-                <Route path={`${this.props.match.path}/users`} component={Users} />
+                {/* <Route path={`${this.props.match.path}/users`} component={Users} />
                 <Route path={`${this.props.match.path}/items`} component={Items} />
                 <Route
                     exact
                     path={this.props.match.path}
                     render={() => <h3>Please select something to maintain.</h3>}
-                />
+                /> */}
             </div>
         );
     }

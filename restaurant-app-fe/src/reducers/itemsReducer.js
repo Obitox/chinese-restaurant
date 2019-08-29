@@ -1,7 +1,8 @@
 import { 
     ITEMS_REQUEST,
     ITEMS_SUCCESS,
-    ITEMS_FAILED
+    ITEMS_FAILED,
+    OPEN_ITEM
 } from '../actions/adminDashboard'
 
 const initialState = {
@@ -9,6 +10,8 @@ const initialState = {
     Items: [],
     Message: '',
     IsFetchingItems: true,
+    ItemID: 0,
+    IsSuccessful: false
 }
 
 export default function itemsReducer(state = initialState, action){
@@ -25,6 +28,10 @@ export default function itemsReducer(state = initialState, action){
         case ITEMS_FAILED:
             return Object.assign({}, state, {
                 Message: action.payload
+            });
+        case OPEN_ITEM:
+            return Object.assign({}, state, {
+                ItemID: action.payload
             });
         default:
             return state;

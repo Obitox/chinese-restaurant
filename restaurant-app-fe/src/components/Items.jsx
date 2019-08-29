@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { push } from 'connected-react-router'
 
+import ItemList from './ItemList.jsx'
+
 // STYLING
 import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
@@ -16,6 +18,7 @@ import Select from '@material-ui/core/Select';
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
 
 class Items extends Component {
     constructor(props){
@@ -35,6 +38,13 @@ class Items extends Component {
             ingredients: [],
             checkboxes: []
         }
+
+        this.TitleRef = React.createRef();
+        this.Description = React.createRef();
+        this.Mass = React.createRef();
+        this.CalorieCount = React.createRef();
+        this.Price = React.createRef();
+        this.Categories = React.createRef();
 
         this.componentDidMount = this.componentDidMount.bind(this);
     }
@@ -144,14 +154,31 @@ class Items extends Component {
         this.setState({[event.target.name]: event.target.value});
     }
 
-    addItem = (item) => {
-        let checkboxes = this.state.checkboxes.filter(checkbox => checkbox.value == true);
-        let ingredients;
+    addItem = (event) => {
+        event.preventDefault();
+
+        console.log(this._Title.value);
+
+        // let item = {
+        //     Title: this.TitleRef.current.value,
+        //     Description: this.Description.current.value,
+        //     Mass: this.Mass.current.value,
+        //     CalorieCount: this.CalorieCount.current.value,
+        //     Price: this.Price.current.value,
+        //     Ingredients: []
+        // };
+
+
+        // let checkboxes = this.state.checkboxes.filter(checkbox => checkbox.value == true);
+        // let ingredients = [];
+
+        // for(var i = 0; i < checkboxes.length; i++){
+        //     ingredients.push(this.state.ingredients.find(ingredient => ingredient.IngredientID == checkboxes[i].key));
+        // }
         
-        for(var i = 0; i < checkboxes.length; i++){
-            ingredients.push(this.state.ingredients.find(ingredient => ingredient.IngredientID == checkboxes[i].key));
-        }
-        console.log(ingredients)
+        // item.Ingredients = ingredients;
+        // console.log(item.Ingredients);
+        // console.log(item);
     }
 
     // shouldComponentUpdate(nextProps, nextState) {
@@ -163,123 +190,127 @@ class Items extends Component {
     //     }
     // }
 
+    openItem = (itemID) => {
+        this.props.openItem(itemID);
+    }
+
 
     render() {
-        let items = this.state.items !== undefined ? this.state.items.map((item, index) => 
-            <tr key={index}>
-                <td>
-                    <TextField
-                        // error={!this.state.IsUsernameValid}
-                        disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                        id="standard-bare"
-                        name="ItemID"
-                        value={item.ItemID}
-                        onChange={(event) => this.handleChange(event, index)}
-                        // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
-                        margin="normal"
-                        variant="outlined"
-                    />
-                </td>
-                <td>
-                    <TextField
-                        // error={!this.state.IsUsernameValid}
-                        disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                        id="standard-bare"
-                        name="Title"
-                        value={item.Title}
-                        onChange={(event) => this.handleChange(event, index)}
-                        // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
-                        margin="normal"
-                        variant="outlined"
-                    />
-                </td>
-                <td>
-                    <TextField
-                        // error={!this.state.IsUsernameValid}
-                        disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                        id="standard-bare"
-                        name="Description"
-                        value={item.Description}
-                        onChange={(event) => this.handleChange(event, index)}
-                        // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
-                        margin="normal"
-                        variant="outlined"
-                    />
-                </td>
-                <td>
-                    <TextField
-                        // error={!this.state.IsUsernameValid}
-                        disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                        id="standard-number"
-                        name="Mass"
-                        value={item.Mass}
-                        onChange={(event) => this.handleChange(event, index)}
-                        type="number"
-                        // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        margin="normal"
-                        variant="outlined"
-                    />
-                </td>
-                <td>
-                    <TextField
-                        // error={!this.state.IsUsernameValid}
-                        disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                        id="standard-number"
-                        name="CalorieCount"
-                        value={item.CalorieCount}
-                        onChange={(event) => this.handleChange(event, index)}
-                        type="number"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
-                        margin="normal"
-                        variant="outlined"
-                    />
-                </td>
-                <td>
-                    <TextField
-                        disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                        id="standard-number"
-                        name="Price"
-                        value={item.Price}
-                        onChange={(event) => this.handleChange(event, index)}
-                        type="number"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        margin="normal"
-                        varirant="outlined"
-                    />
-                </td>
-                <td>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={this.getSwitchState(this.state.switches, item.ItemID)}
-                                onChange={(event) => this.handleEditingSwitch(event, item.ItemID)}
-                                value={item.ItemID}
-                                color="primary"
-                            />
-                        }
-                        label="Editing"
-                    />
-                    {/* <Fab disabled={!this.getSwitchState(this.state.switches, item.ItemID)} color="primary" aria-label="edit" size="small">
-                        <EditIcon />
-                    </Fab> */}
-                    <Fab disabled={!this.getSwitchState(this.state.switches, item.ItemID)} onClick={() => this.deleteUser(index)} color="secondary" aria-label="delete" size="small">
-                        <DeleteIcon />
-                    </Fab>
-                    <Fab disabled={!this.getSwitchState(this.state.switches, item.ItemID)} onClick={() => this.updateUser(this.state.users[index])} color="primary" aria-label="save" size="small">
-                        <SaveIcon />
-                    </Fab>
-                </td>
-            </tr>
+        // let items = this.state.items !== undefined ? this.state.items.map((item, index) => 
+        //     <tr key={index}>
+        //         <td>
+        //             <TextField
+        //                 // error={!this.state.IsUsernameValid}
+        //                 disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
+        //                 id="standard-bare"
+        //                 name="ItemID"
+        //                 value={item.ItemID}
+        //                 onChange={(event) => this.handleChange(event, index)}
+        //                 // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
+        //                 margin="normal"
+        //                 variant="outlined"
+        //             />
+        //         </td>
+        //         <td>
+        //             <TextField
+        //                 // error={!this.state.IsUsernameValid}
+        //                 disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
+        //                 id="standard-bare"
+        //                 name="Title"
+        //                 value={item.Title}
+        //                 onChange={(event) => this.handleChange(event, index)}
+        //                 // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
+        //                 margin="normal"
+        //                 variant="outlined"
+        //             />
+        //         </td>
+        //         <td>
+        //             <TextField
+        //                 // error={!this.state.IsUsernameValid}
+        //                 disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
+        //                 id="standard-bare"
+        //                 name="Description"
+        //                 value={item.Description}
+        //                 onChange={(event) => this.handleChange(event, index)}
+        //                 // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
+        //                 margin="normal"
+        //                 variant="outlined"
+        //             />
+        //         </td>
+        //         <td>
+        //             <TextField
+        //                 // error={!this.state.IsUsernameValid}
+        //                 disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
+        //                 id="standard-number"
+        //                 name="Mass"
+        //                 value={item.Mass}
+        //                 onChange={(event) => this.handleChange(event, index)}
+        //                 type="number"
+        //                 // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
+        //                 InputLabelProps={{
+        //                     shrink: true,
+        //                 }}
+        //                 margin="normal"
+        //                 variant="outlined"
+        //             />
+        //         </td>
+        //         <td>
+        //             <TextField
+        //                 // error={!this.state.IsUsernameValid}
+        //                 disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
+        //                 id="standard-number"
+        //                 name="CalorieCount"
+        //                 value={item.CalorieCount}
+        //                 onChange={(event) => this.handleChange(event, index)}
+        //                 type="number"
+        //                 InputLabelProps={{
+        //                     shrink: true,
+        //                 }}
+        //                 // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
+        //                 margin="normal"
+        //                 variant="outlined"
+        //             />
+        //         </td>
+        //         <td>
+        //             <TextField
+        //                 disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
+        //                 id="standard-number"
+        //                 name="Price"
+        //                 value={item.Price}
+        //                 onChange={(event) => this.handleChange(event, index)}
+        //                 type="number"
+        //                 InputLabelProps={{
+        //                     shrink: true,
+        //                 }}
+        //                 margin="normal"
+        //                 varirant="outlined"
+        //             />
+        //         </td>
+        //         <td>
+        //             <FormControlLabel
+        //                 control={
+        //                     <Switch
+        //                         checked={this.getSwitchState(this.state.switches, item.ItemID)}
+        //                         onChange={(event) => this.handleEditingSwitch(event, item.ItemID)}
+        //                         value={item.ItemID}
+        //                         color="primary"
+        //                     />
+        //                 }
+        //                 label="Editing"
+        //             />
+        //             {/* <Fab disabled={!this.getSwitchState(this.state.switches, item.ItemID)} color="primary" aria-label="edit" size="small">
+        //                 <EditIcon />
+        //             </Fab> */}
+        //             <Fab disabled={!this.getSwitchState(this.state.switches, item.ItemID)} onClick={() => this.deleteUser(index)} color="secondary" aria-label="delete" size="small">
+        //                 <DeleteIcon />
+        //             </Fab>
+        //             <Fab disabled={!this.getSwitchState(this.state.switches, item.ItemID)} onClick={() => this.updateUser(this.state.users[index])} color="primary" aria-label="save" size="small">
+        //                 <SaveIcon />
+        //             </Fab>
+        //         </td>
+        //     </tr>
             
-        ) : (<tr><td>Error</td></tr>);
+        // ) : (<tr><td>Error</td></tr>);
 
         let categories = this.props.Categories.map((category, index) => 
                                           <MenuItem key={index} value={category.Title}>{category.Title}</MenuItem>
@@ -302,145 +333,236 @@ class Items extends Component {
         );
 
 
+        // let itemAdd = (
+        //     <table>
+        //         <thead>
+        //             <tr>
+        //                 <th>
+        //                     Title
+        //                 </th>
+        //                 <th>
+        //                     Description
+        //                 </th>
+        //                 <th>
+        //                     Mass
+        //                 </th>
+        //                 <th>
+        //                     Calorie count
+        //                 </th>
+        //                 <th>
+        //                     Price
+        //                 </th>
+        //                 <th>
+        //                     Category
+        //                 </th>
+        //             </tr>
+        //         </thead>
+        //         <tbody>
+        //             <tr>
+        //                 <td>
+        //                     <TextField
+        //                         // error={!this.state.IsUsernameValid}
+        //                         // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                         id="standard-bare"
+        //                         name="Title"
+        //                         ref={this.title}
+        //                         // value={this.state.item.Title}
+        //                         // onChange={this.handleNewItemChange}
+        //                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                         type="text"
+        //                         margin="normal"
+        //                         variant="outlined"
+        //                     />
+        //                 </td>
+        //                 <td>
+        //                     <TextField
+        //                         // error={!this.state.IsUsernameValid}
+        //                         // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+        //                         id="standard-bare"
+        //                         name="Description"
+        //                         ref={(input) => {this.Description = input}}
+        //                         // value={this.state.item.Description}
+        //                         // onChange={this.handleNewItemChange}
+        //                         // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+        //                         type="text"
+        //                         margin="normal"
+        //                         variant="outlined"
+        //                     />
+        //                 </td>
+        //                 <td>
+        //                     <TextField
+        //                         // error={!this.state.IsUsernameValid}
+        //                         id="standard-number"
+        //                         name="Mass"
+        //                         ref={(input) => {this.Mass = input}}
+        //                         // value={this.state.item.Mass}
+        //                         // onChange={(event) => this.handleChange(event, index)}
+        //                         type="number"
+        //                         // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
+        //                         InputLabelProps={{
+        //                             shrink: true,
+        //                         }}
+        //                         margin="normal"
+        //                         variant="outlined"
+        //                     />
+        //                 </td>
+        //                 <td>
+        //                     <TextField
+        //                         // error={!this.state.IsUsernameValid}
+        //                         id="standard-number"
+        //                         name="CalorieCount"
+        //                         ref={(input) => {this.CalorieCount = input}}
+        //                         // value={this.state.item.CalorieCount}
+        //                         // onChange={(event) => this.handleChange(event, index)}
+        //                         type="number"
+        //                         InputLabelProps={{
+        //                             shrink: true,
+        //                         }}
+        //                         // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
+        //                         margin="normal"
+        //                         variant="outlined"
+        //                     />
+        //                 </td>
+        //                 <td>
+        //                     <TextField
+        //                         id="standard-number"
+        //                         name="Price"
+        //                         ref={(input) => {this.Price = input}}
+        //                         // value={this.state.item.Price}
+        //                         // onChange={(event) => this.handleChange(event, index)}
+        //                         type="number"
+        //                         InputLabelProps={{
+        //                             shrink: true,
+        //                         }}
+        //                         margin="normal"
+        //                         varirant="outlined"
+        //                     />
+        //                 </td>
+        //                 <td>
+        //                 <FormControl>
+        //                     <Select
+        //                             value={this.state.categories}
+        //                             onChange={this.handleSelect}
+        //                             ref={(select) => {this.Categories = select}}
+        //                             inputProps={{
+        //                             name: 'categories',
+        //                             id: 'categories',
+        //                         }}
+        //                     >
+        //                     {categories}
+        //                 </Select>
+        //                     <FormHelperText>Without label</FormHelperText>
+        //                 </FormControl>
+        //                 </td>
+        //                 <td>
+        //                     {/* <Fab type="submit" value="submit" onClick={this.addItem} color="primary" aria-label="add" size="small">
+        //                         <AddCircleIcon />
+        //                     </Fab> */}
+        //                     <Button type="submit" onClick={this.addItem} color="primary">
+        //                         Add Item
+        //                     </Button>
+        //                 </td>
+        //             </tr>
+        //         </tbody>
+        //     </table>
+        // );
+
         let itemAdd = (
-            <table>
-                <thead>
-                    <tr>
-                        <th>
-                            Title
-                        </th>
-                        <th>
-                            Description
-                        </th>
-                        <th>
-                            Mass
-                        </th>
-                        <th>
-                            Calorie count
-                        </th>
-                        <th>
-                            Price
-                        </th>
-                        <th>
-                            Category
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <TextField
-                                // error={!this.state.IsUsernameValid}
-                                // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
-                                id="standard-bare"
-                                name="Title"
-                                value={this.state.item.Title}
-                                onChange={this.handleNewItemChange}
-                                // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
-                                margin="normal"
-                                variant="outlined"
-                            />
-                        </td>
-                        <td>
-                            <TextField
-                                // error={!this.state.IsUsernameValid}
-                                id="standard-number"
-                                name="Mass"
-                                value={this.state.item.Mass}
-                                onChange={(event) => this.handleChange(event, index)}
-                                type="number"
-                                // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                margin="normal"
-                                variant="outlined"
-                            />
-                        </td>
-                        <td>
-                            <TextField
-                                // error={!this.state.IsUsernameValid}
-                                id="standard-number"
-                                name="CalorieCount"
-                                value={this.state.item.CalorieCount}
-                                onChange={(event) => this.handleChange(event, index)}
-                                type="number"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
-                                margin="normal"
-                                variant="outlined"
-                            />
-                        </td>
-                        <td>
-                            <TextField
-                                id="standard-number"
-                                name="Price"
-                                value={this.state.item.Price}
-                                onChange={(event) => this.handleChange(event, index)}
-                                type="number"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                margin="normal"
-                                varirant="outlined"
-                            />
-                        </td>
-                        <td>
-                        <FormControl>
-                            <Select
-                                    value={this.state.categories}
-                                    onChange={this.handleSelect}
-                                    inputProps={{
-                                    name: 'categories',
-                                    id: 'categories',
-                                }}
-                            >
-                            {categories}
-                        </Select>
-                            <FormHelperText>Without label</FormHelperText>
-                        </FormControl>
-                        </td>
-                        <td>
-                            <Fab onClick={() => this.addItem(this.state.item)} color="primary" aria-label="add" size="small">
-                                <AddCircleIcon />
-                            </Fab>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        );
+            // <form onSubmit={this.addItem}>
+                <div>
+                    <TextField
+                    // error={!this.state.IsUsernameValid}
+                    // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                    id="standard-bare"
+                    name="Title"
+                    inputRef={input => this._Title = input}
+                    // value={this.state.item.Title}
+                    // onChange={this.handleNewItemChange}
+                    // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                    type="text"
+                    margin="normal"
+                    variant="outlined"
+                    />
+                    <TextField
+                        // error={!this.state.IsUsernameValid}
+                        // disabled={!this.getSwitchState(this.state.switches, user.UserID)}
+                        id="standard-bare"
+                        name="Description"
+                        ref={this.Description}
+                        // value={this.state.item.Description}
+                        // onChange={this.handleNewItemChange}
+                        // onChange={(event) => this.handleEditingSwitch(event,  user.UserID)}
+                        type="text"
+                        margin="normal"
+                        variant="outlined"
+                    />
+                    <TextField
+                        // error={!this.state.IsUsernameValid}
+                        id="standard-number"
+                        name="Mass"
+                        ref={this.Mass}
+                        // value={this.state.item.Mass}
+                        // onChange={(event) => this.handleChange(event, index)}
+                        type="number"
+                        // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                    <TextField
+                        // error={!this.state.IsUsernameValid}
+                        id="standard-number"
+                        name="CalorieCount"
+                        ref={this.CalorieCount}
+                        // value={this.state.item.CalorieCount}
+                        // onChange={(event) => this.handleChange(event, index)}
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        // onChange={(event) => this.handleEditingSwitch(event,  item.ItemID)}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                    <TextField
+                        id="standard-number"
+                        name="Price"
+                        ref={this.Price}
+                        // value={this.state.item.Price}
+                        // onChange={(event) => this.handleChange(event, index)}
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        margin="normal"
+                        varirant="outlined"
+                    />
+                    <FormControl>
+                        <Select
+                                value={this.state.categories}
+                                onChange={this.handleSelect}
+                                ref={this.Categories}
+                                inputProps={{
+                                name: 'categories',
+                                id: 'categories',
+                            }}
+                        >
+                        {categories}itemAdd
+                    </Select>
+                    <FormHelperText>Without label</FormHelperText>
+                    </FormControl>
+                    <Fab onClick={this.addItem} color="primary" aria-label="add" size="small">
+                        <AddCircleIcon />
+                    </Fab>
+                </div>
+            // </form>
+        )
         
         return (
             <div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>
-                                ItemID
-                            </th>
-                            <th>
-                                Title
-                            </th>
-                            <th>
-                                Description
-                            </th>
-                            <th>
-                                Mass
-                            </th>
-                            <th>
-                                Calorie count
-                            </th>
-                            <th>
-                                Price
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {items}
-                    </tbody>
-                </table>
+                <ItemList items={this.props.Items} url={this.props.match.url} onClick={ () => this.props.push()}/>
                 {itemAdd}
                 {ingredients}
             </div>

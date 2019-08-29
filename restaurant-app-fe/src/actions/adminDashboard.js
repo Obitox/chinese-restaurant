@@ -26,6 +26,8 @@ export const INGREDIENTS_REQUEST = 'INGREDIENTS_REQUEST'
 export const INGREDIENTS_SUCCESS = 'INGREDIENTS_SUCCESS'
 export const INGREDIENTS_FAILED = 'INGREDIENTS_FAILED'
 
+export const OPEN_ITEM = 'OPEN_ITEM'
+
 const baseURL = `http://localhost:3000`
 
 const usersRequest = (isFetching) => {
@@ -400,4 +402,13 @@ export const fetchIngredients = () => dispatch => {
          }
      })
      .catch(error => dispatch(ingredientsFailed(error)));
+}
+
+export const openItem = (itemID) => dispatch => {
+    dispatch(
+        {
+            type: OPEN_ITEM,
+            payload: itemID
+        }
+    )
 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux'
 import { push } from 'connected-react-router'
+import { Route, Link } from 'react-router-dom';
 
 import ItemList from './ItemList.jsx'
 
@@ -562,7 +563,7 @@ class Items extends Component {
         
         return (
             <div>
-                <ItemList items={this.props.Items} url={this.props.match.url} onClick={ () => this.props.push()}/>
+                <ItemList items={this.props.Items} match={this.props.match} onClick={ (itemID) => this.props.push(`/admin/items/${itemID}`)}/>
                 {itemAdd}
                 {ingredients}
             </div>

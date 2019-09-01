@@ -86,7 +86,7 @@ class AdminDashboard extends Component {
     }
     
     render() {
-        console.log(this.props.Ingredients);
+        // console.log(this.props.Ingredients);
         // const isUsers = this.state.isUsers;
         // const isItems = this.state.isItems;
 
@@ -119,12 +119,12 @@ class AdminDashboard extends Component {
             IsFetchingCategories
         } = this.props;
 
-        console.log(this.props.Categories);
+        // console.log(this.props.Categories);
 
         if(IsFetchingUsers && IsFetchingItems && IsFetchingCategories){
             return <div>Loading</div>;
         }
-        console.log(this.props.Items);
+        // console.log(this.props.Items);
 
         return (
             <div>

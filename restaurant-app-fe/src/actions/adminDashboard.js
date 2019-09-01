@@ -27,8 +27,43 @@ export const INGREDIENTS_SUCCESS = 'INGREDIENTS_SUCCESS'
 export const INGREDIENTS_FAILED = 'INGREDIENTS_FAILED'
 
 export const OPEN_ITEM = 'OPEN_ITEM'
+export const CLOSE_ITEM = 'CLOSE_ITEM'
+
+export const ADD_ITEM_REQUEST = 'ADD_ITEM_REQUEST'
+export const ADD_ITEM_SUCCESS = 'ADD_ITEM_SUCCESS'
+export const ADD_ITEM_FAILED = 'ADD_ITEM_FAILED'
+
+export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR'
 
 const baseURL = `http://localhost:3000`
+
+const openItem = (item) => {
+    return {
+        type: OPEN_ITEM,
+        payload: {
+            Item: item,
+            Open: true
+        }
+    }
+}
+
+const closeItem = () => {
+    return {
+        type: CLOSE_ITEM,
+        payload: {
+            Item: {},
+            Open: false
+        }
+    }
+}
+
+export const openItemDialog = (item) => dispatch => {
+    dispatch(openItem(item));
+}
+
+export const closeItemDialog = () => dispatch => {
+    dispatch(closeItem());
+}
 
 const usersRequest = (isFetching) => {
     return {
@@ -191,6 +226,45 @@ const ingredientsFailed = (message) => {
     return {
         type: INGREDIENTS_SUCCESS,
         payload: message
+    }
+}
+
+const addItemRequest = (item) => {
+    return {
+        type: ADD_ITEM_REQUEST,
+        payload: item
+    }
+}
+
+const addItemSuccess = (item, message) => {
+    return {
+        type: ADD_ITEM_SUCCESS,
+        payload: {
+            Open: true,
+            IsSuccessful: true,
+            Message: message,
+            Item: item
+        }
+    }
+}
+
+const addItemFailed = (message) => {
+    return {
+        type: ADD_ITEM_SUCCESS,
+        payload: {
+            Open: true,
+            IsSuccessful: false,
+            Message: message
+        }
+    }
+}
+
+const closeSnackbar = () => {
+    return {
+        type: CLOSE_SNACKBAR,
+        payload: {
+            Open: false
+        }
     }
 }
 
@@ -404,11 +478,46 @@ export const fetchIngredients = () => dispatch => {
      .catch(error => dispatch(ingredientsFailed(error)));
 }
 
-export const openItem = (itemID) => dispatch => {
-    dispatch(
-        {
-            type: OPEN_ITEM,
-            payload: itemID
-        }
-    )
+export const addItem = (item) => dispatch => {
+    dispatch(addItemRequest(item))
+
+    console.log(' HAPPEND');
+    console.log(item);
+
+    fetch(baseURL + '/addItem', {
+        method: 'POST',
+     //    mode: 'cors',
+     //    headers: {
+     //        'Content-Type': 'application/json',
+     //        // 'Content-Type': 'application/x-www-form-urlencoded',
+     //     },
+         body: JSON.stringify(item),
+         credentials: 'include'
+     })
+     .then(res => res.json())
+     .then(response => {
+         let message = "";
+         console.log(response);
+         if(response.Message == "OK"){
+            message = "Item successfully added";
+            dispatch(addItemSuccess(item, message))
+         } else {
+             message = "Item add failed";
+             dispatch(addItemFailed(message))
+         }
+     })
+     .catch(error => dispatch(addItemFailed(error)));
 }
+
+export const handleClose = () => dispatch => {
+    dispatch(closeSnackbar())
+}
+
+// export const openItem = (itemID) => dispatch => {
+//     dispatch(
+//         {
+//             type: OPEN_ITEM,
+//             payload: itemID
+//         }
+//     )
+// }

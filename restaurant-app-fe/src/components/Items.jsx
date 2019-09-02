@@ -23,6 +23,7 @@ import Button from '@material-ui/core/Button';
 import AddItem from './AddItem.jsx';
 
 // import { handleClose, addItem } from '../actions/adminDashboard'
+import { fetchItems, fetchCategories, fetchIngredients } from '../actions/adminDashboard'
 
 class Items extends Component {
     constructor(props){
@@ -47,6 +48,7 @@ class Items extends Component {
     }
 
     async componentDidMount(){
+        // OLD ONE
         if(this.props.Items !== undefined){
             this.props.Items.forEach(this.initSwitches);
         }
@@ -61,6 +63,11 @@ class Items extends Component {
                                 });
         const json = await response.json();
         this.setState({['csrf_token']: json._RequestAntiForgeryToken, ['items']: this.props.Items, ['categories']: this.props.Categories, ['ingredients']: this.props.Ingredients});
+
+
+        this.props.fetchItems();
+        this.props.fetchCategories();
+        this.props.fetchIngredients();
     }
 
     initSwitches = (item) => {
@@ -533,11 +540,21 @@ class Items extends Component {
         //         </div>
         //     // </form>
         // )
-        
-        console.log(this.props.Items);
+
+        const {
+            IsFetchingIngredients,
+            IsFetchingItems,
+            IsFetchingCategories
+        } = this.props;
+
+        if(IsFetchingItems && IsFetchingCategories && IsFetchingIngredients){
+            return <div>Loading</div>;
+        }
+
+
         return (
             <div>
-                <ItemList items={this.props.Items} categories={this.props.Categories} ingredients={this.props.Ingredients} match={this.props.match}/>
+                <ItemList items={this.props.Items} categories={this.props.Categories} ingredients={this.props.Ingredients} csrf={this.state.csrf_token} match={this.props.match}/>
                 <AddItem Ingredients={this.props.Ingredients} Categories={this.props.Categories} addItem={(item) => this.addItem(item)} Open={this.props.Open} IsSuccessful={this.props.IsSuccessful} Message={this.props.Message} handleClose={this.props.handleClose} csrf={this.state.csrf_token}/>
                 {/* {itemAdd} */}
                 {/* {ingredients} */}
@@ -548,17 +565,24 @@ class Items extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        Items: state.itemsReducer.Items,
         Categories: state.categoriesReducer.Categories,
-        Ingredients: state.ingredientsReducer.Ingredients,
         Open: state.itemsReducer.Open,
         IsSuccessful: state.itemsReducer.IsSuccessful,
-        Message: state.itemsReducer.Message
+        Message: state.itemsReducer.Message,
+        IsFetchingItems: state.itemsReducer.IsFetchingItems,
+        Items: state.itemsReducer.Items,
+        IsFetchingCategories: state.categoriesReducer.IsFetchingCategories,
+        Categories: state.categoriesReducer.Categories,
+        IsFetchingIngredients: state.ingredientsReducer.IsFetchingIngredients,
+        Ingredients: state.ingredientsReducer.Ingredients,
     };
 }
 
 const mapDispatchToProps = {
-    push
+    push,
+    fetchItems, 
+    fetchCategories, 
+    fetchIngredients
     // addItem,
     // handleClose
 }

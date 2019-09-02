@@ -52,7 +52,14 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname,'src'),
-    historyApiFallback: true
+    historyApiFallback: true,
+    hot: true,
+    inline: true,
+    host: "localhost",
+    port: 8082,
+    watchOptions: {
+        poll: true
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({

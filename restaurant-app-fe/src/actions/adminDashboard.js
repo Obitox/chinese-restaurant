@@ -35,7 +35,86 @@ export const ADD_ITEM_FAILED = 'ADD_ITEM_FAILED'
 
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR'
 
+export const LOAD_TABLE_COLUMNS = 'LOAD_TABLE_COLUMNS'
+
+// export const UPDATE_ITEM_REQUEST = 'UPDATE_ITEM_REQUEST'
+export const UPDATE_ITEM_SUCCESS = 'UPDATE_ITEM_SUCCESS'
+export const UPDATE_ITEM_FAILED = 'UPDATE_ITEM_FAILED'
+
+export const DELETE_ITEM_REQUEST = 'DELETE_ITEM_REQUEST'
+export const DELETE_ITEM_SUCCESS = 'DELETE_ITEM_SUCCESS'
+export const DELETE_ITEM_FAILED = 'DELETE_ITEM_FAILED'
+
 const baseURL = `http://localhost:3000`
+
+// const updateItemRequest = () => {
+//     return {
+//         type: UPDATE_ITEM_REQUEST,
+//         payload: 
+//     }
+// }
+
+
+const deleteItemRequest = (itemID) => {
+    return {
+        type: DELETE_ITEM_REQUEST,
+        payload: itemID
+    }
+}
+
+const deleteItemSuccess = (items, message) => {
+    return {
+        type: DELETE_ITEM_SUCCESS,
+        payload: {
+            Open: true,
+            IsSuccessful: true,
+            Message: message,
+            Items: items
+        }
+    }
+}
+
+const deleteItemFailed = (message) => {
+    return {
+        type: DELETE_ITEM_FAILED,
+        payload: {
+            Open: true,
+            IsSuccessful: false,
+            Message: message
+        }
+    }
+}
+
+const updateItemSuccess = (items, message) => {
+    return {
+        type: UPDATE_ITEM_SUCCESS,
+        payload: {
+            Open: true,
+            IsSuccessful: true,
+            Message: message,
+            Items: items
+        }
+    }
+}
+
+const updateItemFailed = (message) => {
+    return {
+        type: UPDATE_ITEM_FAILED,
+        payload: {
+            Open: true,
+            IsSuccessful: false,
+            Message: message
+        }
+    }
+}
+
+
+const loadColumns = (columns) => {
+    return {
+        type: LOAD_TABLE_COLUMNS,
+        payload: columns
+    }
+}
 
 const openItem = (item) => {
     return {
@@ -250,7 +329,7 @@ const addItemSuccess = (item, message) => {
 
 const addItemFailed = (message) => {
     return {
-        type: ADD_ITEM_SUCCESS,
+        type: ADD_ITEM_FAILED,
         payload: {
             Open: true,
             IsSuccessful: false,
@@ -479,10 +558,7 @@ export const fetchIngredients = () => dispatch => {
 }
 
 export const addItem = (item) => dispatch => {
-    dispatch(addItemRequest(item))
-
-    console.log(' HAPPEND');
-    console.log(item);
+    dispatch(addItemRequest(item));
 
     fetch(baseURL + '/addItem', {
         method: 'POST',
@@ -513,11 +589,64 @@ export const handleClose = () => dispatch => {
     dispatch(closeSnackbar())
 }
 
-// export const openItem = (itemID) => dispatch => {
-//     dispatch(
-//         {
-//             type: OPEN_ITEM,
-//             payload: itemID
-//         }
-//     )
-// }
+export const loadTableColumns = (columns) => dispatch => {
+    dispatch(loadColumns(columns));
+}
+
+export const updateItem = (items, item, csrf) => dispatch => {
+    item.RequestAntiForgeryToken = csrf;
+
+    fetch(baseURL + '/updateItem', {
+        method: 'POST',
+     //    mode: 'cors',
+     //    headers: {
+     //        'Content-Type': 'application/json',
+     //        // 'Content-Type': 'application/x-www-form-urlencoded',
+     //     },
+         body: JSON.stringify(item),
+         credentials: 'include'
+     })
+     .then(res => res.json())
+     .then(response => {
+         let message = "";
+         console.log(response);
+         if(response.Message == "OK"){
+            message = "Item successfully updated";
+            dispatch(updateItemSuccess(items, message))
+         } else {
+             message = "Item update failed";
+             dispatch(updateItemFailed(message))
+         }
+     })
+     .catch(error => dispatch(updateItemFailed(error)));
+}
+
+export const deleteItem = (items, item, csrf) => dispatch => {
+    dispatch(deleteItemRequest(item.ItemID));
+
+    item.RequestAntiForgeryToken = csrf;
+
+    fetch(baseURL + '/deleteItem', {
+        method: 'POST',
+     //    mode: 'cors',
+     //    headers: {
+     //        'Content-Type': 'application/json',
+     //        // 'Content-Type': 'application/x-www-form-urlencoded',
+     //     },
+         body: JSON.stringify(item),
+         credentials: 'include'
+     })
+     .then(res => res.json())
+     .then(response => {
+         let message = "";
+         console.log(response);
+         if(response.Message == "OK"){
+            message = "Item successfully deleted";
+            dispatch(deleteItemSuccess(items, message))
+         } else {
+             message = "Item delete failed";
+             dispatch(deleteItemFailed(message))
+         }
+     })
+     .catch(error => dispatch(deleteItemFailed(error)));
+}

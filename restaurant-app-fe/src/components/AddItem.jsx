@@ -269,8 +269,8 @@ class AddItem extends Component {
                         </Button>
                         <Snackbar
                             anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
+                                vertical: 'top',
+                                horizontal: 'right',
                             }}
                             open={this.props.Open}
                             autoHideDuration={6000}

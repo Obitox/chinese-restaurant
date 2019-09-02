@@ -5,7 +5,13 @@ import {
     ADD_ITEM_REQUEST,
     ADD_ITEM_SUCCESS,
     ADD_ITEM_FAILED,
-    CLOSE_SNACKBAR
+    UPDATE_ITEM_SUCCESS,
+    UPDATE_ITEM_FAILED,
+    CLOSE_SNACKBAR,
+    LOAD_TABLE_COLUMNS,
+    DELETE_ITEM_REQUEST,
+    DELETE_ITEM_SUCCESS,
+    DELETE_ITEM_FAILED
 
 } from '../actions/adminDashboard'
 
@@ -18,6 +24,7 @@ const initialState = {
     Message: '',
     IsFetchingItems: true,
     ItemID: 0,
+    Columns: []
 }
 
 export default function itemsReducer(state = initialState, action){
@@ -66,6 +73,40 @@ export default function itemsReducer(state = initialState, action){
         case CLOSE_SNACKBAR:
             return Object.assign({}, state, {
                 Open: action.payload.Open
+            });
+        case LOAD_TABLE_COLUMNS:
+            return Object.assign({}, state, {
+                Columns: action.payload
+            });
+        case UPDATE_ITEM_SUCCESS:
+            return Object.assign({}, state, {
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful,
+                Message: action.payload.Message,
+                Items: action.payload.Items
+            });
+        case UPDATE_ITEM_FAILED:
+            return Object.assign({}, state, {
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful,
+                Message: action.payload.Message
+            });
+        case DELETE_ITEM_REQUEST:
+            return Object.assign({}, state, {
+                ItemID: action.payload
+            });
+        case DELETE_ITEM_SUCCESS:
+            return Object.assign({}, state, {
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful,
+                Message: action.payload.Message,
+                Items: action.payload.Items
+            });
+        case DELETE_ITEM_FAILED:
+            return Object.assign({}, state, {
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful,
+                Message: action.payload.Message
             });
         default:
             return state;

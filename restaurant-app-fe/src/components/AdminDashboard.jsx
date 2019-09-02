@@ -33,9 +33,9 @@ class AdminDashboard extends Component {
         }
 
         this.props.fetchUsers(payload._RequestAntiForgeryToken);
-        this.props.fetchItems();
-        this.props.fetchCategories();
-        this.props.fetchIngredients();
+        // this.props.fetchItems();
+        // this.props.fetchCategories();
+        // this.props.fetchIngredients();
         // const responseUsers = await fetch(`http://localhost:3000/users`, {
         //                             method: 'POST',
         //                             credentials: 'include',
@@ -112,18 +112,18 @@ class AdminDashboard extends Component {
         // }
         // console.log(this.props.Users);
 
-        const {
-            // Users,
-            IsFetchingUsers,
-            IsFetchingItems,
-            IsFetchingCategories
-        } = this.props;
+        // const {
+        //     // Users,
+        //     IsFetchingUsers,
+        //     IsFetchingItems,
+        //     IsFetchingCategories
+        // } = this.props;
 
-        // console.log(this.props.Categories);
+        // // console.log(this.props.Categories);
 
-        if(IsFetchingUsers && IsFetchingItems && IsFetchingCategories){
-            return <div>Loading</div>;
-        }
+        // if(IsFetchingUsers && IsFetchingItems && IsFetchingCategories){
+        //     return <div>Loading</div>;
+        // }
         // console.log(this.props.Items);
 
         return (

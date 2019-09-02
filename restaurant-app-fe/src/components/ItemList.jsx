@@ -26,6 +26,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Input from '@material-ui/core/Input';
 
+import { loadTableColumns, updateItem, deleteItem } from '../actions/adminDashboard'
+
 class ItemList extends Component {
     constructor(props){
         super(props);
@@ -82,7 +84,8 @@ class ItemList extends Component {
                 //   render: rowData => <input type="text" value={rowData.Ingredients.join()} />
                 // }
             ],
-            data: props.items,
+            // data: props.items,
+            data: this.props.Items,
             // categories: props.categories,
             category: ''
             // ingredients: [] 
@@ -103,12 +106,49 @@ class ItemList extends Component {
     }
 
     componentDidMount = () => {
-      console.log('POZVAN');
-      if(this.props.IsSuccessful){
-        this.setState({
-          data: this.props.Items
-        });
+      let categoryLookup = {};
+
+      for(var i = 0; i < this.props.Categories.length; i++){
+        categoryLookup[this.props.Categories[i].CategoryID] = this.props.Categories[i].Title;
       }
+
+      let columns = [
+          {
+              title: 'ItemID',
+              field: 'ItemID',
+              type: 'numeric'
+          },
+          {
+              title: 'Title',
+              field: 'Title'
+          },
+          {
+              title: 'Description',
+              field: 'Description'
+          },
+          {
+              title: 'Mass',
+              field: 'Mass',
+              type: 'numeric'
+          },
+          {
+              title: 'Calorie count',
+              field: 'CalorieCount',
+              type: 'numeric'
+          },
+          {
+              title: 'Price',
+              field: 'Price',
+              type: 'numeric'
+          },
+          {
+            title: 'Category',
+            field: 'CategoryID',
+            lookup: categoryLookup
+          }
+      ];
+
+      this.props.loadTableColumns(columns);
       // let column = { 
       //   title: 'Ingredients',
       //   field: 'Ingredients',
@@ -160,15 +200,14 @@ class ItemList extends Component {
           ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
         };
 
-
-
-        // console.log(this.state.data);
+        console.log(this.props.Items);
         return (
             <MaterialTable
               icons={tableIcons}
               title="Maintain items"
-              columns={this.state.columns}
-              data={this.state.data}
+              columns={this.props.Columns}
+              // data={this.state.data}
+              data={this.props.Items}
               editable={{
                 // onRowAdd: newData =>
                 //   new Promise(resolve => {
@@ -183,18 +222,23 @@ class ItemList extends Component {
                   new Promise(resolve => {
                     setTimeout(() => {
                       resolve();
-                      const data = [...this.state.data];
+                      const data = [...this.props.Items];
                       data[data.indexOf(oldData)] = newData;
-                      this.setState({ ...this.state, data });
+                      this.props.updateItem(data, newData, this.props.csrf);
+                      // this.setState({ ...this.state, data });
                     }, 600);
                   }),
                 onRowDelete: oldData =>
                   new Promise(resolve => {
                     setTimeout(() => {
                       resolve();
-                      const data = [...this.state.data];
+                      const data = [...this.props.Items];
                       data.splice(data.indexOf(oldData), 1);
-                      this.setState({ ...this.state, data });
+                      console.log('OLD DATA:');
+                      console.log(oldData);
+                      console.log(data);
+                      this.props.deleteItem(data, oldData, this.props.csrf);
+                      // this.setState({ ...this.state, data });
                     }, 600);
                   }),
               }}
@@ -202,7 +246,21 @@ class ItemList extends Component {
                 exportButton: true
               }}
             />
-
+            // <Snackbar
+            //     anchorOrigin={{
+            //         vertical: 'top',
+            //         horizontal: 'right',
+            //     }}
+            //     open={this.props.Open}
+            //     autoHideDuration={6000}
+            //     onClose={this.props.handleClose}
+            // >
+            //     <MySnackbarContentWrapper
+            //         onClose={this.props.handleClose}
+            //         variant={this.props.IsSuccessful ? 'success': 'error'}
+            //         message={this.props.Message}
+            //     />
+            // </Snackbar>
         )
     }
 }
@@ -214,15 +272,19 @@ const mapStateToProps = (state) => ({
     // Open: state.itemsReducer.Open,
     // IsSuccessful: state.itemsReducer.IsSuccessful,
     // Message: state.itemsReducer.Message
-    
+    Categories: state.categoriesReducer.Categories,
     IsSuccessful: state.itemsReducer.IsSuccessful,
-    UpdatedItems: state.itemsReducer.Items
+    Items: state.itemsReducer.Items,
+    Columns: state.itemsReducer.Columns
 })
 
 const mapDispatchToProps = {
+    loadTableColumns,
+    updateItem,
+    deleteItem
     // push
     // openItemDialog,
-    // closeItemDialog
+    // closeItemDialog,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ItemList)

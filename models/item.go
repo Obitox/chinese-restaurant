@@ -11,7 +11,7 @@ type Item struct {
 	ItemID                                      uint64 `gorm:"primary_key"`
 	CategoryID                                  uint64
 	Title, Description, RequestAntiForgeryToken string
-	Mass, CalorieCount                          int
+	Mass, CalorieCount, IsDeleted               int
 	Price                                       float64
 	Category                                    Category `gorm:"foreignkey:CategoryID;association_foreignkey:CategoryID"`
 	Ingredients                                 []Ingredient
@@ -37,7 +37,7 @@ func GetAllItems() []Item {
 	}
 
 	items := []Item{}
-	conn.Set("gorm:auto_preload", true).Find(&items)
+	conn.Set("gorm:auto_preload", true).Where("is_deleted=?", 0).Find(&items)
 
 	ingredients := []Ingredient{}
 	portions := []Portion{}
@@ -88,4 +88,36 @@ func (item Item) CreateItem() (err error) {
 	// db.Exec("INSERT INTO orders SET shipped_at=? WHERE id IN (?)", time.Now(), []int64{11,22,33})
 
 	return createError.Error
+}
+
+// UpdateItem updates an item in the DB
+func (item Item) UpdateItem() (err error) {
+	conn, err := db.MySQLConnect()
+	defer conn.Close()
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	conn.Save(&item)
+
+	return nil
+}
+
+// DeleteItem deletes user from the DB
+func (item Item) DeleteItem() (err error) {
+	conn, err := db.MySQLConnect()
+	defer conn.Close()
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	item.IsDeleted = 1
+
+	conn.Exec("UPDATE item SET is_deleted = ? WHERE item_id = ?", item.IsDeleted, item.ItemID)
+
+	return nil
 }

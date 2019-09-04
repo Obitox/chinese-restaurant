@@ -200,7 +200,6 @@ class ItemList extends Component {
           ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
         };
 
-        console.log(this.props.Items);
         return (
             <MaterialTable
               icons={tableIcons}

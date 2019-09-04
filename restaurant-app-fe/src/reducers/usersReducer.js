@@ -10,7 +10,10 @@ import {
     USER_DELETE_FAILED,
     USER_ADD_REQUEST,
     USER_ADD_SUCCESS,
-    USER_ADD_FAILED
+    USER_ADD_FAILED,
+    CLOSE_USER_SNACKBAR,
+    LOAD_USER_TABLE_COLUMNS
+
 } from '../actions/adminDashboard'
 
 const initialState = {
@@ -19,6 +22,9 @@ const initialState = {
     Users: [],
     User: {},
     IsFetchingUsers: true,
+    IsSuccessful: false,
+    Open: false,
+    Columns: [],
     UserID: 0
 }
 
@@ -43,11 +49,16 @@ export default function usersReducer(state = initialState, action){
             });
         case USER_UPDATE_SUCCESS:
             return Object.assign({}, state, {
-                Messsage: action.payload
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful,
+                Messsage: action.payload.Message,
+                Users: action.payload.Users
             });
         case USER_UPDATE_FAILED:
             return Object.assign({}, state, {
-                Message: action.payload
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful,
+                Messsage: action.payload.Message
             });
         case USER_DELETE_REQUEST:
             return Object.assign({}, state, {
@@ -58,11 +69,16 @@ export default function usersReducer(state = initialState, action){
                 // Users: state.Users.filter((user) => {
                 //         return user.UserID !== state.UserID
                 // }),
-                Message: action.payload.Message
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful,
+                Message: action.payload.Message,
+                Users: action.payload.Users
             });
         case USER_DELETE_FAILED:
             return Object.assign({}, state, {
-                Message: action.payload
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful,
+                Message: action.payload.Message,
             });
         case USER_ADD_REQUEST:
             return Object.assign({}, state, {
@@ -71,11 +87,20 @@ export default function usersReducer(state = initialState, action){
         case USER_ADD_SUCCESS:
             return Object.assign({}, state, {
                 // Users: state.Cart.concat(state.User),
-                Message: action.payload.Message
+                Message: action.payload.Message,
+                Users: action.payload.Users
             });
         case USER_DELETE_FAILED:
             return Object.assign({}, state, {
                 Message: action.payload
+            });
+        case CLOSE_USER_SNACKBAR:
+            return Object.assign({}, state, {
+                Open: action.payload.Open
+            });
+        case LOAD_USER_TABLE_COLUMNS:
+            return Object.assign({}, state, {
+                Columns: action.payload.Columns
             });
         default:
             return state;

@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { push } from 'connected-react-router'
 
-import { addUser, updateUser, deleteUser } from '../actions/adminDashboard'
+import UserList from './UserList.jsx'
+import { addUser, updateUser, deleteUser, handleUserSnackbarClose, fetchUsers } from '../actions/adminDashboard'
 
 // Styling
 import TextField from '@material-ui/core/TextField';
@@ -13,9 +14,68 @@ import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import IconButton from '@material-ui/core/IconButton';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import { makeStyles } from '@material-ui/core/styles';
+import { amber, green } from '@material-ui/core/colors';
+import clsx from 'clsx';
+import CloseIcon from '@material-ui/icons/Close';
 // import DeleteIcon from '@material-ui/icons/Delete';
 
-import { throttle } from 'throttle-debounce';
+
+const variantIcon = {
+    success: CheckCircleIcon,
+    error: ErrorIcon
+  };
+  
+const useStyles1 = makeStyles(theme => ({
+    success: {
+      backgroundColor: green[600],
+    },
+    error: {
+      backgroundColor: theme.palette.error.dark,
+    },
+    icon: {
+      fontSize: 20,
+    },
+    iconVariant: {
+      opacity: 0.9,
+      marginRight: theme.spacing(1),
+    },
+    message: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+}));
+
+function MySnackbarContentWrapper(props) {
+    const classes = useStyles1();
+    const { className, message, onClose, variant, ...other } = props;
+    const Icon = variantIcon[variant];
+  
+    return (
+      <SnackbarContent
+        className={clsx(classes[variant], className)}
+        aria-describedby="client-snackbar"
+        message={
+          <span id="client-snackbar" className={classes.message}>
+            <Icon className={clsx(classes.icon, classes.iconVariant)} />
+            {message}
+          </span>
+        }
+        action={[
+          <IconButton key="close" aria-label="close" color="inherit" onClick={onClose}>
+            <CloseIcon className={classes.icon} />
+          </IconButton>,
+        ]}
+        {...other}
+      />
+    );
+}
+
 
 class Users extends Component {
     constructor(props){
@@ -56,15 +116,17 @@ class Users extends Component {
 
     async componentDidMount(){
         // this.initSwitches(this.props.Users);
-        if(this.props.Users !== undefined){
-            this.props.Users.forEach(this.initSwitches);
-        }
+        // if(this.props.Users !== undefined){
+        //     this.props.Users.forEach(this.initSwitches);
+        // }
         const response = await fetch(`http://localhost:3000/csrf`, {
                                     method: 'POST',
                                     credentials: 'include'
                                 });
         const json = await response.json();
         this.setState({['csrf_token']: json._RequestAntiForgeryToken, ['users']: this.props.Users});
+
+        this.props.fetchUsers(this.state.csrf_token);
     }
 
     // componentDidUpdate = () => {
@@ -768,51 +830,75 @@ class Users extends Component {
         //         );
 
 
+        const {
+            IsFetchingUsers
+        } = this.props;
+
+        if(IsFetchingUsers){
+            return <div>Loading</div>;
+        }
+
         return (
+            //<div>
+            //     <table>
+            //         <thead>
+            //             <tr>
+            //                 <th>
+            //                     UserID
+            //                 </th>
+            //                 <th>
+            //                     Username
+            //                 </th>
+            //                 <th>
+            //                     Password
+            //                 </th>
+            //                 <th>
+            //                     Role
+            //                 </th>
+            //                 <th>
+            //                     Firstname
+            //                 </th>
+            //                 <th>
+            //                     Lastname
+            //                 </th>
+            //                 <th>
+            //                     Address1
+            //                 </th>
+            //                 <th>
+            //                     Address2
+            //                 </th>
+            //                 <th>
+            //                     Address3
+            //                 </th>
+            //                 <th>
+            //                     Phone
+            //                 </th>
+            //                 <th>
+            //                     Email
+            //                 </th>
+            //             </tr>
+            //         </thead>
+            //         <tbody>
+            //             {users}
+            //         </tbody>
+            //     </table>
             <div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>
-                                UserID
-                            </th>
-                            <th>
-                                Username
-                            </th>
-                            <th>
-                                Password
-                            </th>
-                            <th>
-                                Role
-                            </th>
-                            <th>
-                                Firstname
-                            </th>
-                            <th>
-                                Lastname
-                            </th>
-                            <th>
-                                Address1
-                            </th>
-                            <th>
-                                Address2
-                            </th>
-                            <th>
-                                Address3
-                            </th>
-                            <th>
-                                Phone
-                            </th>
-                            <th>
-                                Email
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users}
-                    </tbody>
-                </table>
-                {userAdd}
+                <UserList csrf={this.state.csrf_token} />
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={this.props.Open}
+                    autoHideDuration={6000}
+                    onClose={this.props.handleUserSnackbarClose}
+                >
+                    <MySnackbarContentWrapper
+                        onClose={this.props.handleUserSnackbarClose}
+                        variant={this.props.IsSuccessful ? 'success': 'error'}
+                        message={this.props.Message}
+                    />
+                </Snackbar>
             </div>
         );
     }
@@ -821,6 +907,9 @@ class Users extends Component {
 const mapStateToProps = (state) => {
     return {
         Users: state.usersReducer.Users,
+        Open: state.usersReducer.Open,
+        IsSuccessful: state.usersReducer.IsSuccessful,
+        Message: state.usersReducer.Message
         // Message: state.usersReducer.Message
     };
 }
@@ -828,7 +917,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
     addUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    handleUserSnackbarClose,
+    fetchUsers
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Users)

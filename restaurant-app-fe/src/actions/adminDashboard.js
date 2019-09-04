@@ -34,8 +34,10 @@ export const ADD_ITEM_SUCCESS = 'ADD_ITEM_SUCCESS'
 export const ADD_ITEM_FAILED = 'ADD_ITEM_FAILED'
 
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR'
+export const CLOSE_USER_SNACKBAR = 'CLOSE_USER_SNACKBAR'
 
 export const LOAD_TABLE_COLUMNS = 'LOAD_TABLE_COLUMNS'
+export const LOAD_USER_TABLE_COLUMNS = 'LOAD_USER_TABLE_COLUMNS'
 
 // export const UPDATE_ITEM_REQUEST = 'UPDATE_ITEM_REQUEST'
 export const UPDATE_ITEM_SUCCESS = 'UPDATE_ITEM_SUCCESS'
@@ -54,6 +56,23 @@ const baseURL = `http://localhost:3000`
 //     }
 // }
 
+const closeUserSnackbar = () => {
+    return {
+        type: CLOSE_USER_SNACKBAR,
+        payload: {
+            Open: false
+        }
+    }
+}
+
+const loadUserColumns = (columns) => {
+    return {
+        type: LOAD_USER_TABLE_COLUMNS,
+        payload: {
+            Columns: columns
+        }
+    }
+}
 
 const deleteItemRequest = (itemID) => {
     return {
@@ -175,11 +194,12 @@ const addUserRequest = (user) => {
     }
 }
 
-const addUserSuccess = (message) => {
+const addUserSuccess = (users, message) => {
     return {
         type: USER_ADD_SUCCESS,
         payload: {
-            Message: message
+            Message: message,
+            Users: users
         }
     }
 }
@@ -198,40 +218,56 @@ const updateUserRequest = (user) => {
     }
 }
 
-const updateUserSuccess = (message) => {
+const updateUserSuccess = (users, message) => {
     return {
         type: USER_UPDATE_SUCCESS,
-        payload: message
+        payload: {
+            Open: true,
+            IsSuccessful: true,
+            Message: message,
+            Users: users
+        }
     }
 }
 
 const updateUserFailed = (message) => {
     return {
         type: USER_UPDATE_FAILED,
-        payload: message
+        payload: {
+            Open: true,
+            IsSuccessful: false,
+            Message: message,
+        }
     }
 }
 
 const deleteUserRequest = (userID) => {
     return {
-        type: USER_UPDATE_REQUEST,
+        type: USER_DELETE_REQUEST,
         payload: userID
     }
 }
 
-const deleteUserSuccess = (message) => {
+const deleteUserSuccess = (users, message) => {
     return {
-        type: USER_UPDATE_SUCCESS,
+        type: USER_DELETE_SUCCESS,
         payload: {
-            Message: message
+            Open: true,
+            IsSuccessful: true,
+            Message: message,
+            Users: users,
         }
     }
 }
 
 const deleteUserFailed = (message) => {
     return {
-        type: USER_UPDATE_FAILED,
-        payload: message
+        type: USER_DELETE_FAILED,
+        payload: {
+            Open: true,
+            IsSuccessful: false,
+            Message: message
+        }
     }
 }
 
@@ -398,7 +434,7 @@ export const fetchUsers = (csrf) => dispatch => {
     .catch(error => dispatch(usersFailed(error)));
 }
 
-export const updateUser = (user, csrf) => dispatch => {
+export const updateUser = (users, user, csrf) => dispatch => {
     dispatch(updateUserRequest(user))
 
     user.RequestAntiForgeryToken = csrf;
@@ -417,7 +453,7 @@ export const updateUser = (user, csrf) => dispatch => {
      .then(res => res.json())
      .then(response => {
          if(response.Message == "OK"){
-             dispatch(updateUserSuccess(response.Message))
+             dispatch(updateUserSuccess(users, response.Message))
          } else {
              dispatch(updateUserFailed("Update failed"))
          }
@@ -425,7 +461,7 @@ export const updateUser = (user, csrf) => dispatch => {
      .catch(error => dispatch(updateUserFailed(error)));
 }
 
-export const deleteUser = (user, csrf) => dispatch => {
+export const deleteUser = (users, user, csrf) => dispatch => {
     dispatch(deleteUserRequest(user.UserID))
 
     user.RequestAntiForgeryToken = csrf;
@@ -444,7 +480,7 @@ export const deleteUser = (user, csrf) => dispatch => {
      .then(res => res.json())
      .then(response => {
          if(response.Message == "OK"){
-             dispatch(deleteUserSuccess(response.Message))
+             dispatch(deleteUserSuccess(users, response.Message))
          } else {
              dispatch(deleteUserFailed("Delete failed"))
          }
@@ -452,7 +488,7 @@ export const deleteUser = (user, csrf) => dispatch => {
      .catch(error => dispatch(deleteUserFailed(error)));
 }
 
-export const addUser = (user, csrf) => dispatch => {
+export const addUser = (users, user, csrf) => dispatch => {
     dispatch(addUserRequest(user))
 
     user.RequestAntiForgeryToken = csrf;
@@ -471,7 +507,7 @@ export const addUser = (user, csrf) => dispatch => {
      .then(res => res.json())
      .then(response => {
          if(response.Message == "OK"){
-             dispatch(addUserSuccess(response.Message))
+             dispatch(addUserSuccess(users, response.Message))
          } else {
              dispatch(addUserFailed("Add failed"))
          }
@@ -593,6 +629,10 @@ export const loadTableColumns = (columns) => dispatch => {
     dispatch(loadColumns(columns));
 }
 
+export const loadUserTableColumns = (columns) => dispatch => {
+    dispatch(loadUserColumns(columns))
+}
+
 export const updateItem = (items, item, csrf) => dispatch => {
     item.RequestAntiForgeryToken = csrf;
 
@@ -649,4 +689,8 @@ export const deleteItem = (items, item, csrf) => dispatch => {
          }
      })
      .catch(error => dispatch(deleteItemFailed(error)));
+}
+
+export const handleUserSnackbarClose = () => dispatch => {
+    dispatch(closeUserSnackbar())
 }

@@ -97,19 +97,8 @@ class Users extends Component {
                 Email: ''
             }
         };
-        // this.username = React.createRef();
-        // this.password = React.createRef();
-        // this.role = React.createRef();
-        // this.firstname = React.createRef();
-        // this.lastname = React.createRef();
-        // this.address1 = React.createRef();
-        // this.address2 = React.createRef();
-        // this.address3 = React.createRef();
-        // this.phone = React.createRef();
-        // this.email = React.createRef();
 
         this.componentDidMount = this.componentDidMount.bind(this);
-        // this.initSwitches = this.initSwitches.bind(this);
         this.getSwitchState = this.getSwitchState.bind(this);
 
     }
@@ -831,57 +820,17 @@ class Users extends Component {
 
 
         const {
-            IsFetchingUsers
+            IsFetchingUsers,
+            Message
         } = this.props;
 
         if(IsFetchingUsers){
             return <div>Loading</div>;
         }
 
+        console.log("Message: " + Message);
+
         return (
-            //<div>
-            //     <table>
-            //         <thead>
-            //             <tr>
-            //                 <th>
-            //                     UserID
-            //                 </th>
-            //                 <th>
-            //                     Username
-            //                 </th>
-            //                 <th>
-            //                     Password
-            //                 </th>
-            //                 <th>
-            //                     Role
-            //                 </th>
-            //                 <th>
-            //                     Firstname
-            //                 </th>
-            //                 <th>
-            //                     Lastname
-            //                 </th>
-            //                 <th>
-            //                     Address1
-            //                 </th>
-            //                 <th>
-            //                     Address2
-            //                 </th>
-            //                 <th>
-            //                     Address3
-            //                 </th>
-            //                 <th>
-            //                     Phone
-            //                 </th>
-            //                 <th>
-            //                     Email
-            //                 </th>
-            //             </tr>
-            //         </thead>
-            //         <tbody>
-            //             {users}
-            //         </tbody>
-            //     </table>
             <div>
                 <UserList csrf={this.state.csrf_token} />
                 <Snackbar
@@ -896,7 +845,7 @@ class Users extends Component {
                     <MySnackbarContentWrapper
                         onClose={this.props.handleUserSnackbarClose}
                         variant={this.props.IsSuccessful ? 'success': 'error'}
-                        message={this.props.Message}
+                        message={Message}
                     />
                 </Snackbar>
             </div>
@@ -909,6 +858,7 @@ const mapStateToProps = (state) => {
         Users: state.usersReducer.Users,
         Open: state.usersReducer.Open,
         IsSuccessful: state.usersReducer.IsSuccessful,
+        // FIXME: Not showing on update
         Message: state.usersReducer.Message
         // Message: state.usersReducer.Message
     };

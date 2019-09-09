@@ -53,8 +53,8 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname,'src'),
     historyApiFallback: true,
-    hot: true,
-    inline: true,
+    // hot: true,
+    // inline: true,
     host: "localhost",
     port: 8082,
     watchOptions: {

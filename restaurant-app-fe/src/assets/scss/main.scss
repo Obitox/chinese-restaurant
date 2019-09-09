@@ -1,6 +1,27 @@
-// body {
-//     div#root{
-//       background-color: #222;
-//       color: #ff3e41;
-//     }
-// }
+body {
+    // background-color: black;
+}
+
+.home {
+    display: grid;
+    grid-template-areas: "navigation cart"
+                         "items items";
+
+    .home-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        grid-area: navigation;
+    }
+    
+    .cart-container {
+        grid-area: cart;
+    }
+
+    .container-items {
+        display: grid;
+        grid-area: items;
+        grid-template-columns: repeat(6, minmax(100px, 1fr) );
+        grid-template-rows: auto;
+    }
+}

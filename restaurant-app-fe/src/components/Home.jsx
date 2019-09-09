@@ -15,6 +15,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import '../assets/scss/main.scss';
 
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -167,7 +168,7 @@ class Home extends React.Component {
                         {this.props.loginData} */}
                       </div>;
         } else {
-            button = <div>
+            button = <div className="home-navigation">
                 <Button variant="outlined" onClick={this.redirectLogin}>
                     Login
                 </Button>
@@ -209,7 +210,7 @@ class Home extends React.Component {
 
         const isCartOpen = this.state.isCartOpen;
 
-        let cart =  <div className="cart">
+        let cart =  <div className="cart-container">
                         <FontAwesomeIcon icon={faShoppingCart} />
                         {this.props.Cart !== undefined ? <p>{this.props.Cart.length}</p> : <p>{0}</p>}
                         <Button variant="outlined" onClick={this.handleCartOpen}>
@@ -231,14 +232,14 @@ class Home extends React.Component {
         }
 
         return (
-            <div>
+            <div className="home">
                 {button}
+                {cart}
                 <div className="container-items">
                     {items}
-                    {itemDialog}
-                    {cart}
-                    {cartDialog}
                 </div>
+                {itemDialog}
+                {cartDialog}
             </div>
         )
     }

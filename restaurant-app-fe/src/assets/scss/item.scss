@@ -1,34 +1,41 @@
-.item-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
+// .item-dialog-wrapper {
+    // display: flex;
+    // flex-direction: row;
+    // flex-wrap: wrap;
+    // justify-content: center;
+    // align-items: center;
 
-    .item-dialog {
+    
+// }
+
+.item-dialog {
+    display: grid;
+    grid-template-areas:    "title"
+                            "dialog"
+                            "actions";
+    
+    .title { grid-area: title; }
+    .content { 
+        grid-area: dialog;
         display: grid;
-        grid-template-areas:    "title"
-                                "dialog"
-                                "actions";
-        
-        .title { grid-area: title; }
-        .content { 
-            grid-area: dialog;
-            display: grid;
-            grid-template-areas:    "img"
-                                    "ingredients"
-                                    "allergens"
-                                    "portion"
-                                    "personalPref"
-                                    "amount"
-                                    "price";
-            .img { grid-area: img}
-            .ingredient { grid-area: ingredients}
-            .portion { grid-area: portion}
-            .personal-preference { grid-area: personalPref}
-            .amount { grid-area: amount}
-            .price { grid-area: price}
+        grid-template-areas:    "img"
+                                "ingredients"
+                                "allergens"
+                                "portion"
+                                "personalPref"
+                                "amount"
+                                "price";
+        .img { grid-area: img}
+        .ingredients-wrapper { 
+            grid-area: ingredients;
+            .ingredient {
+                display: inline;
+            }
         }
-        .actions { grid-area: actions; }                  
+        .portion { grid-area: portion}
+        .personal-preference { grid-area: personalPref}
+        .amount { grid-area: amount}
+        .price { grid-area: price}
     }
+    .actions { grid-area: actions; }                  
 }

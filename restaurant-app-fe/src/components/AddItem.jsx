@@ -20,6 +20,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { amber, green } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
+import '../assets/scss/addItem.scss';
 
 import { handleClose, addItem } from '../actions/adminDashboard'
 
@@ -83,7 +84,11 @@ class AddItem extends Component {
         for(var i=0;i<props.Ingredients.length;i++){
             ingredientTitleArray.push(props.Ingredients[i].Title);
         }
+        console.log('ESD');
+        console.log(props.Ingredients);
 
+        console.log('HEEEE');
+        console.log(props.Categories);
         this.state = {
             ingredientTitles: ingredientTitleArray,
             ingredientTitle: [],
@@ -156,13 +161,13 @@ class AddItem extends Component {
 
     render() {
         return (
-            <div>
-                <form onSubmit={this.addItem}>
-                    <div>
+            <div className="add-item-container">
+                <form className="add-item-form" onSubmit={this.addItem}>
                         <TextField
                             // error={!this.state.IsUsernameValid}
                             // disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                            id="standard-bare"
+                            id="outlined-name"
+                            label="Title"
                             name="Title"
                             // defaultValue={item.Title}
                             inputRef={input => this._Title = input}
@@ -175,7 +180,8 @@ class AddItem extends Component {
                         <TextField
                             // error={!this.state.IsUsernameValid}
                             // disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                            id="standard-bare"
+                            id="outlined-name"
+                            label="Description"
                             name="Description"
                             // defaultValue={item.Description}
                             inputRef={input => this._Description = input}
@@ -187,7 +193,8 @@ class AddItem extends Component {
                         <TextField
                             // error={!this.state.IsUsernameValid}
                             // disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                            id="standard-number"
+                            id="outlined-number"
+                            label="Mass"
                             name="Mass"
                             // defaultValue={item.Mass}
                             inputRef={input => this._Mass = input}
@@ -203,7 +210,8 @@ class AddItem extends Component {
                         <TextField
                             // error={!this.state.IsUsernameValid}
                             // disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                            id="standard-number"
+                            id="outlined-number"
+                            label="Calorie count"
                             name="CalorieCount"
                             // defaultValue={item.CalorieCount}
                             inputRef={input => this._CalorieCount = input}
@@ -218,7 +226,8 @@ class AddItem extends Component {
                         />
                         <TextField
                             // disabled={!this.getSwitchState(this.state.switches, item.ItemID)}
-                            id="standard-number"
+                            id="outlined-number"
+                            label="Price"
                             name="Price"
                             // defaultValue={item.Price}
                             inputRef={input => this._Price = input}
@@ -231,7 +240,7 @@ class AddItem extends Component {
                             varirant="outlined"
                         />
                         <FormControl>
-                            <InputLabel htmlFor="categories">Category</InputLabel>
+                            <InputLabel shrink htmlFor="categories">Category</InputLabel>
                             <Select
                                 value={this.state.category}
                                 onChange={this.handleSelectChange}
@@ -247,7 +256,7 @@ class AddItem extends Component {
                             </Select>
                         </FormControl>
                         <FormControl>
-                            <InputLabel htmlFor="select-multiple-checkbox">Ingredients</InputLabel>
+                            <InputLabel shrink htmlFor="select-multiple-checkbox">Ingredients</InputLabel>
                             <Select
                                 multiple
                                 value={this.state.ingredientTitle}
@@ -316,7 +325,6 @@ class AddItem extends Component {
                             }}
                             message={<span id="message-id">{this.props.Message}</span>}
                         /> */}
-                    </div>
                 </form>
             </div>
         );

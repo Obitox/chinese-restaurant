@@ -20,6 +20,15 @@ class AdminDashboard extends Component {
     }
 
     async componentDidMount(){
+        if(localStorage.hasOwnProperty("IsAuthenticated")){
+            if(localStorage.getItem("IsAuthenticated") !== "true") {
+                this.props.push("/login");
+            }
+        }
+        else {
+            this.props.push("/login");
+        }
+
         const response = await fetch(`http://localhost:3000/csrf`, {
                                     method: 'POST',
                                     credentials: 'include'

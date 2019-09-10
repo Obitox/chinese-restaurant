@@ -203,12 +203,14 @@ export default class ItemDialog extends React.Component {
 
     //FIXME: fix this ugly menace
     return (
-        <div className="item-container">
+        <div className="item-dialog-wrapper">
           <Dialog className="item-dialog" open={this.props.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title" className="title">{this.props.Item.Title}</DialogTitle>
                     <DialogContent className="content">
                       {this.props.open ? img : null}
-                      {ingredients}
+                      <div className="ingredients-wrapper">
+                        {ingredients}
+                      </div>
                       {allergens.length > 1 ? <div className="allergens"><FontAwesomeIcon icon={faAllergies} />{allergens}</div> : <div className="allergens"><FontAwesomeIcon icon={faCheck} />No allergens :)</div>}
                       <FormControl className="portion">
                         <InputLabel htmlFor="portion-size">Portion size</InputLabel>
@@ -249,7 +251,7 @@ export default class ItemDialog extends React.Component {
                         }}
                         margin="normal"
                       />
-                      <p className="price">{this.state.total_price}</p>
+                      <p className="price">Price: {this.state.total_price}</p>
                     </DialogContent>
                     <DialogActions className="actions">
                       <Button onClick={this.handleClose} color="primary">

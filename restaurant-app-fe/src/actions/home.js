@@ -21,7 +21,18 @@ export const CART_ITEM_REMOVE = 'CART_ITEM_REMOVE'
 export const INCREMENT_CART_ITEM_AMOUNT = 'INCREASE_CART_ITEM_AMOUNT'
 export const DECREMENT_CART_ITEM_AMOUNT = 'DECREMENT_CART_ITEM_AMOUNT'
 
+export const CLOSE_CART_TOAST = 'CLOSE_CART_TOAST';
+
 const baseURL = `http://localhost:3000`
+
+const closeCartToast = () => {
+    return {
+        type: CLOSE_CART_TOAST,
+        payload: {
+            Open: false
+        }
+    }
+}
 
 const logoutRequest = (username) => {
     return {
@@ -81,14 +92,22 @@ const cartCheckoutRequest = () => {
 const cartCheckoutSuccess = (message) => {
     return {
         type: CART_CHECKOUT_SUCCESS,
-        payload: message
+        payload: {
+            Message: message,
+            Open: true,
+            IsSuccessful: true,
+        }
     }
 }
 
 const cartCheckoutFailed = (message) => {
     return {
         type: CART_CHECKOUT_FAILED,
-        payload: message
+        payload: {
+            Message: message,
+            Open: true,
+            IsSuccessful: false,
+        }
     }
 }
 
@@ -236,6 +255,26 @@ export const addItemToCart = (item) => dispatch => {
 }
 
 export const removeItemFromCart = (itemID, size) => dispatch => {
+    if(localStorage.hasOwnProperty("cart")){
+        let cart = JSON.parse(localStorage.getItem("cart"));
+        let newCart = [];
+
+        if(cart.length > 0) {
+            for(var i = 0; i < cart.length; i++){
+                if(cart[i].ItemID !== itemID){
+                    newCart.push(cart[i]);
+                }
+            }
+        }
+
+        if(newCart.length > 0){
+            localStorage.setItem("cart", JSON.stringify(newCart));
+        }
+        else {
+            localStorage.removeItem("cart");
+        }
+    }
+    
     dispatch(cartItemRemove(itemID, size))
 }
 
@@ -280,4 +319,8 @@ export const checkoutCart = (cart, csrf) => dispatch => {
      .catch(error => dispatch(cartCheckoutFailed(error)));
 
     
+}
+
+export const handleToastClose = () => dispatch => {
+    dispatch(closeCartToast());
 }

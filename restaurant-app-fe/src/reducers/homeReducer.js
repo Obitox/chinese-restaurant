@@ -14,13 +14,16 @@ import {
     CART_CHECKOUT_SUCCESS,
     CART_CHECKOUT_FAILED,
     LOAD_CART_FROM_LOCALSTORAGE,
-    DECREMENT_CART_ITEM_AMOUNT
+    DECREMENT_CART_ITEM_AMOUNT,
+    CLOSE_CART_TOAST
 } from '../actions/home'
 
 const initialState = {
     IsAuthenticated: false,
     Username: '',
     Message: '',
+    IsSuccessful: true,
+    Open: false,
     // FIXME: Refactor to Items
     Data: [],
     Cart: [],
@@ -117,15 +120,23 @@ export default function homeReducer(state = initialState, action){
             });
         case CART_CHECKOUT_SUCCESS:
             return Object.assign({}, state, {
-                Message: action.payload
+                Message: action.payload.Message,
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful
             });
         case CART_CHECKOUT_FAILED:
             return Object.assign({}, state, {
-                Message: action.payload
+                Open: action.payload.Open,
+                IsSuccessful: action.payload.IsSuccessful,
+                Messsage: action.payload.Message,
             });
         case LOAD_CART_FROM_LOCALSTORAGE:
             return Object.assign({}, state, {
                 Cart: action.payload
+            });
+        case CLOSE_CART_TOAST:
+            return Object.assign({}, state, {
+                Open: action.payload.Open
             });
         default:
             return state;

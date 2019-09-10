@@ -551,7 +551,6 @@ class Items extends Component {
             return <div>Loading</div>;
         }
 
-
         return (
             <div>
                 <ItemList items={this.props.Items} categories={this.props.Categories} ingredients={this.props.Ingredients} csrf={this.state.csrf_token} match={this.props.match}/>

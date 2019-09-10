@@ -12,7 +12,23 @@
                                 "actions";
         
         .title { grid-area: title; }
-        .content { grid-area: dialog; }
+        .content { 
+            grid-area: dialog;
+            display: grid;
+            grid-template-areas:    "img"
+                                    "ingredients"
+                                    "allergens"
+                                    "portion"
+                                    "personalPref"
+                                    "amount"
+                                    "price";
+            .img { grid-area: img}
+            .ingredient { grid-area: ingredients}
+            .portion { grid-area: portion}
+            .personal-preference { grid-area: personalPref}
+            .amount { grid-area: amount}
+            .price { grid-area: price}
+        }
         .actions { grid-area: actions; }                  
     }
 }

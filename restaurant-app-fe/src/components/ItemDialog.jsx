@@ -19,6 +19,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAllergies, faCheck } from '@fortawesome/free-solid-svg-icons'
 import defaultImg from '../assets/images/default.png';
 
+import '../assets/scss/item.scss';
+
 
 
 export default class ItemDialog extends React.Component {

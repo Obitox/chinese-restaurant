@@ -1,0 +1,27 @@
+.register-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    .register-form {
+        display: grid;
+        grid-template-areas:    "username password"
+                                "email firstname"
+                                "lastname address1"
+                                "address2 address3"
+                                "phone button";
+    
+        .register-username{grid-area: username; margin-right: 4px;}
+        .register-password {grid-area: password;}
+        .register-email {grid-area: email; margin-right: 4px;}
+        .register-firstname {grid-area: firstname;}
+        .register-lastname {grid-area: lastname; margin-right: 4px;}
+        .register-address1 {grid-area: address1;}
+        .register-address2 {grid-area: address2; margin-right: 4px;}
+        .register-address3 {grid-area: address3;}
+        .register-phone {grid-area: phone; margin-right: 4px;}
+        .register-button {grid-area: button;}
+    }
+}

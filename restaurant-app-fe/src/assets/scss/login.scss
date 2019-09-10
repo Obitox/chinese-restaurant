@@ -1,0 +1,44 @@
+.container {
+//     width: 100%;
+//   /* Firefox */
+//     display: -moz-box;
+//     -moz-box-pack: center;
+//     -moz-box-align: center;
+//     /* Safari and Chrome */
+//     display: -webkit-box;
+//     -webkit-box-pack: center;
+//     -webkit-box-align: center;
+//     /* W3C */
+//     display: box;
+//     box-pack: center;
+//     box-align: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    .login-container {
+        display: grid;
+        grid-template-areas: "username password"
+                             "login login";
+        // grid-template-columns: 200px 200px;
+        // grid-template-rows: 200px;
+        align-content: center;
+        justify-content: center;
+        // width: 50%;
+
+        .login-username {
+            grid-area: username;
+            margin-right: 4px;
+        }
+
+        .login-password {
+            grid-area: password;
+        }
+
+        .login-button {
+            grid-area: login;
+        }
+    }
+}

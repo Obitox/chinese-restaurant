@@ -171,6 +171,7 @@ export default class ItemDialog extends React.Component {
     // FIXME: fix this ugly menace
     let ingredients = this.props.Item.Ingredients.map((ingredient, index) => 
                                         <FormControlLabel
+                                          className="ingredient"
                                           key={index}
                                           control={
                                             <Checkbox
@@ -191,7 +192,7 @@ export default class ItemDialog extends React.Component {
         }
     });
 
-    let img = <img id='default' alt="default" src={defaultImg} height='75px' width='75px'></img>
+    let img = <img className="img" id='default' alt="default" src={defaultImg} height='75px' width='75px'></img>
 
     // FIXME: fix this ugly menace
     let portion = this.props.Item.Category.Portions.map((portion, index) => 
@@ -200,59 +201,61 @@ export default class ItemDialog extends React.Component {
 
     //FIXME: fix this ugly menace
     return (
-        <div>
-          <Dialog open={this.props.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">{this.props.Item.Title}</DialogTitle>
-                    <DialogContent>
-                    {this.props.open ? img : null}
-                    {ingredients}
-                    {allergens.length > 1 ? <div><FontAwesomeIcon icon={faAllergies} />{allergens}</div> : <div><FontAwesomeIcon icon={faCheck} />No allergens :)</div>}
-                    <FormControl>
-                      <InputLabel htmlFor="portion-size">Portion size</InputLabel>
-                      <Select
-                        value={this.state.size}
-                        onChange={this.handleSelect}
-                        inputProps={{
-                          name: 'size',
-                          id: 'size',
+        <div className="item-container">
+          <Dialog className="item-dialog" open={this.props.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title" className="title">{this.props.Item.Title}</DialogTitle>
+                    <DialogContent className="content">
+                      {this.props.open ? img : null}
+                      {ingredients}
+                      {allergens.length > 1 ? <div className="allergens"><FontAwesomeIcon icon={faAllergies} />{allergens}</div> : <div className="allergens"><FontAwesomeIcon icon={faCheck} />No allergens :)</div>}
+                      <FormControl className="portion">
+                        <InputLabel htmlFor="portion-size">Portion size</InputLabel>
+                        <Select
+                          value={this.state.size}
+                          onChange={this.handleSelect}
+                          inputProps={{
+                            name: 'size',
+                            id: 'size',
+                          }}
+                        >
+                          {portion}
+                        </Select>
+                      </FormControl>
+                      <TextField
+                        className="personal-preference"
+                        id="outlined-multiline-flexible"
+                        label="Personal preference"
+                        name="personalPreference"
+                        multiline
+                        rowsMax="4"
+                        value={this.state.personalPreference}
+                        onChange={this.handleChange}
+                        margin="normal"
+                        helperText="No onion, no cabbage, more chicken :)"
+                        variant="outlined"
+                      />
+                      <TextField
+                        className="amount"
+                        id="standard-number"
+                        label="Amount"
+                        name="amount"
+                        value={this.state.amount}
+                        onChange={this.handleAmountChange}
+                        type="number"
+                        InputLabelProps={{
+                          shrink: true,
                         }}
-                      >
-                        {portion}
-                      </Select>
-                    </FormControl>
-                    <TextField
-                      id="outlined-multiline-flexible"
-                      label="Personal preference"
-                      name="personalPreference"
-                      multiline
-                      rowsMax="4"
-                      value={this.state.personalPreference}
-                      onChange={this.handleChange}
-                      margin="normal"
-                      helperText="No onion, no cabbage, more chicken :)"
-                      variant="outlined"
-                    />
-                    <TextField
-                      id="standard-number"
-                      label="Amount"
-                      name="amount"
-                      value={this.state.amount}
-                      onChange={this.handleAmountChange}
-                      type="number"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      margin="normal"
-                    />
-                    <p>{this.state.total_price}</p>
+                        margin="normal"
+                      />
+                      <p className="price">{this.state.total_price}</p>
                     </DialogContent>
-                    <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                        Done
-                    </Button>
-                    <Button onClick={this.addToCart} disabled={this.state.isDisabled} color="primary">
-                        Add to cart
-                    </Button>
+                    <DialogActions className="actions">
+                      <Button onClick={this.handleClose} color="primary">
+                          Done
+                      </Button>
+                      <Button onClick={this.addToCart} disabled={this.state.isDisabled} color="primary">
+                          Add to cart
+                      </Button>
                     </DialogActions>
           </Dialog>
         </div>

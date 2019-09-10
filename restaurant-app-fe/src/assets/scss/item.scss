@@ -1,0 +1,18 @@
+.item-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    .item-dialog {
+        display: grid;
+        grid-template-areas:    "title"
+                                "dialog"
+                                "actions";
+        
+        .title { grid-area: title; }
+        .content { grid-area: dialog; }
+        .actions { grid-area: actions; }                  
+    }
+}

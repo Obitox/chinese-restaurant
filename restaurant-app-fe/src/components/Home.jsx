@@ -155,12 +155,15 @@ class Home extends React.Component {
 
         let button;
         if (isLoggedIn) {
-            button = <div>
+            button = <div className="logout-button">
                         <input type="hidden" value={this.state.csrf_token}>
                         </input>
-                        <button type="submit" onClick={this.doLogout}>
+                        <Button variant="outlined" color="primary" onClick={this.doLogout}>
                             Logout
-                        </button>
+                        </Button>
+                        {/* <button type="submit" onClick={this.doLogout}>
+                            Logout
+                        </button> */}
                         {/* <input type="text" defaultValue={this.state.csrf_token}></input>
                         <input type="text" name="username" onChange={this.handleChange} placeholder="Enter your username here"></input>
                         <input type="text" name="password" onChange={this.handleChange} placeholder="Enter your password here"></input>
@@ -169,10 +172,10 @@ class Home extends React.Component {
                       </div>;
         } else {
             button = <div className="home-navigation">
-                <Button variant="outlined" onClick={this.redirectLogin}>
+                <Button variant="outlined" color="primary" onClick={this.redirectLogin}>
                     Login
                 </Button>
-                <Button variant="outlined" onClick={this.redirectRegister}>
+                <Button variant="outlined" color="primary" onClick={this.redirectRegister}>
                     Register
                 </Button>
             </div>;
@@ -184,7 +187,7 @@ class Home extends React.Component {
                 <p>
                     {item.Title}
                 </p>
-                <Button variant="outlined" onClick={() => this.handleClickOpen(item.ItemID)}>
+                <Button variant="outlined" color="primary" onClick={() => this.handleClickOpen(item.ItemID)}>
                     Add to cart
                 </Button>
                 {/* <ItemDialog 
@@ -213,7 +216,7 @@ class Home extends React.Component {
         let cart =  <div className="cart-container">
                         <FontAwesomeIcon icon={faShoppingCart} />
                         {this.props.Cart !== undefined ? <p>{this.props.Cart.length}</p> : <p>{0}</p>}
-                        <Button variant="outlined" onClick={this.handleCartOpen}>
+                        <Button variant="outlined" color="primary" onClick={this.handleCartOpen}>
                             Go to cart
                         </Button>
                     </div>

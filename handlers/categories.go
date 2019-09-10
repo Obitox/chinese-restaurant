@@ -13,7 +13,6 @@ func Categories(w http.ResponseWriter, r *http.Request) {
 	utils.SetupCors(&w, r)
 
 	categories := models.GetAllCategories()
-	log.Println(categories)
 	marshaledCategories, err := json.Marshal(categories)
 
 	if err != nil {

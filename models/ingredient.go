@@ -23,6 +23,8 @@ func GetAllIngredients() []Ingredient {
 	ingredients := []Ingredient{}
 	conn.Find(&ingredients)
 
+	log.Println(ingredients)
+
 	return ingredients
 }
 

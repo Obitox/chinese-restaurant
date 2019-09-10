@@ -32,6 +32,8 @@ func GetAllCategories() []Category {
 
 	categories := []Category{}
 	conn.Find(&categories)
+	log.Println("HAPPEND")
+	log.Println(categories)
 
 	return categories
 }

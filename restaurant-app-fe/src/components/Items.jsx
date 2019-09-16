@@ -551,10 +551,14 @@ class Items extends Component {
             return <div>Loading</div>;
         }
 
+        console.log("START ITEMS");
+        console.log(this.props.Ingredients);
+        console.log("END ITEMS");
+
         return (
             <div>
                 <ItemList items={this.props.Items} categories={this.props.Categories} ingredients={this.props.Ingredients} csrf={this.state.csrf_token} match={this.props.match}/>
-                <AddItem Ingredients={this.props.Ingredients} Categories={this.props.Categories} addItem={(item) => this.addItem(item)} Open={this.props.Open} IsSuccessful={this.props.IsSuccessful} Message={this.props.Message} handleClose={this.props.handleClose} csrf={this.state.csrf_token}/>
+                <AddItem ingredients={this.props.Ingredients} categories={this.props.Categories} addItem={(item) => this.addItem(item)} Open={this.props.Open} IsSuccessful={this.props.IsSuccessful} Message={this.props.Message} handleClose={this.props.handleClose} csrf={this.state.csrf_token}/>
                 {/* {itemAdd} */}
                 {/* {ingredients} */}
             </div>

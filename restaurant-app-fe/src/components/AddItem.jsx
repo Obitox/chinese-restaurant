@@ -81,25 +81,28 @@ class AddItem extends Component {
         let ingredientTitleArray = [
         ];
 
-        for(var i=0;i<props.Ingredients.length;i++){
-            ingredientTitleArray.push(props.Ingredients[i].Title);
+        for(var i=0;i<props.ingredients.length;i++){
+            ingredientTitleArray.push(props.ingredients[i].Title);
         }
         console.log('ESD');
         console.log(props.Ingredients);
 
         console.log('HEEEE');
-        console.log(props.Categories);
+        console.log(props.categories);
         this.state = {
             ingredientTitles: ingredientTitleArray,
             ingredientTitle: [],
-            ingredients: props.Ingredients,
-            categories: props.Categories,
+            ingredients: props.ingredients,
+            categories: props.categories,
             category: ''
             // csrf_token: ''
         };
     }
 
     componentDidMount = () => {
+        console.log('START TEST');
+        console.log(this.props.ingredients);
+        console.log('END TEST');
         // FIXME: separate this request to action
         // fetch(`http://localhost:3000/csrf`, {
         //     method: 'POST',
@@ -160,6 +163,10 @@ class AddItem extends Component {
     }
 
     render() {
+        console.log('START INGREDIENTS');
+        console.log(this.state.ingredientTitles);
+        console.log('END INGREDIENTS');
+
         return (
             <div className="add-item-container">
                 <form className="add-item-form" onSubmit={this.addItem}>

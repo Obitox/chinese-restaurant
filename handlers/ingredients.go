@@ -15,6 +15,9 @@ func Ingredients(w http.ResponseWriter, r *http.Request) {
 	ingredients := models.GetAllIngredients()
 	marshaledIngredients, err := json.Marshal(ingredients)
 
+	log.Println("ALL INGREDIENTS START")
+	log.Println(ingredients)
+
 	if err != nil {
 		response := models.Response{
 			ReturnCode: -1,

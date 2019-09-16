@@ -41,7 +41,7 @@ type User struct {
 	Password                string
 	Role                    string
 	FirstName               string
-	LastNames               string
+	LastName                string
 	Address1                string
 	Address2                string
 	Address3                string

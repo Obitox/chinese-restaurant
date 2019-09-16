@@ -36,9 +36,19 @@ type TokenClaims struct {
 }
 
 type User struct {
-	UserID                                                                                                             uint64 `gorm:"primary_key"`
-	Username, Password, Role, FirstName, LastName, Address1, Address2, Address3, Phone, Email, RequestAntiForgeryToken string
-	IsDeleted                                                                                                          int8
+	UserID                  uint64 `gorm:"primary_key"`
+	Username                string
+	Password                string
+	Role                    string
+	FirstName               string
+	LastNames               string
+	Address1                string
+	Address2                string
+	Address3                string
+	Phone                   string
+	Email                   string
+	RequestAntiForgeryToken string
+	IsDeleted               int8
 }
 
 const (

@@ -84,11 +84,7 @@ class AddItem extends Component {
         for(var i=0;i<props.ingredients.length;i++){
             ingredientTitleArray.push(props.ingredients[i].Title);
         }
-        console.log('ESD');
-        console.log(props.Ingredients);
 
-        console.log('HEEEE');
-        console.log(props.categories);
         this.state = {
             ingredientTitles: ingredientTitleArray,
             ingredientTitle: [],

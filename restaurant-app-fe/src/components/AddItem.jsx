@@ -96,6 +96,9 @@ class AddItem extends Component {
     }
 
     componentDidMount = () => {
+        console.log('START TEST');
+        console.log(this.props.ingredients);
+        console.log('END TEST');
         // FIXME: separate this request to action
         // fetch(`http://localhost:3000/csrf`, {
         //     method: 'POST',
@@ -156,6 +159,10 @@ class AddItem extends Component {
     }
 
     render() {
+        console.log('START INGREDIENTS');
+        console.log(this.state.ingredientTitles);
+        console.log('END INGREDIENTS');
+
         return (
             <div className="add-item-container">
                 <form className="add-item-form" onSubmit={this.addItem}>

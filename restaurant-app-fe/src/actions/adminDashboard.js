@@ -587,6 +587,7 @@ export const fetchIngredients = () => dispatch => {
      .then(response => {
          if(response.length > 0){
             isFetching = false;
+            console.log(response);
             dispatch(ingredientsSuccess(response, isFetching))
          } else {
              dispatch(ingredientsFailed("No data"))

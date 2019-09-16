@@ -579,7 +579,11 @@ class Items extends Component {
         return (
             <div>
                 <ItemList items={this.props.Items} categories={this.props.Categories} ingredients={this.props.Ingredients} csrf={this.state.csrf_token} match={this.props.match}/>
+<<<<<<< HEAD
                 <AddItem categoryPass={this.props.Categories} addItem={(item) => this.addItem(item)} Open={this.props.Open} IsSuccessful={this.props.IsSuccessful} Message={this.props.Message} handleClose={this.props.handleClose} csrf={this.state.csrf_token} ingredientsPass={this.props.Ingredients}/>
+=======
+                <AddItem ingredients={this.props.Ingredients} categories={this.props.Categories} addItem={(item) => this.addItem(item)} Open={this.props.Open} IsSuccessful={this.props.IsSuccessful} Message={this.props.Message} handleClose={this.props.handleClose} csrf={this.state.csrf_token}/>
+>>>>>>> f005d5919a8be804cd7c7892a97cfe388fa76905
                 {/* {itemAdd} */}
                 {/* {ingredients} */}
             </div>

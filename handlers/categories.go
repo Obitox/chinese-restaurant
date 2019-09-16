@@ -14,6 +14,9 @@ func Categories(w http.ResponseWriter, r *http.Request) {
 
 	categories := models.GetAllCategories()
 	marshaledCategories, err := json.Marshal(categories)
+	log.Println("ALL CATEGORIES START")
+	log.Println(categories)
+	log.Println("ALL CATEGORIES END")
 
 	if err != nil {
 		response := models.Response{

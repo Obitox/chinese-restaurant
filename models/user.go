@@ -18,7 +18,7 @@ import (
 )
 
 // User represents a model for a real user inside the Application
-// Roles: Admin, Dispatcher & Customer (Default)
+// Roles: Admin & Customer (Default)
 // Address1: *
 // Address2: Optional
 // Address3: Optional

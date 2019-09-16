@@ -219,7 +219,7 @@ class Register extends Component {
                     />
                     <TextField
                         id="outlined-name"
-                        label="Address3*"
+                        label="Address3"
                         name="address3"
                         className="register-address3"
                         // value={this.state.address3}

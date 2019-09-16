@@ -32,11 +32,18 @@ class ItemList extends Component {
     constructor(props){
         super(props);
 
+        console.log('ITEM LIST START')
+        console.log(props);
+        console.log('ITEM LIST end')
         let categoryLookup = {};
 
         for(var i = 0; i < props.categories.length; i++){
           categoryLookup[props.categories[i].CategoryID] = props.categories[i].Title;
         }
+
+        console.log('LOOKUP START')
+        console.log(props.categories);
+        console.log('LOOKUP END')
 
         this.state = {
             columns: [
@@ -147,6 +154,8 @@ class ItemList extends Component {
             lookup: categoryLookup
           }
       ];
+
+      // this.setState({['columns']: columns})
 
       this.props.loadTableColumns(columns);
       // let column = { 

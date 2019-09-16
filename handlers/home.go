@@ -42,6 +42,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(marshaledItems)
+	return
 
 	// w.Write([]byte("Hello my name is Bojan!"))
 }

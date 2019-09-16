@@ -15,6 +15,7 @@ class Login extends Component {
             csrf_token: ''
         }
         this.componentDidMount = this.componentDidMount.bind(this);
+        this.doLogin = this.doLogin.bind(this);
     }
 
     componentDidMount (){
@@ -36,10 +37,11 @@ class Login extends Component {
         this.setState({[event.target.name]: event.target.value});
     }
 
-    doLogin = () => {
+    doLogin(){
+        console.log(this._Username.value);
         const user = {
-            username: this.state.username,
-            password: this.state.password
+            username: this._Username.value,
+            password: this._Password.value
         };
 
         this.props.loginAction(user.username, user.password, this.state.csrf_token);
@@ -67,8 +69,9 @@ class Login extends Component {
                         label="Username"
                         name="username"
                         className="login-username"
+                        inputRef={textfield => this._Username = textfield}
                         // value={this.state.phone}
-                        onChange={this.handleChange}
+                        // onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
                     />
@@ -78,12 +81,13 @@ class Login extends Component {
                         className="login-password"
                         name="password"
                         type="password"
-                        onChange={this.handleChange}
+                        inputRef={textfield => this._Password = textfield}
+                        // onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
                     />
                     <Button 
-                        onClick={this.doLogin()}
+                        onClick={this.doLogin}
                         variant="outlined"
                         className="login-button"
                         type="submit">

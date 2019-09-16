@@ -30,4 +30,5 @@ func Categories(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(marshaledCategories)
+	return
 }

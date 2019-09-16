@@ -74,6 +74,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if len(user.RequestAntiForgeryToken) > 0 {
 		if user.RequestAntiForgeryToken == cookie.Value {
 			retrievalError := user.GetUserByUsernameAndPassword()
+			log.Println("ROLE: " + user.Role)
 			if retrievalError != nil {
 				response := models.Response{
 					ReturnCode: -1,
@@ -114,6 +115,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 				ReturnCode: 0,
 				Message:    "OK",
 			}
+
+			if user.Role == "administrator" {
+				response.Message = "admin"
+			}
+
 			byteResponse, marshalError := response.Response()
 			if marshalError != nil {
 				// Internal server errorA
@@ -138,8 +144,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(byteResponse)
 	return
+}
 
-	// retrievalError := user.GetUserByUsernameAndPassword()
+// retrievalError := user.GetUserByUsernameAndPassword()
 	// if retrievalError != nil {
 	// 	response := models.Response{
 	// 		ReturnCode: -1,
@@ -186,4 +193,3 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 	// w.Write(byteResponse)
-}

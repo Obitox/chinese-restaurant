@@ -20,14 +20,29 @@ class AdminDashboard extends Component {
     }
 
     async componentDidMount(){
-        if(localStorage.hasOwnProperty("IsAuthenticated")){
-            if(localStorage.getItem("IsAuthenticated") !== "true") {
+        if(localStorage.hasOwnProperty("IsAuthenticated") && localStorage.hasOwnProperty("IsAdmin")){
+            if(localStorage.getItem("IsAuthenticated") !== "true" && localStorage.hasOwnProperty("IsAdmin") !== "true") {
                 this.props.push("/login");
+            }
+            else {
+                this.props.push("/admin");
             }
         }
         else {
             this.props.push("/login");
         }
+
+        fetch(`http://localhost:3000/csrf`, {
+            method: 'POST',
+            credentials: 'include'
+         })
+         .then(res => res.json())
+         .then(response => {
+            //  csrfToken = response._RequestAntiForgeryToken;
+            this.setState({
+                csrf_token: response._RequestAntiForgeryToken
+            });
+         });
 
         const response = await fetch(`http://localhost:3000/csrf`, {
                                     method: 'POST',
@@ -35,7 +50,7 @@ class AdminDashboard extends Component {
                                 });
         // FIXME: Fix this naming
         const json = await response.json();
-        // this.setState({ csrf_token: json._RequestAntiForgeryToken });                  
+        this.setState({ csrf_token: json._RequestAntiForgeryToken });                  
 
         const payload = {
             _RequestAntiForgeryToken: json._RequestAntiForgeryToken

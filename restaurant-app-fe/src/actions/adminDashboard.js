@@ -559,6 +559,8 @@ export const fetchCategories = () => dispatch => {
      .then(response => {
          if(response.length > 0){
             isFetching = false;
+            console.log('DATA IN FETCH');
+            console.log(response);
             dispatch(categoriesSuccess(response, isFetching))
          } else {
              dispatch(categoriesFailed("No data"))
@@ -595,6 +597,10 @@ export const fetchIngredients = () => dispatch => {
 
 export const addItem = (item) => dispatch => {
     dispatch(addItemRequest(item));
+
+    console.log('spe')
+    console.log(item);
+    console.log('spe')
 
     fetch(baseURL + '/addItem', {
         method: 'POST',

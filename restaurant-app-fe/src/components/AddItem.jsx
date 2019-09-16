@@ -81,15 +81,15 @@ class AddItem extends Component {
         let ingredientTitleArray = [
         ];
 
-        for(var i=0;i<props.Ingredients.length;i++){
-            ingredientTitleArray.push(props.Ingredients[i].Title);
+        for(var i=0;i<props.ingredientsPass.length;i++){
+            ingredientTitleArray.push(props.ingredientsPass[i].Title);
         }
 
         this.state = {
             ingredientTitles: ingredientTitleArray,
             ingredientTitle: [],
-            ingredients: props.Ingredients,
-            categories: props.Categories,
+            ingredients: props.ingredientsPass,
+            categories: props.categoryPass,
             category: ''
             // csrf_token: ''
         };

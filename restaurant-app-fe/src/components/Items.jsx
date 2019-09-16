@@ -48,6 +48,9 @@ class Items extends Component {
     }
 
     async componentDidMount(){
+
+        let csrfToken = "";
+
         // OLD ONE
         if(this.props.Items !== undefined){
             this.props.Items.forEach(this.initSwitches);
@@ -57,6 +60,15 @@ class Items extends Component {
             this.props.Ingredients.forEach(this.initCheckboxes);
         }
 
+        // fetch(`http://localhost:3000/csrf`, {
+        //     method: 'POST',
+        //     credentials: 'include'
+        //  })
+        //  .then(res => res.json())
+        //  .then(response => {
+        //         csrfToken = response._RequestAntiForgeryToken;
+        //  });
+
         const response = await fetch(`http://localhost:3000/csrf`, {
                                     method: 'POST',
                                     credentials: 'include'
@@ -65,9 +77,9 @@ class Items extends Component {
         this.setState({['csrf_token']: json._RequestAntiForgeryToken, ['items']: this.props.Items, ['categories']: this.props.Categories, ['ingredients']: this.props.Ingredients});
 
 
-        this.props.fetchItems();
         this.props.fetchCategories();
         this.props.fetchIngredients();
+        this.props.fetchItems();
     }
 
     initSwitches = (item) => {
@@ -292,6 +304,10 @@ class Items extends Component {
         //     </tr>
             
         // ) : (<tr><td>Error</td></tr>);
+
+        console.log('START ITEMS');
+        console.log(this.props.Ingredients);
+        console.log('END ITEMS');
 
         let categories = this.props.Categories.map((category, index) => 
                                           <MenuItem key={index} value={category.Title}>{category.Title}</MenuItem>
@@ -551,10 +567,19 @@ class Items extends Component {
             return <div>Loading</div>;
         }
 
+        console.log('START ITEMS X')
+        console.log(this.props.Ingredients);
+        console.log('END ITEMS X')
+        
+        
+        console.log('START ITEMS F')
+        console.log(this.props.Categories);
+        console.log('END ITEMS F')
+
         return (
             <div>
                 <ItemList items={this.props.Items} categories={this.props.Categories} ingredients={this.props.Ingredients} csrf={this.state.csrf_token} match={this.props.match}/>
-                <AddItem Ingredients={this.props.Ingredients} Categories={this.props.Categories} addItem={(item) => this.addItem(item)} Open={this.props.Open} IsSuccessful={this.props.IsSuccessful} Message={this.props.Message} handleClose={this.props.handleClose} csrf={this.state.csrf_token}/>
+                <AddItem categoryPass={this.props.Categories} addItem={(item) => this.addItem(item)} Open={this.props.Open} IsSuccessful={this.props.IsSuccessful} Message={this.props.Message} handleClose={this.props.handleClose} csrf={this.state.csrf_token} ingredientsPass={this.props.Ingredients}/>
                 {/* {itemAdd} */}
                 {/* {ingredients} */}
             </div>

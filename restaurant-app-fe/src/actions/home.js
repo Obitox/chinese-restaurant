@@ -213,6 +213,9 @@ export const logoutAction = (csrf) => dispatch => {
          .then(response => {
              if(response.Message == "OK"){
                 localStorage.setItem("IsAuthenticated", false)
+                if(localStorage.hasOwnProperty("IsAdmin")){
+                    localStorage.setItem("IsAdmin", false)
+                }
                 dispatch(logoutSuccess(response.Message))
              } else {
                  dispatch(logoutFailed("Logout failed"))
@@ -311,7 +314,7 @@ export const checkoutCart = (cart, csrf) => dispatch => {
      .then(response => {
          if(response.Message == "OK"){
             localStorage.removeItem("cart")
-            dispatch(cartCheckoutSuccess(response.Message))
+            dispatch(cartCheckoutSuccess("Order successful, our dispatcher will contact you shortly."))
          } else {
              dispatch(cartCheckoutFailed("No data"))
          }

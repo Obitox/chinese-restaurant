@@ -70,7 +70,17 @@ export const loginAction = (username, password, csrf) => dispatch => {
             })
             dispatch(loginSuccess(response.Message))
             dispatch(push('/home'))
-        } else {
+        }
+        else if(response.Message == "admin"){
+            saveObjectToLocalStorage({
+                Username: username,
+                IsAdmin: true,
+                IsAuthenticated: true
+            })
+            dispatch(loginSuccess("OK"))
+            dispatch(push('/admin'))
+        }
+        else {
             dispatch(loginFailure("Authentication failed, username or password is wrong"))
         }
     })
